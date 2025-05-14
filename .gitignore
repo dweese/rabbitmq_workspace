@@ -1,0 +1,19 @@
+# Generated files
+/target/
+**/target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# The output of cargo build
+**/*.rs.bk
+
+# Debug artifacts
+**/debug/
+**/profile/
+
+# Local configuration
+.env
+EOF

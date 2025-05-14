@@ -1,0 +1,14 @@
+
+#### rabbitmq_workspace/Cargo.toml
+[workspace]
+members = [
+    "rabbitmq-config",
+    "egui-components",
+    "rabbitmq-ui",
+]
+resolver = "2"  # Add this line to use edition 2021's resolver
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+eframe = "0.24.1"
