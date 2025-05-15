@@ -27,6 +27,20 @@ This project uses the following key dependencies:
 - **thiserror** (1.0.69) - Error handling
 - **env_logger** (0.11.8) - Logging
 
+
+IMPORTANT: This code is specifically designed for lapin 2.5.3
+
+The API has changed significantly between versions:
+- In 2.5.3, `basic_qos` takes a prefetch_count and BasicQosOptions structure
+- `confirm_select` requires a ConfirmSelectOptions parameter
+- ShortString and LongString are concrete types (not just String aliases)
+- AMQPValue has specific constructors for different value types
+If upgrading lapin in the future, check for API changes in:
+ - Channel methods (especially basic_qos, confirm_select)
+ - Type conversions for FieldTable entries
+ - Message property handling
+
+
 ## Getting Started
 
 ### Prerequisites

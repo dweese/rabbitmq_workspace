@@ -1,4 +1,4 @@
-# Generated files
+# Build artifacts
 /target/
 **/target/
 
@@ -7,13 +7,28 @@
 .vscode/
 *.iml
 
-# The output of cargo build
+# Rust build artifacts
 **/*.rs.bk
+Cargo.lock
 
-# Debug artifacts
+# Debug and profiling artifacts
 **/debug/
 **/profile/
 
-# Local configuration
+# Environment variables
 .env
-EOF
+
+# RabbitMQ specific
+rabbitmq_data/
+*.log
+
+# Credentials and private keys
+id_*
+!id_*.pub  # Still track public keys if needed
+
+# macOS specific files
+.DS_Store
+
+# Backup files
+*~
+*.bak
