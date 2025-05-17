@@ -32,3 +32,10 @@ id_*
 # Backup files
 *~
 *.bak
+
+# Ignore sensitive files
+*_config.json
+*.pem
+id_*
+*.key
+*.pub
