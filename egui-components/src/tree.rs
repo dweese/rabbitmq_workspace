@@ -1,6 +1,6 @@
 // egui-components/src/tree.rs
 
-use eframe::egui::{self, Color32, Response, Sense, Stroke, Ui};
+use eframe::egui::{self, Color32, Stroke, Ui};
 use std::collections::HashMap;
 
 // Make sure all these types are public
