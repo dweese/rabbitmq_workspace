@@ -1,8 +1,6 @@
-use std::sync::Arc;
 use lapin::{
     options::{
         QueueDeclareOptions, ExchangeDeclareOptions, BasicPublishOptions,
-        QueueDeleteOptions, ExchangeDeleteOptions,
     },
     types::FieldTable,
     BasicProperties, Connection, Channel, ConnectionProperties, ExchangeKind,
@@ -12,13 +10,11 @@ use amq_protocol_uri::AMQPUri;
 
 
 
-use futures_util::stream::StreamExt;
 use tokio::time::timeout;
 use std::time::Duration;
 use thiserror::Error;
-use crate::config::{RabbitMQConfig, ConnectionConfig};
+use crate::config::RabbitMQConfig;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 // Error types
 #[derive(Debug, Error)]
