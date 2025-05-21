@@ -7,7 +7,11 @@ use lapin::{
     types::FieldTable,
     BasicProperties, Connection, Channel, ConnectionProperties, ExchangeKind,
 };
+// Use lapin's AMQPUri
 use amq_protocol_uri::AMQPUri;
+
+
+
 use futures_util::stream::StreamExt;
 use tokio::time::timeout;
 use std::time::Duration;
