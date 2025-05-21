@@ -1,12 +1,8 @@
 // egui-components/src/tree.rs
-
 use eframe::egui::{self, Color32, Stroke, Ui};
 use std::collections::HashMap;
 
-// Make sure all these types are public
-pub type ChildrenFn = Box<dyn Fn(TreeNodeId) -> Vec<TreeNodeId>>;
-pub type RenderFn = Box<dyn Fn(&mut Ui, &TreeNode, bool, bool) -> bool>;
-
+// TreeNodeId definition
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TreeNodeId(pub u64);
 
@@ -16,12 +12,18 @@ impl TreeNodeId {
     }
 }
 
+// TreeNode definition
 #[derive(Debug, Clone)]
 pub struct TreeNode {
     pub id: TreeNodeId,
     pub depth: u32,
 }
 
+// Function types for tree operations
+pub type ChildrenFn = Box<dyn Fn(TreeNodeId) -> Vec<TreeNodeId>>;
+pub type RenderFn = Box<dyn Fn(&mut Ui, &TreeNode, bool, bool) -> bool>;
+
+// Internal state tracking
 #[derive(Debug, Clone)]
 struct TreeNodeState {
     expanded: bool,
