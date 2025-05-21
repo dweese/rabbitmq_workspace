@@ -2,6 +2,7 @@
 // rabbitmq_ui/src/main.rs
 mod app;
 
+use eframe::NativeOptions;
 use eframe::egui::{self, Color32, RichText, ScrollArea, Stroke};
 use std::collections::HashMap;
 use egui_components::{BorderLayout, Tree, TreeNodeId};
