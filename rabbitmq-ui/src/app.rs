@@ -1,6 +1,9 @@
 // rabbitmq_ui/src/main.rs
 
 use eframe::egui::{self, Color32, RichText};
+use std::collections::HashMap;
+use egui_components::TreeNodeId;
+
 use rabbitmq_config::{
     RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
     MessageProperties, QueueInfo, ExchangeInfo,
@@ -20,6 +23,24 @@ pub enum UiAction {
 }
 
 // Application state that contains all data needed by the UI
+pub struct TreeState {
+    queue_tree_nodes: HashMap<TreeNodeId, String>,
+    queue_children: HashMap<TreeNodeId, Vec<TreeNodeId>>,
+    selected_queue: Option<TreeNodeId>,
+}
+
+// Add this to your app.rs file where TreeState is defined
+impl Default for TreeState {
+    fn default() -> Self {
+        Self {
+            queue_tree_nodes: HashMap::new(),
+            queue_children: HashMap::new(),
+            selected_queue: None,
+        }
+    }
+}
+
+
 pub struct AppState {
     runtime: Arc<Runtime>,
     client: Option<Arc<Mutex<RabbitMQClient>>>,
@@ -37,7 +58,11 @@ pub struct AppState {
     // UI state flags
     show_queue_dialog: bool,
     show_exchange_dialog: bool,
+
+    // Tree state in a separate struct
+    tree_state: TreeState,
 }
+
 
 impl Default for AppState {
     fn default() -> Self {
@@ -69,6 +94,8 @@ impl Default for AppState {
             },
             show_queue_dialog: false,
             show_exchange_dialog: false,
+            tree_state: TreeState::default(), // Add this line
+
         }
     }
 }
@@ -267,6 +294,7 @@ impl Default for App {
 }
 
 impl eframe::App for App {
+
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Create our own manual layout
         let screen_rect = ctx.screen_rect();
@@ -527,4 +555,5 @@ impl eframe::App for App {
             }
         }
     }
+    
 }

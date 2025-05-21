@@ -1,0 +1,24 @@
+.
+├── Cargo.toml
+├── config.tree
+├── src
+│   ├── client.rs
+│   ├── config.rs
+│   └── lib.rs
+└── tests
+    ├── client
+    │   ├── integration_tests.rs
+    │   ├── mocked_tests.rs
+    │   └── unit_tests.rs
+    ├── common
+    │   └── test_utils.rs
+    ├── config
+    │   ├── manipulation_tests.rs
+    │   ├── serialization_tests.rs
+    │   └── validation_tests.rs
+    ├── connection_test.rs
+    ├── fixtures
+    │   └── sample_config
+    └── lib.rs
+
+8 directories, 14 files
