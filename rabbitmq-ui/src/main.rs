@@ -341,8 +341,8 @@ impl eframe::App for App {
             .frame(egui::Frame::none().fill(Color32::from_rgb(255, 218, 185))) // Peach
             .show(ctx, |ui| {
                 ui.vertical(|ui| {
-                    // Implement our tree view using our custom Tree component
-                    let tree = Tree::new("resource_tree")
+                    // Try using a String instead of &str to ensure ownership:
+                    let tree = Tree::new(String::from("resource_tree"))
                         .root_id(TreeNodeId::root())
                         .children_fn(|node_id| {
                             if node_id == TreeNodeId::root() {
@@ -465,20 +465,39 @@ impl eframe::App for App {
                         // Message properties collapsing section
                         ui.collapsing("Message Properties", |ui| {
                             if let Some(props) = &mut self.state.message.properties {
-                                ui.horizontal(|ui| {
-                                    ui.label("Content Type:");
-                                    ui.text_edit_singleline(&mut props.content_type);
-                                });
+                                // Content Type
+                                {
+                                    let mut content_type = props.content_type.clone().unwrap_or_default();
+                                    ui.horizontal(|ui| {
+                                        ui.label("Content Type:");
+                                        if ui.text_edit_singleline(&mut content_type).changed() {
+                                            props.content_type = if content_type.is_empty() { None } else { Some(content_type) };
+                                        }
+                                    });
+                                }
 
-                                ui.horizontal(|ui| {
-                                    ui.label("Content Encoding:");
-                                    ui.text_edit_singleline(&mut props.content_encoding);
-                                });
+                                // Content Encoding
+                                {
+                                    let mut content_encoding = props.content_encoding.clone().unwrap_or_default();
+                                    ui.horizontal(|ui| {
+                                        ui.label("Content Encoding:");
+                                        if ui.text_edit_singleline(&mut content_encoding).changed() {
+                                            props.content_encoding = if content_encoding.is_empty() { None } else { Some(content_encoding) };
+                                        }
+                                    });
+                                }
 
-                                ui.checkbox(&mut props.persistent, "Persistent");
+                                // Delivery Mode
+                                {
+                                    let mut persistent = props.delivery_mode.unwrap_or(1) == 2;
+                                    if ui.checkbox(&mut persistent, "Persistent").changed() {
+                                        props.delivery_mode = Some(if persistent { 2 } else { 1 });
+                                    }
+                                }
 
                                 // Add more properties as needed
                             }
+
                         });
 
                         if ui.add_enabled(self.state.connection_status, egui::Button::new("Publish")).clicked() {
@@ -580,41 +599,19 @@ impl eframe::App for App {
     }
 }
 
-fn main() -> Result<(), eframe::Error> {
-    // Initialize the logger
+fn main() {
     env_logger::init();
 
-    // Get the RabbitMQ configuration from environment variables or use defaults
-    let options = NativeOptions {
-        initial_window_size: Some(egui::vec2(1024.0, 768.0)),
-        min_window_size: Some(egui::vec2(640.0, 480.0)),
-        follow_system_theme: true,
-        default_theme: eframe::Theme::Light,
-        window_builder: Some(Box::new(|window| {
-            window.with_title("RabbitMQ UI")
-        })),
-        hardware_acceleration: eframe::HardwareAcceleration::Preferred,
+    let native_options = eframe::NativeOptions {
+        viewport: eframe::egui::ViewportBuilder::default()
+            .with_inner_size([1024.0, 768.0]),
         ..Default::default()
     };
 
-    // Run the application
     eframe::run_native(
         "RabbitMQ UI",
-        options,
-        Box::new(|cc| {
-            // Configure text style
-            let mut style = (*cc.egui_ctx.style()).clone();
-            style.text_styles = [
-                (egui::TextStyle::Heading, egui::FontId::new(24.0, egui::FontFamily::Proportional)),
-                (egui::TextStyle::Body, egui::FontId::new(16.0, egui::FontFamily::Proportional)),
-                (egui::TextStyle::Monospace, egui::FontId::new(14.0, egui::FontFamily::Monospace)),
-                (egui::TextStyle::Button, egui::FontId::new(16.0, egui::FontFamily::Proportional)),
-                (egui::TextStyle::Small, egui::FontId::new(12.0, egui::FontFamily::Proportional)),
-            ]
-                .into();
-            cc.egui_ctx.set_style(style);
-
-            Box::new(App::default())
-        }),
-    )
+        native_options,
+        Box::new(|_cc| Box::new(app::App::default())),
+    ).unwrap();
 }
+
