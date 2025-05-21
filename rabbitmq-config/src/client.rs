@@ -320,5 +320,12 @@ impl RabbitMQClient {
         
         Ok(())
     }
+
+    // Add this method to use the config field
+    pub fn get_config(&self) -> &RabbitMQConfig {
+        &self.config
+    }
+
+
 }
 
