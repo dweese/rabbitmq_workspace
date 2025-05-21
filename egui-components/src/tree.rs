@@ -1,16 +1,9 @@
 // egui-components/src/tree.rs
 use eframe::egui::{self, Color32, Stroke, Ui};
 use std::collections::HashMap;
+pub(crate) use crate::tree_node_id::TreeNodeId;
 
-// TreeNodeId definition
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TreeNodeId(pub u64);
 
-impl TreeNodeId {
-    pub fn root() -> Self {
-        TreeNodeId(0)
-    }
-}
 
 // TreeNode definition
 #[derive(Debug, Clone)]
@@ -90,76 +83,92 @@ impl Tree {
         self
     }
 
-    pub fn ui(mut self, ui: &mut Ui) -> Option<TreeNodeId> {
-        let mut selected = self.selected;
+    // Other methods remain the same...
 
-        if let (Some(children_fn), Some(render_fn)) = (self.children_fn.as_ref(), self.render_fn.as_ref()) {
+    pub fn ui(&mut self, ui: &mut Ui) -> Option<TreeNodeId> {
+        if let (Some(children_fn), Some(render_fn)) = (&self.children_fn, &self.render_fn) {
             let mut nodes = Vec::new();
-
-            // Start with the root
-            self.collect_visible_nodes(&mut nodes, self.root_id, 0, children_fn);
-
+            let root_id = self.root_id.clone();
+            
+            // Collect nodes before using render_fn to avoid borrowing issues
+            self.collect_visible_nodes(&mut nodes, root_id, 0, children_fn);
+            
+            // Store selected state outside so we can modify it
+            let mut selected = self.selected.clone();
+            
             // Render each visible node
             egui::Frame::none()
                 .fill(self.background_color.unwrap_or_default())
                 .show(ui, |ui| {
                     for node in nodes {
-                        let is_selected = selected == Some(node.id);
+                        let is_selected = selected.as_ref() == Some(&node.id);
                         let indent = node.depth as f32 * self.indent_size;
-
+                        
                         ui.horizontal(|ui| {
                             ui.add_space(indent);
-
+                            
                             // Check if this node has children
-                            let children = children_fn(node.id);
+                            let children = children_fn(node.id.clone());
                             let has_children = !children.is_empty();
-
-                            // Get expansion state
-                            let node_state = self.state.entry(node.id).or_insert(TreeNodeState { expanded: false });
-
+                            
+                            // Get expansion state - clone to avoid borrowing issues
+                            let node_id = node.id.clone();
+                            let mut expanded = self.state.get(&node_id)
+                                .map_or(false, |state| state.expanded);
+                            
                             if has_children {
                                 // Toggle button for expansion
-                                let toggle_text = if node_state.expanded { "▼" } else { "►" };
+                                let toggle_text = if expanded { "▼" } else { "►" };
                                 if ui.button(toggle_text).clicked() {
-                                    node_state.expanded = !node_state.expanded;
+                                    expanded = !expanded;
+                                    // Update state after button click
+                                    self.state.insert(node_id.clone(), TreeNodeState { expanded });
                                 }
                             } else {
                                 // Spacer for leaf nodes
                                 ui.add_space(self.icon_size);
                             }
-
+                            
                             // Draw the actual item with selection highlighting
                             let response = ui.scope(|ui| {
                                 let is_hovered = ui.rect_contains_pointer(ui.max_rect());
-
+                                
                                 // Background for selection/hover
                                 if is_selected || is_hovered {
-                                    let color = if is_selected { self.selection_color } else { self.hover_color };
+                                    let color = if is_selected { 
+                                        self.selection_color 
+                                    } else { 
+                                        self.hover_color 
+                                    };
                                     ui.painter().rect_filled(ui.max_rect(), 4.0, color);
                                 }
-
+                                
                                 // Render the node using the provided function
                                 render_fn(ui, &node, is_selected, is_hovered)
                             });
-
+                            
                             // Handle selection on click
                             if response.inner {
-                                selected = Some(node.id);
+                                selected = Some(node.id.clone());
                             }
                         });
-
+                        
                         ui.add_space(self.node_spacing);
                     }
                 });
+            
+            // Update self.selected with the new value
+            self.selected = selected.clone();
+            selected
+        } else {
+            None
         }
-
-        selected
     }
 
     // Helper to build the list of visible nodes based on expansion state
     fn collect_visible_nodes(&self, nodes: &mut Vec<TreeNode>, id: TreeNodeId, depth: u32, children_fn: &ChildrenFn) {
         if depth > 0 {  // Skip the root node from display
-            nodes.push(TreeNode { id, depth: depth - 1 });
+            nodes.push(TreeNode { id: id.clone(), depth: depth - 1 });
         }
 
         // Check if this node is expanded
