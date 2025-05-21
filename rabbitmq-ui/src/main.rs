@@ -341,93 +341,33 @@ impl eframe::App for App {
             .frame(egui::Frame::none().fill(Color32::from_rgb(255, 218, 185))) // Peach
             .show(ctx, |ui| {
                 ui.vertical(|ui| {
-                    // Try using a String instead of &str to ensure ownership:
-                    let tree = Tree::new(String::from("resource_tree"))
-                        .root_id(TreeNodeId::root())
-                        .children_fn(|node_id| {
-                            if node_id == TreeNodeId::root() {
-                                // Root level has two nodes: Queues and Exchanges
-                                vec![TreeNodeId(1), TreeNodeId(2)]
-                            } else if node_id.0 == 1 {
-                                // Children of "Queues"
-                                self.state.available_queues.iter().enumerate()
-                                    .map(|(i, _)| TreeNodeId(100 + i as u64))
-                                    .collect()
-                            } else if node_id.0 == 2 {
-                                // Children of "Exchanges"
-                                self.state.available_exchanges.iter().enumerate()
-                                    .map(|(i, _)| TreeNodeId(200 + i as u64))
-                                    .collect()
-                            } else {
-                                vec![]
+                    // Create fully owned copies of the data
+                    let owned_queues: Vec<String> = self.state.available_queues
+                        .iter()
+                        .map(|s| s.clone())
+                        .collect();
+
+                    let owned_exchanges: Vec<String> = self.state.available_exchanges
+                        .iter()
+                        .map(|s| s.clone())
+                        .collect();
+
+                    // Create a tree structure
+                    ui.collapsing("Resources", |ui| {
+                        ui.collapsing("Queues", |ui| {
+                            for queue in &owned_queues {
+                                ui.label(queue);
                             }
-                        })
-                        .render_fn(|ui, node, is_selected, is_hovered| {
-                            let text = match node.id.0 {
-                                0 => "Resources".to_string(),
-                                1 => "Queues".to_string(),
-                                2 => "Exchanges".to_string(),
-                                id if id >= 100 && id < 200 => {
-                                    let idx = (id - 100) as usize;
-                                    if idx < self.state.available_queues.len() {
-                                        self.state.available_queues[idx].clone()
-                                    } else {
-                                        "Unknown Queue".to_string()
-                                    }
-                                },
-                                id if id >= 200 && id < 300 => {
-                                    let idx = (id - 200) as usize;
-                                    if idx < self.state.available_exchanges.len() {
-                                        self.state.available_exchanges[idx].clone()
-                                    } else {
-                                        "Unknown Exchange".to_string()
-                                    }
-                                },
-                                _ => "Unknown Node".to_string(),
-                            };
+                        });
 
-                            let response = ui.selectable_label(is_selected, text);
-                            response.clicked()
-                        })
-                        .with_expanded(TreeNodeId(1), true)
-                        .with_expanded(TreeNodeId(2), true)
-                        .selected(self.state.tree_state.selected_queue);
-
-                    self.state.tree_state.selected_queue = tree.ui(ui);
-
-                    // Don't need to track the selected node in a separate struct field since we have it in tree_state
-                    if let Some(selected) = self.state.tree_state.selected_queue {
-                        match selected.0 {
-                            id if id >= 100 && id < 200 => {
-                                let idx = (id - 100) as usize;
-                                if idx < self.state.available_queues.len() {
-                                    let queue = &self.state.available_queues[idx];
-                                    self.state.message.routing_key = queue.clone();
-                                    self.state.status_message = format!("Selected queue: {}", queue);
-                                }
-                            },
-                            id if id >= 200 && id < 300 => {
-                                let idx = (id - 200) as usize;
-                                if idx < self.state.available_exchanges.len() {
-                                    let exchange = &self.state.available_exchanges[idx];
-                                    self.state.message.exchange = exchange.clone();
-                                    self.state.status_message = format!("Selected exchange: {}", exchange);
-                                }
-                            },
-                            _ => {}
-                        }
-                    }
-
-                    ui.separator();
-
-                    if ui.button("Declare Queue").clicked() {
-                        self.state.show_queue_dialog = true;
-                    }
-
-                    if ui.button("Declare Exchange").clicked() {
-                        self.state.show_exchange_dialog = true;
-                    }
+                        ui.collapsing("Exchanges", |ui| {
+                            for exchange in &owned_exchanges {
+                                ui.label(exchange);
+                            }
+                        });
+                    });
                 });
+
             });
 
         // ======= BOTTOM PANEL (Status bar) =======
