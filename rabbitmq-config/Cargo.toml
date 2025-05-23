@@ -1,15 +1,21 @@
+## rabbitmq-config/Cargo.toml
+
 [package]
 name = "rabbitmq-config"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serde = { workspace = true }
-serde_json = { workspace = true }
+serde = { version = "1.0", features = ["derive"] }
+
+serde_json = "1.0"
+
 tokio = { version = "1", features = ["full"] }
 lapin = "2.5.3"
 thiserror = "1.0"
 futures-util = "0.3.31"
 # Use version 7.2.3 which is compatible with lapin 2.5.3
 amq-protocol-uri = "7.2.3"
+
+
 

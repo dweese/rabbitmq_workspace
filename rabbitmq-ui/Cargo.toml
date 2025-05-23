@@ -1,3 +1,4 @@
+## rabbitmq-ui/Cargo.toml
 [package]
 name = "rabbitmq-ui"
 version = "0.1.0"
@@ -6,6 +7,6 @@ edition = "2021"
 [dependencies]
 rabbitmq-config = { path = "../rabbitmq-config" }
 egui-components = { path = "../egui-components" }
-eframe = { workspace = true }
+eframe = "0.24.0"  # Replace with actual version you need
 tokio = { version = "1", features = ["full"] }
 env_logger = "0.11.8"

@@ -1,3 +1,4 @@
+## rabbitmq-info/Cargo.toml
 [package]
 name = "rabbitmq-info"
 version = "0.1.0"
