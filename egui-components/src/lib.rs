@@ -1,13 +1,10 @@
 // egui-components/src/lib.rs
-
-// First declare all the modules
-mod tree_node_id;
-mod tree;
 mod border_layout;
 mod event_tree;
-
-// Then export the types, but only export TreeNodeId from tree_node_id.rs
-pub use tree_node_id::TreeNodeId;
-pub use tree::{Tree, TreeNode}; // Remove TreeNodeId from here
+mod tree_node_id;
+mod tree;
 pub use border_layout::BorderLayout;
-pub use event_tree::Tree as EventTree; // Use an alias to avoid name conflicts
+pub use tree::Tree;
+pub use event_tree::{EventTree, TreeEvent, TreeNode};
+pub use tree_node_id::TreeNodeId;
+pub mod tree_vis;

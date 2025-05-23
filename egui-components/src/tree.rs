@@ -1,20 +1,7 @@
-// egui-components/src/tree.rs
-use eframe::egui::{self, Color32, Stroke, Ui};
+use std::fmt::Debug;
+use std::hash::Hash;
 use std::collections::HashMap;
-pub(crate) use crate::tree_node_id::TreeNodeId;
-
-
-
-// TreeNode definition
-#[derive(Debug, Clone)]
-pub struct TreeNode {
-    pub id: TreeNodeId,
-    pub depth: u32,
-}
-
-// Function types for tree operations
-pub type ChildrenFn = Box<dyn Fn(TreeNodeId) -> Vec<TreeNodeId>>;
-pub type RenderFn = Box<dyn Fn(&mut Ui, &TreeNode, bool, bool) -> bool>;
+use eframe::egui;
 
 // Internal state tracking
 #[derive(Debug, Clone)]
@@ -22,162 +9,147 @@ struct TreeNodeState {
     expanded: bool,
 }
 
-/// A tree component for displaying hierarchical data
-pub struct Tree {
-    id: String,
-    root_id: TreeNodeId,
-    children_fn: Option<ChildrenFn>,
-    render_fn: Option<RenderFn>,
-    state: HashMap<TreeNodeId, TreeNodeState>,
-    indent_size: f32,
-    node_spacing: f32,
-    icon_size: f32,
-    background_color: Option<Color32>,
-    selection_color: Color32,
-    hover_color: Color32,
-    line_stroke: Stroke,
-    selected: Option<TreeNodeId>,
+// TreeNode holds data for each node
+pub struct TreeNode<ID: Clone + Eq + Hash + Debug> {
+    
+    #[allow(dead_code)]
+    pub id: ID,
+    #[allow(dead_code)]
+    pub parent: Option<ID>,
+    pub children: Vec<ID>,
+    pub label: String,
+    // Other fields...
 }
 
-impl Tree {
-    pub fn new(id: impl Into<String>) -> Self {
+pub struct Tree<ID: Clone + Eq + Hash + Debug> {
+    nodes: HashMap<ID, TreeNode<ID>>,
+    states: HashMap<ID, TreeNodeState>,
+    root_nodes: Vec<ID>,
+    selected_node: Option<ID>,
+}
+
+// Helper struct to store node data needed for display
+struct NodeDisplayData<ID: Clone + Eq + Hash + Debug> {
+    #[allow(dead_code)]
+    id: ID,
+    children: Vec<ID>,
+    label: String,
+}
+
+impl<ID: Clone + Eq + Hash + Debug> Tree<ID> {
+    pub fn new() -> Self {
         Self {
-            id: id.into(),
-            root_id: TreeNodeId::root(),
-            children_fn: None,
-            render_fn: None,
-            state: HashMap::new(),
-            indent_size: 20.0,
-            node_spacing: 4.0,
-            icon_size: 16.0,
-            background_color: None,
-            selection_color: Color32::from_rgb(100, 150, 250),
-            hover_color: Color32::from_rgb(180, 200, 250),
-            line_stroke: Stroke::new(1.0, Color32::from_gray(180)),
-            selected: None,
+            nodes: HashMap::new(),
+            states: HashMap::new(),
+            root_nodes: Vec::new(),
+            selected_node: None,
         }
     }
 
-    pub fn root_id(mut self, root_id: TreeNodeId) -> Self {
-        self.root_id = root_id;
-        self
-    }
+    pub fn add_node(&mut self, id: ID, parent: Option<ID>, label: String) -> ID {
+        let node = TreeNode {
+            id: id.clone(),
+            parent: parent.clone(),
+            children: Vec::new(),
+            label,
+        };
 
-    pub fn children_fn(mut self, children_fn: impl Fn(TreeNodeId) -> Vec<TreeNodeId> + 'static) -> Self {
-        self.children_fn = Some(Box::new(children_fn));
-        self
-    }
+        // Initialize state
+        self.states.insert(id.clone(), TreeNodeState { expanded: false });
 
-    pub fn render_fn(mut self, render_fn: impl Fn(&mut Ui, &TreeNode, bool, bool) -> bool + 'static) -> Self {
-        self.render_fn = Some(Box::new(render_fn));
-        self
-    }
-
-    pub fn with_expanded(mut self, id: TreeNodeId, expanded: bool) -> Self {
-        self.state.entry(id).or_insert(TreeNodeState { expanded }).expanded = expanded;
-        self
-    }
-
-    pub fn selected(mut self, selected: Option<TreeNodeId>) -> Self {
-        self.selected = selected;
-        self
-    }
-
-    // Other methods remain the same...
-
-    pub fn ui(&mut self, ui: &mut Ui) -> Option<TreeNodeId> {
-        if let (Some(children_fn), Some(render_fn)) = (&self.children_fn, &self.render_fn) {
-            let mut nodes = Vec::new();
-            let root_id = self.root_id.clone();
-            
-            // Collect nodes before using render_fn to avoid borrowing issues
-            self.collect_visible_nodes(&mut nodes, root_id, 0, children_fn);
-            
-            // Store selected state outside so we can modify it
-            let mut selected = self.selected.clone();
-            
-            // Render each visible node
-            egui::Frame::none()
-                .fill(self.background_color.unwrap_or_default())
-                .show(ui, |ui| {
-                    for node in nodes {
-                        let is_selected = selected.as_ref() == Some(&node.id);
-                        let indent = node.depth as f32 * self.indent_size;
-                        
-                        ui.horizontal(|ui| {
-                            ui.add_space(indent);
-                            
-                            // Check if this node has children
-                            let children = children_fn(node.id.clone());
-                            let has_children = !children.is_empty();
-                            
-                            // Get expansion state - clone to avoid borrowing issues
-                            let node_id = node.id.clone();
-                            let mut expanded = self.state.get(&node_id)
-                                .map_or(false, |state| state.expanded);
-                            
-                            if has_children {
-                                // Toggle button for expansion
-                                let toggle_text = if expanded { "▼" } else { "►" };
-                                if ui.button(toggle_text).clicked() {
-                                    expanded = !expanded;
-                                    // Update state after button click
-                                    self.state.insert(node_id.clone(), TreeNodeState { expanded });
-                                }
-                            } else {
-                                // Spacer for leaf nodes
-                                ui.add_space(self.icon_size);
-                            }
-                            
-                            // Draw the actual item with selection highlighting
-                            let response = ui.scope(|ui| {
-                                let is_hovered = ui.rect_contains_pointer(ui.max_rect());
-                                
-                                // Background for selection/hover
-                                if is_selected || is_hovered {
-                                    let color = if is_selected { 
-                                        self.selection_color 
-                                    } else { 
-                                        self.hover_color 
-                                    };
-                                    ui.painter().rect_filled(ui.max_rect(), 4.0, color);
-                                }
-                                
-                                // Render the node using the provided function
-                                render_fn(ui, &node, is_selected, is_hovered)
-                            });
-                            
-                            // Handle selection on click
-                            if response.inner {
-                                selected = Some(node.id.clone());
-                            }
-                        });
-                        
-                        ui.add_space(self.node_spacing);
-                    }
-                });
-            
-            // Update self.selected with the new value
-            self.selected = selected.clone();
-            selected
+        // If this node has a parent, add it to the parent's children
+        if let Some(parent_id) = &parent {
+            if let Some(parent_node) = self.nodes.get_mut(parent_id) {
+                parent_node.children.push(id.clone());
+            }
         } else {
-            None
+            // If no parent, it's a root node
+            self.root_nodes.push(id.clone());
         }
+
+        // Add the node to our map
+        self.nodes.insert(id.clone(), node);
+
+        id
     }
 
-    // Helper to build the list of visible nodes based on expansion state
-    fn collect_visible_nodes(&self, nodes: &mut Vec<TreeNode>, id: TreeNodeId, depth: u32, children_fn: &ChildrenFn) {
-        if depth > 0 {  // Skip the root node from display
-            nodes.push(TreeNode { id: id.clone(), depth: depth - 1 });
-        }
+    pub fn show(&mut self, ui: &mut egui::Ui) -> Option<ID> {
+        let mut clicked_node = None;
 
-        // Check if this node is expanded
-        let is_expanded = self.state.get(&id).map_or(false, |state| state.expanded);
+        // Clone root nodes to avoid borrow issues
+        let root_ids = self.root_nodes.clone();
 
-        if is_expanded || depth == 0 {  // Always process children of root
-            for child_id in children_fn(id) {
-                self.collect_visible_nodes(nodes, child_id, depth + 1, children_fn);
+        ui.vertical(|ui| {
+            for root_id in root_ids {
+                if let Some(clicked) = self.show_node(ui, &root_id, 0) {
+                    clicked_node = Some(clicked);
+                }
+            }
+        });
+
+        clicked_node
+    }
+
+    fn show_node(&mut self, ui: &mut egui::Ui, id: &ID, depth: usize) -> Option<ID> {
+        let mut clicked_node = None;
+
+        // First, collect all the data we need
+        let (node_data, state_expanded, is_selected) = match (self.nodes.get(id), self.states.get(id)) {
+            (Some(node), Some(state)) => {
+                let node_data = NodeDisplayData {
+                    id: id.clone(),
+                    label: node.label.clone(),
+                    children: node.children.clone(),
+                };
+                let state_expanded = state.expanded;
+                let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+                (Some(node_data), state_expanded, is_selected)
+            },
+            _ => (None, false, false),
+        };
+
+        if let Some(node_data) = node_data {
+            let is_leaf = node_data.children.is_empty();
+
+            // Render the node UI
+            ui.horizontal(|ui| {
+                ui.add_space((depth * 20) as f32); // Indent
+
+                // Show expand/collapse indicator (if not a leaf)
+                if !is_leaf {
+                    if ui.button(if state_expanded { "▼" } else { "►" }).clicked() {
+                        // Toggle expansion state
+                        if let Some(state) = self.states.get_mut(id) {
+                            state.expanded = !state.expanded;
+                        }
+                    }
+                } else {
+                    // Just add some space for leaf nodes to align them
+                    ui.add_space(20.0);
+                }
+
+                // Use selectable for node text
+                if ui.selectable_label(is_selected, &node_data.label).clicked() {
+                    self.selected_node = Some(id.clone());
+                    clicked_node = Some(id.clone());
+                }
+            });
+
+            // If expanded, show children
+            if state_expanded {
+                // Clone children list to avoid borrow issues
+                let children = node_data.children;
+                for child_id in children {
+                    if let Some(clicked) = self.show_node(ui, &child_id, depth + 1) {
+                        // Only set the clicked node if we haven't already set one
+                        if clicked_node.is_none() {
+                            clicked_node = Some(clicked);
+                        }
+                    }
+                }
             }
         }
+
+        clicked_node
     }
 }
