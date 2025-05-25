@@ -1,331 +1,301 @@
+// rabbitmq-config/src/client.rs
+
 use lapin::{
+    Connection, Channel, ConnectionProperties,
     options::{
         QueueDeclareOptions, ExchangeDeclareOptions, BasicPublishOptions,
+        QueueBindOptions, QueueDeleteOptions, ExchangeDeleteOptions
     },
     types::FieldTable,
-    BasicProperties, Connection, Channel, ConnectionProperties, ExchangeKind,
+    BasicProperties,
+    ExchangeKind
 };
-// Use lapin's AMQPUri
-use amq_protocol_uri::AMQPUri;
-
-
-
-use tokio::time::timeout;
+use log::{info};
 use std::time::Duration;
-use thiserror::Error;
-use crate::config::RabbitMQConfig;
-use serde::{Deserialize, Serialize};
+use tokio::time::timeout;
 
-// Error types
-#[derive(Debug, Error)]
-pub enum RabbitMQError {
-    #[error("Connection error: {0}")]
-    ConnectionError(String),
+use crate::{
+    RabbitMQConfig,
+    RabbitMQError,
+    QueueInfo,
+    ExchangeInfo,
+    RabbitMQMessage,
 
-    #[error("Channel error: {0}")]
-    ChannelError(String),
+};
 
-    #[error("Queue operation error: {0}")]
-    QueueError(String),
-
-    #[error("Exchange operation error: {0}")]
-    ExchangeError(String),
-
-    #[error("Message publish error: {0}")]
-    PublishError(String),
-
-    #[error("Configuration error: {0}")]
-    ConfigError(String),
-
-    #[error("IO error: {0}")]
-    IoError(#[from] std::io::Error),
-
-    #[error("JSON error: {0}")]
-    JsonError(#[from] serde_json::Error),
-
-    #[error("Timeout error: {0}")]
-    TimeoutError(String),
-
-    #[error("Lapin error: {0}")]
-    LapinError(#[from] lapin::Error),  // Add #[from] here if it's missing
-}
-
-
-// Message properties
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MessageProperties {
-    pub content_type: Option<String>,
-    pub content_encoding: Option<String>,
-    pub correlation_id: Option<String>,
-    pub reply_to: Option<String>,
-    pub expiration: Option<String>,
-    pub message_id: Option<String>,
-    pub timestamp: Option<u64>,
-    pub user_id: Option<String>,
-    pub app_id: Option<String>,
-    pub delivery_mode: Option<u8>, // 2 for persistent, 1 for non-persistent
-}
-
-impl Default for MessageProperties {
-    fn default() -> Self {
-        Self {
-            content_type: Some("application/json".to_string()),
-            content_encoding: None,
-            correlation_id: None,
-            reply_to: None,
-            expiration: None,
-            message_id: None,
-            timestamp: None,
-            user_id: None,
-            app_id: Some("rabbitmq-ui".to_string()),
-            delivery_mode: Some(2), // Persistent by default
-        }
-    }
-}
-
-// RabbitMQ message structure
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RabbitMQMessage {
-    pub exchange: String,
-    pub routing_key: String,
-    pub payload: String,
-    pub properties: Option<MessageProperties>,
-}
-
-// Queue info for declaration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct QueueInfo {
-    pub name: String,
-    pub durable: bool,
-    pub exclusive: bool,
-    pub auto_delete: bool,
-}
-
-// Exchange info for declaration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ExchangeInfo {
-    pub name: String,
-    pub kind: String,
-    pub durable: bool,
-    pub auto_delete: bool,
-}
-
-// The main client for RabbitMQ operations
+/// Represents a connection to RabbitMQ
 pub struct RabbitMQClient {
-    connection: Connection,
-    channel: Channel,
+    connection: Option<Connection>,
+    channel: Option<Channel>,
     config: RabbitMQConfig,
 }
 
 impl RabbitMQClient {
-    // Create a new client and connect to RabbitMQ
+    /// Creates a new RabbitMQ client and establishes a connection
     pub async fn new(config: RabbitMQConfig) -> Result<Self, RabbitMQError> {
-        let uri = config.to_uri();
-        
-        // Parse the AMQP URI
-        let amqp_uri: AMQPUri = uri.parse()
-            .map_err(|e| RabbitMQError::ConnectionError(format!("Invalid URI: {}", e)))?;
-        
-        // Set up connection properties with methods available in lapin 2.5.3
-        let connection_props = ConnectionProperties::default()
-            .with_connection_name("rust-rabbitmq-client".into());
-        
+        info!("component=RabbitMQClient action=new host={} port={}", config.host, config.port);
+
+        let mut client = Self {
+            connection: None,
+            channel: None,
+            config,
+        };
+
+        // Connect to RabbitMQ server
+        client.connect().await?;
+
+        Ok(client)
+    }
+
+    /// Lists all queues in the vhost - UI friendly version
+    pub async fn list_queues(&self) -> Result<Vec<String>, RabbitMQError> {
+        // Get the detailed queue objects
+        let queues = self.get_queues().await?;
+
+        // Return just the queue names as strings
+        Ok(queues.into_iter()
+            .map(|q| q.name)
+            .collect())
+    }
+
+    /// Establishes a connection to RabbitMQ
+    async fn connect(&mut self) -> Result<(), RabbitMQError> {
+        info!("component=RabbitMQClient action=connect");
+
+        // Construct connection URI
+        let uri = format!(
+            "amqp://{}:{}@{}:{}/{}",
+            self.config.username,
+            self.config.password,
+            self.config.host,
+            self.config.port,
+            self.config.vhost
+        );
+
         // Connect with timeout
-        let connect_timeout = Duration::from_secs(10);
-        let connection_future = Connection::connect_uri(amqp_uri, connection_props);
-        let connection = timeout(connect_timeout, connection_future)
+        let connection_timeout = Duration::from_secs(10);
+        let connection_future = Connection::connect(
+            &uri,
+            ConnectionProperties::default()
+        );
+
+        let connection = timeout(connection_timeout, connection_future)
             .await
             .map_err(|_| RabbitMQError::TimeoutError("Connection timeout".to_string()))?
-            .map_err(|e| RabbitMQError::ConnectionError(e.to_string()))?;
-        
+            .map_err(|e| RabbitMQError::ConnectionError(format!("{}", e)))?;
+
         // Create a channel
         let channel = connection.create_channel()
             .await
-            .map_err(|e| RabbitMQError::ChannelError(e.to_string()))?;
-        
-        Ok(Self {
-            connection,
-            channel,
-            config,
-        })
+            .map_err(|e| RabbitMQError::ChannelError(format!("{}", e)))?;
+
+        self.connection = Some(connection);
+        self.channel = Some(channel);
+
+        Ok(())
     }
-    
-    // Close the connection
+
+    /// Closes the connection to RabbitMQ
     pub async fn close(&self) -> Result<(), RabbitMQError> {
-        // Close the channel first
-        self.channel.close(0, "Normal shutdown")
-            .await
-            .map_err(|e| RabbitMQError::ChannelError(e.to_string()))?;
-        
-        // Then close the connection
-        self.connection.close(0, "Normal shutdown")
-            .await
-            .map_err(|e| RabbitMQError::ConnectionError(e.to_string()))?;
-            
+        info!("component=RabbitMQClient action=close");
+
+        if let Some(connection) = &self.connection {
+            connection.close(0, "Closing connection")
+                .await
+                .map_err(|e| RabbitMQError::ConnectionError(format!("Error closing connection: {}", e)))?;
+        }
+
         Ok(())
     }
-    
-    // List available queues
-    pub async fn list_queues(&self) -> Result<Vec<String>, RabbitMQError> {
-        // This is a simplified implementation - in a real application, 
-        // you would use the RabbitMQ management API or other methods
-        // to get a comprehensive list of queues
-        
-        // For now, return an empty list that you can populate manually
-        // or in future implementations
-        Ok(Vec::new())
+
+    /// Gets information about all queues
+    pub async fn get_queues(&self) -> Result<Vec<Queue>, RabbitMQError> {
+        info!("component=RabbitMQClient action=get_queues");
+
+        // For a real implementation, you would use the RabbitMQ HTTP API
+        // This is a simplified example
+        Ok(vec![]) // Placeholder - implement real API call
     }
-    
-    // List available exchanges
+
+    /// Lists all exchanges in the vhost
     pub async fn list_exchanges(&self) -> Result<Vec<String>, RabbitMQError> {
-        // This is a simplified implementation - in a real application, 
-        // you would use the RabbitMQ management API or other methods
-        // to get a comprehensive list of exchanges
-        
-        // For now, return a list with the default exchanges
+        info!("component=RabbitMQClient action=list_exchanges");
+
+        // For a real implementation, you would use the RabbitMQ HTTP API
+        // This is a simplified example
         Ok(vec![
-            "".to_string(),                // Default exchange
-            "amq.direct".to_string(),      // Standard direct exchange
-            "amq.fanout".to_string(),      // Standard fanout exchange
-            "amq.topic".to_string(),       // Standard topic exchange
-            "amq.headers".to_string(),     // Standard headers exchange
-            "amq.match".to_string(),       // Standard match exchange
-        ])
+            "amq.direct".to_string(),
+            "amq.fanout".to_string(),
+            "amq.topic".to_string(),
+            "amq.headers".to_string(),
+        ]) // Placeholder - implement real API call
     }
-    
-    // Publish a message
-    pub async fn publish_message(&self, message: &RabbitMQMessage) -> Result<(), RabbitMQError> {
-        // Default publish options
-        let options = BasicPublishOptions::default();
-        
-        // Convert our message properties to lapin's BasicProperties
-        let properties = match &message.properties {
-            Some(props) => {
-                let mut lapin_props = BasicProperties::default();
-                
-                if let Some(content_type) = &props.content_type {
-                    lapin_props = lapin_props.with_content_type(content_type.as_str().into());
-                }
-                
-                if let Some(content_encoding) = &props.content_encoding {
-                    lapin_props = lapin_props.with_content_encoding(content_encoding.as_str().into());
-                }
-                
-                if let Some(correlation_id) = &props.correlation_id {
-                    lapin_props = lapin_props.with_correlation_id(correlation_id.as_str().into());
-                }
-                
-                if let Some(reply_to) = &props.reply_to {
-                    lapin_props = lapin_props.with_reply_to(reply_to.as_str().into());
-                }
-                
-                if let Some(expiration) = &props.expiration {
-                    lapin_props = lapin_props.with_expiration(expiration.as_str().into());
-                }
-                
-                if let Some(message_id) = &props.message_id {
-                    lapin_props = lapin_props.with_message_id(message_id.as_str().into());
-                }
-                
-                if let Some(timestamp) = props.timestamp {
-                    lapin_props = lapin_props.with_timestamp(timestamp);
-                }
-                
-                if let Some(user_id) = &props.user_id {
-                    lapin_props = lapin_props.with_user_id(user_id.as_str().into());
-                }
-                
-                if let Some(app_id) = &props.app_id {
-                    lapin_props = lapin_props.with_app_id(app_id.as_str().into());
-                }
-                
-                if let Some(delivery_mode) = props.delivery_mode {
-                    lapin_props = lapin_props.with_delivery_mode(delivery_mode);
-                }
-                
-                lapin_props
-            },
-            None => BasicProperties::default()
-        };
-        
-        // Publish the message
-        self.channel.basic_publish(
-            &message.exchange,
-            &message.routing_key,
-            options,
-            message.payload.as_bytes(),
-            properties,
-        )
-        .await
-        .map_err(|e| RabbitMQError::PublishError(e.to_string()))?;
-        
-        Ok(())
-    }
-    
-    // Declare a queue
+
+    /// Declares a new queue with the given parameters
     pub async fn declare_queue(&self, queue_info: &QueueInfo) -> Result<(), RabbitMQError> {
-        // Set up the queue options
-        let options = QueueDeclareOptions {
-            durable: queue_info.durable,
-            exclusive: queue_info.exclusive,
-            auto_delete: queue_info.auto_delete,
-            ..QueueDeclareOptions::default()
-        };
-        
-        // Empty arguments
-        let arguments = FieldTable::default();
-        
-        // Declare the queue
-        self.channel.queue_declare(
-            &queue_info.name,
-            options,
-            arguments,
-        )
-        .await
-        .map_err(|e| RabbitMQError::QueueError(e.to_string()))?;
-        
-        Ok(())
+        info!("component=RabbitMQClient action=declare_queue queue={}", queue_info.name);
+
+        if let Some(channel) = &self.channel {
+            // Create queue options based on QueueInfo
+            let options = QueueDeclareOptions {
+                durable: queue_info.durable,
+                auto_delete: queue_info.auto_delete,
+                exclusive: queue_info.exclusive,
+                ..Default::default()
+            };
+
+            // Declare the queue
+            channel.queue_declare(&queue_info.name, options, FieldTable::default())
+                .await
+                .map_err(|e| RabbitMQError::QueueError(format!("Failed to declare queue: {}", e)))?;
+
+            Ok(())
+        } else {
+            Err(RabbitMQError::ChannelError("No channel available".to_string()))
+        }
     }
-    
-    // Declare an exchange
+
+    /// Declares a new exchange with the given parameters
     pub async fn declare_exchange(&self, exchange_info: &ExchangeInfo) -> Result<(), RabbitMQError> {
-        // Set up the exchange options
-        let options = ExchangeDeclareOptions {
-            durable: exchange_info.durable,
-            auto_delete: exchange_info.auto_delete,
-            ..ExchangeDeclareOptions::default()
-        };
-        
-        // Convert the exchange type string to lapin's ExchangeKind
-        let kind = match exchange_info.kind.as_str() {
-            "direct" => ExchangeKind::Direct,
-            "fanout" => ExchangeKind::Fanout,
-            "topic" => ExchangeKind::Topic,
-            "headers" => ExchangeKind::Headers,
-            _ => return Err(RabbitMQError::ExchangeError(format!("Invalid exchange type: {}", exchange_info.kind)))
-        };
-        
-        // Empty arguments
-        let arguments = FieldTable::default();
-        
-        // Declare the exchange
-        self.channel.exchange_declare(
-            &exchange_info.name,
-            kind,
-            options,
-            arguments,
-        )
-        .await
-        .map_err(|e| RabbitMQError::ExchangeError(e.to_string()))?;
-        
-        Ok(())
+        info!("component=RabbitMQClient action=declare_exchange exchange={}", exchange_info.name);
+
+        if let Some(channel) = &self.channel {
+            // Map the exchange kind string to the ExchangeKind enum
+            let kind = match exchange_info.kind.as_str() {
+                "direct" => ExchangeKind::Direct,
+                "fanout" => ExchangeKind::Fanout,
+                "topic" => ExchangeKind::Topic,
+                "headers" => ExchangeKind::Headers,
+                _ => return Err(RabbitMQError::ExchangeError(
+                    format!("Invalid exchange type: {}", exchange_info.kind)
+                )),
+            };
+
+            // Create exchange options
+            let options = ExchangeDeclareOptions {
+                durable: exchange_info.durable,
+                auto_delete: exchange_info.auto_delete,
+                ..Default::default()
+            };
+
+            // Declare the exchange
+            channel.exchange_declare(&exchange_info.name, kind, options, FieldTable::default())
+                .await
+                .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to declare exchange: {}", e)))?;
+
+            Ok(())
+        } else {
+            Err(RabbitMQError::ChannelError("No channel available".to_string()))
+        }
     }
 
-    // Add this method to use the config field
-    pub fn get_config(&self) -> &RabbitMQConfig {
-        &self.config
+    /// Publishes a message to RabbitMQ
+    pub async fn publish_message(&self, message: &RabbitMQMessage) -> Result<(), RabbitMQError> {
+        info!("component=RabbitMQClient action=publish_message exchange={} routing_key={}", 
+              message.exchange, message.routing_key);
+
+        if let Some(channel) = &self.channel {
+            // Convert payload to bytes
+            let payload = message.payload.as_bytes().to_vec();
+
+            // Set up properties
+            let mut properties = BasicProperties::default();
+            if let Some(props) = &message.properties {
+                if let Some(content_type) = &props.content_type {
+                    properties = properties.with_content_type(content_type.as_str().into());
+                }
+
+                if let Some(content_encoding) = &props.content_encoding {
+                    properties = properties.with_content_encoding(content_encoding.as_str().into());
+                }
+
+                if let Some(delivery_mode) = props.delivery_mode {
+                    properties = properties.with_delivery_mode(delivery_mode);
+                }
+            }
+
+            // Publish the message
+            channel.basic_publish(
+                &message.exchange,
+                &message.routing_key,
+                BasicPublishOptions::default(),
+                &payload,
+                properties
+            )
+                .await
+                .map_err(|e| RabbitMQError::PublishError(format!("Failed to publish message: {}", e)))?;
+
+            Ok(())
+        } else {
+            Err(RabbitMQError::ChannelError("No channel available".to_string()))
+        }
     }
 
+    /// Binds a queue to an exchange
+    pub async fn bind_queue(&self, queue_name: &str, exchange_name: &str, routing_key: &str) -> Result<(), RabbitMQError> {
+        info!("component=RabbitMQClient action=bind_queue queue={} exchange={} routing_key={}", 
+              queue_name, exchange_name, routing_key);
 
+        if let Some(channel) = &self.channel {
+            channel.queue_bind(
+                queue_name,
+                exchange_name,
+                routing_key,
+                QueueBindOptions::default(),
+                FieldTable::default()
+            )
+                .await
+                .map_err(|e| RabbitMQError::BindingError(format!("Failed to bind queue: {}", e)))?;
+
+            Ok(())
+        } else {
+            Err(RabbitMQError::ChannelError("No channel available".to_string()))
+        }
+    }
+
+    /// Deletes a queue
+    pub async fn delete_queue(&self, queue_name: &str) -> Result<(), RabbitMQError> {
+        info!("component=RabbitMQClient action=delete_queue queue={}", queue_name);
+
+        if let Some(channel) = &self.channel {
+            channel.queue_delete(
+                queue_name,
+                QueueDeleteOptions::default()
+            )
+                .await
+                .map_err(|e| RabbitMQError::QueueError(format!("Failed to delete queue: {}", e)))?;
+
+            Ok(())
+        } else {
+            Err(RabbitMQError::ChannelError("No channel available".to_string()))
+        }
+    }
+
+    /// Deletes an exchange
+    pub async fn delete_exchange(&self, exchange_name: &str) -> Result<(), RabbitMQError> {
+        info!("component=RabbitMQClient action=delete_exchange exchange={}", exchange_name);
+
+        if let Some(channel) = &self.channel {
+            channel.exchange_delete(
+                exchange_name,
+                ExchangeDeleteOptions::default()
+            )
+                .await
+                .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to delete exchange: {}", e)))?;
+
+            Ok(())
+        } else {
+            Err(RabbitMQError::ChannelError("No channel available".to_string()))
+        }
+    }
 }
+
+// Define a Queue struct for the get_queues method
+#[derive(Debug, Clone)]
+pub struct Queue {
+    pub name: String,
+    pub messages: u32,
+    pub consumers: u32,
+}
+
 

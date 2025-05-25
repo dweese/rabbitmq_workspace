@@ -3,7 +3,7 @@
 use crate::{BindingInfo, ExchangeInfo, QueueInfo, ServerInfo};
 use crate::api::{RabbitMQApiClient, ApiError};
 use serde::{Serialize, Deserialize};
-use serde_json::Value;
+
 
 // Define the RabbitMQInfo struct
 #[derive(Debug, Serialize, Deserialize)]

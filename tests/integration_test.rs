@@ -1,33 +1,32 @@
-#[cfg(test)]
-mod tests {
-    use rabbitmq_config::RabbitMQConfig;
-    use rabbitmq_info::*;
-    use std::path::Path;
+// tests/integration_test.rs
 
-    #[tokio::test]
-    #[ignore] // This test is ignored as it requires a real RabbitMQ server
-    async fn test_rabbitmq_info_dump() {
-        // Create a test config
-        let config = RabbitMQConfig {
-            host: "localhost".to_string(),
-            port: 5672,
-            vhost: "/".to_string(),
-            username: "guest".to_string(),
-            password: "guest".to_string(),
-        };
+use rabbitmq_config::{RabbitMQClient, RabbitMQConfig, RabbitMQError};
+use tokio::runtime::Runtime;
 
-        // Create a temp file path for the dump
-        let dump_path = Path::new("target/test_rabbitmq_dump.json");
+#[test]
+fn test_simple_rabbitmq_connection() {
+    // Create a simple config
+    let config = RabbitMQConfig {
+        host: "localhost".to_string(),
+        port: 5672,
+        username: "guest".to_string(),
+        password: "guest".to_string(),
+        vhost: "/".to_string(),
+    };
 
-        // Dump the RabbitMQ information
-        let result = dump_rabbitmq_info(&config, dump_path).await;
+    // Create a tokio runtime
+    let rt = Runtime::new().unwrap();
 
-        // This will fail if RabbitMQ is not running, that's expected in the ignored test
-        if result.is_ok() {
-            assert!(dump_path.exists(), "Dump file was not created");
+    // Try to connect
+    let result = rt.block_on(async {
+        let client = RabbitMQClient::new(config).await?;
 
-            // Clean up
-            let _ = std::fs::remove_file(dump_path);
-        }
-    }
+        // If we get here, connection was successful
+        // Close it properly
+        client.close().await?;
+
+        Ok::<_, RabbitMQError>(())
+    });
+
+    assert!(result.is_ok(), "Failed to connect to RabbitMQ: {:?}", result.err());
 }

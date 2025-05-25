@@ -1,13 +1,18 @@
-[package]
-name = "rabbitmq-info"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [
+    "rabbitmq-config",
+    "rabbitmq-info",
+    "rabbitmq-ui",
+    "egui-components"
+]
 
-[dependencies]
-rabbitmq-config = { path = "../rabbitmq-config" }
+resolver = "2"
+
+
+[workspace.dependencies]
+rabbitmq-config = { path = "./rabbitmq-config" }
+rabbitmq-info = { path = "./rabbitmq-info" }
+tokio = { version = "1", features = ["full", "rt", "macros"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tokio = { version = "1", features = ["full", "rt", "macros"] }
 thiserror = "1.0"
-reqwest = { version = "0.11", features = ["json"] }
-base64 = "0.21"

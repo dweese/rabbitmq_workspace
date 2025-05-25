@@ -1,10 +1,40 @@
-// For rabbitmq-config/src/config.rs
-use crate::client::RabbitMQError;
-use serde::{Deserialize, Serialize};
-use std::fs;
-use std::io::{ BufReader, BufWriter};
-use std::path::Path;
+// rabbitmq-config/src/config.rs
+use crate::error::RabbitMQError;  // Import from error module, not client
+use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
+use std::path::Path;
+use std::fs;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RabbitMQConfig {
+    pub host: String,
+    pub port: u16,
+    pub username: String,
+    pub password: String,
+    pub vhost: String,
+}
+
+impl Default for RabbitMQConfig {
+    fn default() -> Self {
+        Self {
+            host: "localhost".to_string(),
+            port: 5672,
+            username: "guest".to_string(),
+            password: "guest".to_string(),
+            vhost: "/".to_string(),
+        }
+    }
+}
+
+// Keep your existing code for RabbitMQFullConfig and other structures here
+// For rabbitmq-config/src/config.rs
+//use crate::error::RabbitMQError;  // Import from error module, not client
+
+//use serde::{Deserialize, Serialize};
+//use std::fs;
+//use std::io::{ BufReader, BufWriter};
+//use std::path::Path;
+//use std::collections::HashMap;
 
 // For config.rs - add this struct if it's missing
 
@@ -21,22 +51,34 @@ pub struct LoggingConfig {
 
 
 // Legacy simple config (for backward compatibility)
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RabbitMQConfig {
-    pub host: String,
-    pub port: u16,
-    pub username: String,
-    pub password: String,
-    pub vhost: String,
-}
+//#[derive(Debug, Clone, Serialize, Deserialize)]
+//pub struct RabbitMQConfig {
+//    pub host: String,
+//    pub port: u16,
+//    pub username: String,
+//    pub password: String,
+//    pub vhost: String,
+//}
 
 impl RabbitMQConfig {
     pub fn to_uri(&self) -> String {
-        format!(
-            "amqp://{}:{}@{}:{}/{}",
-            self.username, self.password, self.host, self.port, self.vhost
-        )
+        // Special case for the default vhost "/"
+        if self.vhost == "/" {
+            format!(
+                "amqp://{}:{}@{}:{}{}",
+                self.username, self.password, self.host, self.port, self.vhost
+            )
+        } else {
+            format!(
+                "amqp://{}:{}@{}:{}/{}",
+                self.username, self.password, self.host, self.port, self.vhost
+            )
+        }
     }
+
+
+
+
 
     pub fn from_connection_config(conn: &ConnectionConfig) -> Self {
         Self {
@@ -49,17 +91,17 @@ impl RabbitMQConfig {
     }
 }
 
-impl Default for RabbitMQConfig {
-    fn default() -> Self {
-        Self {
-            host: "localhost".to_string(),
-            port: 5672,
-            username: "guest".to_string(),
-            password: "guest".to_string(),
-            vhost: "/".to_string(),
-        }
-    }
-}
+//impl Default for RabbitMQConfig {
+//    fn default() -> Self {
+//        Self {
+//            host: "localhost".to_string(),
+//            port: 5672,
+//            username: "guest".to_string(),
+//            password: "guest".to_string(),
+//            vhost: "/".to_string(),
+//        }
+//    }
+//}
 
 // Main comprehensive configuration structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -85,7 +127,7 @@ impl RabbitMQFullConfig {
     // Load configuration from a file
     pub fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self, RabbitMQError> {
         let file = fs::File::open(path)?;
-        let reader = BufReader::new(file);
+        let reader = std::io::BufReader::new(file);
         let config = serde_json::from_reader(reader)?;
         Ok(config)
     }
@@ -93,7 +135,7 @@ impl RabbitMQFullConfig {
     // Save configuration to a file
     pub fn save_to_file<P: AsRef<Path>>(&self, path: P) -> Result<(), RabbitMQError> {
         let file = fs::File::create(path)?;
-        let writer = BufWriter::new(file);
+        let writer = std::io::BufWriter::new(file);
         serde_json::to_writer_pretty(writer, self)?;
         Ok(())
     }
