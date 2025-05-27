@@ -1,4 +1,4 @@
-
+// egui-components/src/event_tree.rs
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::Hash;

@@ -3,9 +3,11 @@
 mod app;
 
 use eframe::NativeOptions;
-use eframe::egui::{self, Color32, RichText, ScrollArea, Stroke};
+use eframe::egui::{self, Color32, RichText, ScrollArea}; // Remove Stroke
+
 use std::collections::HashMap;
-use egui_components::{BorderLayout, Tree, TreeNodeId};
+use egui_components::{BorderLayout, TreeNodeId}; // Keep BorderLayout, remove Tree
+
 
 use rabbitmq_config::{
     RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
@@ -74,7 +76,7 @@ impl Default for AppState {
             message: RabbitMQMessage {
                 exchange: "".to_string(),
                 routing_key: "".to_string(),
-                payload: "".to_string(),
+                payload: "".to_string().into(),
                 properties: Some(MessageProperties::default()),
             },
             status_message: "Welcome to RabbitMQ UI".to_string(),
@@ -85,12 +87,17 @@ impl Default for AppState {
                 durable: true,
                 auto_delete: false,
                 exclusive: false,
+                arguments: HashMap::new(), // Add this line
+
             },
             new_exchange: ExchangeInfo {
                 name: "".to_string(),
                 kind: "direct".to_string(),
                 durable: true,
                 auto_delete: false,
+                internal: false,  // Add this line
+                arguments: HashMap::new(), // Add this line
+
             },
             show_queue_dialog: false,
             show_exchange_dialog: false,
@@ -399,8 +406,12 @@ impl eframe::App for App {
                         });
 
                         ui.label("Payload:");
-                        ui.text_edit_multiline(&mut self.state.message.payload)
-                            .on_hover_text("Enter message content here");
+                        let mut payload_text = String::from_utf8_lossy(&self.state.message.payload).to_string();
+                        if ui.text_edit_multiline(&mut payload_text).changed() {
+                            self.state.message.payload = payload_text.into_bytes();
+                        }
+
+
 
                         // Message properties collapsing section
                         ui.collapsing("Message Properties", |ui| {

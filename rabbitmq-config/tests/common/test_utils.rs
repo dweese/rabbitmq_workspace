@@ -1,50 +1,22 @@
+// rabbitmq-config/tests/common/test_utils.rs
+
 use rabbitmq_config::*;
 use std::collections::HashMap;
 use std::path::Path;
 
-/// Creates a standard test configuration for RabbitMQFullConfig
-pub fn create_test_config() -> RabbitMQFullConfig {
-    let mut config = RabbitMQFullConfig::default();
-
-    // Set some reasonable test values
-    config.connection.host = "test-host".to_string();
-    config.connection.port = 5672;
-    config.connection.username = "test-user".to_string();
-    config.connection.password = "test-pass".to_string();
-    config.connection.vhost = "/".to_string();
-
-    // Add a test exchange
-    config.exchanges.push(ExchangeConfig {
-        name: "test.exchange".to_string(),
-        exchange_type: "topic".to_string(),
-        durable: true,
-        auto_delete: false,
-        internal: false,
-        arguments: HashMap::new(),
-    });
-
-    // Add a test queue
-    config.queues.push(QueueConfig {
-        name: "test.queue".to_string(),
-        durable: true,
-        exclusive: false,
-        auto_delete: false,
-        arguments: HashMap::new(),
-    });
-
-    // Add a test binding
-    config.bindings.push(BindingConfig {
-        exchange: "test.exchange".to_string(),
-        queue: "test.queue".to_string(),
-        routing_key: "test.key".to_string(),
-        arguments: HashMap::new(),
-    });
-
-    config
+/// Creates a standard test configuration for RabbitMQ connections
+pub fn create_test_config() -> RabbitMQConfig {
+    RabbitMQConfig {
+        host: "localhost".to_string(),
+        port: 5672,
+        username: "guest".to_string(),
+        password: "guest".to_string(),
+        vhost: "%2F".to_string(), // URL-encoded form of "/"
+    }
 }
 
 /// Saves a configuration to a temporary file and returns the path
-pub fn save_config_to_temp(config: &RabbitMQFullConfig) -> std::path::PathBuf {
+pub fn save_config_to_temp(config: &RabbitMQConfig) -> std::path::PathBuf {
     // Create test directory if it doesn't exist
     let test_dir = Path::new("tests/fixtures/sample_configs");
     std::fs::create_dir_all(test_dir).expect("Failed to create test directory");
@@ -58,7 +30,9 @@ pub fn save_config_to_temp(config: &RabbitMQFullConfig) -> std::path::PathBuf {
     let config_path = test_dir.join(format!("temp_config_{}.json", timestamp));
 
     // Save the configuration
-    config.save_to_file(&config_path).expect("Failed to save config");
+    let file = std::fs::File::create(&config_path).expect("Failed to create config file");
+    let writer = std::io::BufWriter::new(file);
+    serde_json::to_writer_pretty(writer, config).expect("Failed to serialize config");
 
     config_path
 }

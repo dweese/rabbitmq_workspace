@@ -4,21 +4,23 @@ use std::collections::HashMap;
 #[test]
 fn test_empty_fields() {
     // Test empty host
-    let mut config = RabbitMQFullConfig::default();
-    config.connection.host = "".to_string();
+    let mut config = RabbitMQConfig::default();
+    config.host = "".to_string();
 
+    
+    
     let json = serde_json::to_string(&config).expect("Failed to serialize");
-    let deserialized: RabbitMQFullConfig = serde_json::from_str(&json).expect("Failed to deserialize");
+    let deserialized: RabbitMQConfig = serde_json::from_str(&json).expect("Failed to deserialize");
 
-    assert_eq!(deserialized.connection.host, "");
+    assert_eq!(deserialized.host, "");
 
     // Test empty username/password
-    config.connection.username = "".to_string();
-    config.connection.password = "".to_string();
+    config.username = "".to_string();
+    config.password = "".to_string();
 
     let json = serde_json::to_string(&config).expect("Failed to serialize");
-    let deserialized: RabbitMQFullConfig = serde_json::from_str(&json).expect("Failed to deserialize");
+    let deserialized: RabbitMQConfig = serde_json::from_str(&json).expect("Failed to deserialize");
 
-    assert_eq!(deserialized.connection.username, "");
-    assert_eq!(deserialized.connection.password, "");
+    assert_eq!(deserialized.username, "");
+    assert_eq!(deserialized.password, "");
 }

@@ -7,7 +7,8 @@ mod client;
 mod config;
 mod error;
 mod topology;
-mod models; // Include the new models module
+mod models;
+
 
 // Re-exports of core types
 pub use client::RabbitMQClient;
@@ -19,25 +20,16 @@ pub use models::{
     MessageProperties,
     RabbitMQMessage,
     ExchangeInfo,
+    QueueInfo,  // Use QueueInfo from models instead of defining it here
+    RabbitMQServerDefinition,
+    UserDefinition,
+    VhostDefinition,
+    PermissionDefinition,
+    TopicPermissionDefinition,
+    GlobalParameterDefinition,
+    QueueDefinition,
+    ExchangeDefinition,
+    BindingDefinition,
 };
 
-// If QueueInfo is not already defined in your models,
-// you can include it here
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct QueueInfo {
-    pub name: String,
-    pub durable: bool,
-    pub auto_delete: bool,
-    pub exclusive: bool,
-}
-
-impl Default for QueueInfo {
-    fn default() -> Self {
-        Self {
-            name: "".to_string(),
-            durable: true,
-            auto_delete: false,
-            exclusive: false,
-        }
-    }
-}
+// Remove the QueueInfo struct definition from here since we're now using the one from models

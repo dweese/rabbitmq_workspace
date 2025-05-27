@@ -196,8 +196,8 @@ impl RabbitMQClient {
 
         if let Some(channel) = &self.channel {
             // Convert payload to bytes
-            let payload = message.payload.as_bytes().to_vec();
-
+            let payload = &message.payload;
+            
             // Set up properties
             let mut properties = BasicProperties::default();
             if let Some(props) = &message.properties {

@@ -54,10 +54,10 @@ impl Default for MessageProperties {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RabbitMQMessage {
-    pub exchange: String,
-    pub routing_key: String,
-    pub payload: String,
-    pub properties: Option<MessageProperties>,
-}
+// #[derive(Debug, Clone, Serialize, Deserialize)]
+// pub struct RabbitMQMessage {
+//     pub exchange: String,
+//     pub routing_key: String,
+//     pub payload: String,
+//     pub properties: Option<MessageProperties>,
+// }

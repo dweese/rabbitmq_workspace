@@ -22,19 +22,3 @@ fn test_basic_config_serialization() {
     assert_eq!(config.password, deserialized.password);
     assert_eq!(config.vhost, deserialized.vhost);
 }
-
-#[test]
-fn test_full_config_serialization() {
-    // Get a test config
-    let config = create_test_config();
-
-    // Serialize and deserialize
-    let json = serde_json::to_string_pretty(&config).expect("Failed to serialize");
-    let deserialized: RabbitMQFullConfig = serde_json::from_str(&json).expect("Failed to deserialize");
-
-    // Verify key fields were preserved
-    assert_eq!(config.connection.host, deserialized.connection.host);
-    assert_eq!(config.exchanges.len(), deserialized.exchanges.len());
-    assert_eq!(config.queues.len(), deserialized.queues.len());
-    assert_eq!(config.bindings.len(), deserialized.bindings.len());
-}

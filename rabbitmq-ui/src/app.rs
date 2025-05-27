@@ -4,6 +4,10 @@ use eframe::egui::{self, Color32, RichText};
 use std::collections::HashMap;
 use egui_components::TreeNodeId;
 
+// Keep the import for table support
+use egui_extras::{Column, TableBuilder};
+
+
 use rabbitmq_config::{
     RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
     MessageProperties, QueueInfo, ExchangeInfo,
@@ -74,7 +78,7 @@ impl Default for AppState {
             message: RabbitMQMessage {
                 exchange: "".to_string(),
                 routing_key: "".to_string(),
-                payload: "".to_string(),
+                payload: Vec::new(),  // Empty Vec<u8>
                 properties: Some(MessageProperties::default()),
             },
             status_message: "Welcome to RabbitMQ UI".to_string(),
@@ -85,12 +89,15 @@ impl Default for AppState {
                 durable: true,
                 auto_delete: false,
                 exclusive: false,
+                arguments: HashMap::new(), // Add this line
             },
             new_exchange: ExchangeInfo {
                 name: "".to_string(),
                 kind: "direct".to_string(),
                 durable: true,
                 auto_delete: false,
+                internal: false,
+                arguments: HashMap::new(), // Add this line
             },
             show_queue_dialog: false,
             show_exchange_dialog: false,
@@ -458,7 +465,11 @@ impl eframe::App for App {
                     });
 
                     ui.label("Payload:");
-                    ui.text_edit_multiline(&mut self.state.message.payload);
+                    let mut payload_text = String::from_utf8_lossy(&self.state.message.payload).to_string();
+                    if ui.text_edit_multiline(&mut payload_text).changed() {
+                        self.state.message.payload = payload_text.into_bytes();
+                    }
+
 
                     if ui.button("Publish").clicked() {
                         actions.push(UiAction::PublishMessage);
