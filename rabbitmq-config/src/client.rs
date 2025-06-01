@@ -200,6 +200,7 @@ impl RabbitMQClient {
             
             // Set up properties
             let mut properties = BasicProperties::default();
+            
             if let Some(props) = &message.properties {
                 if let Some(content_type) = &props.content_type {
                     properties = properties.with_content_type(content_type.as_str().into());
