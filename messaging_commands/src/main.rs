@@ -5,9 +5,11 @@ use clap::{Parser, Subcommand};
 use log::{debug, info};
 
 // Use crate:: to reference modules within your own crate
-use crate::client::RabbitMQClient;
-use crate::client::RabbitMQConfig;
-use crate::error::MessagingError;
+// Import from the library crate
+use messaging_commands::client::RabbitMQClient;
+use messaging_commands::client::RabbitMQConfig;
+use messaging_commands::error::MessagingError;
+
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]

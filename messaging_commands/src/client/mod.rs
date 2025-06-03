@@ -3,13 +3,11 @@
 
 use crate::error::MessagingError;
 use log::{debug, info};
-use tokio::net::TcpStream;
+// use tokio::net::TcpStream;
 use lapin::{
-    options::*,
-    types::FieldTable,
     Connection, ConnectionProperties,
 };
-use std::str::FromStr;
+// use std::str::FromStr;
 
 pub struct RabbitMQConfig {
     pub host: String,

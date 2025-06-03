@@ -1,15 +1,22 @@
 // messaging_commands/src/lib.rs
 
-// Declare all modules that exist in your file structure
+// Module declarations
 pub mod client;
-pub mod clients;
-pub mod common;
 pub mod config;
 pub mod error;
+pub mod clients;
+pub mod common;
 pub mod protocol;
+
 pub mod traits;
 pub mod utils;
 pub mod version;
+
+// Re-exports of core types
+pub use client::RabbitMQClient;
+pub use client::RabbitMQConfig;
+pub use error::MessagingError;
+
 
 // Tests module (needs to point to tests/mod.rs)
 #[cfg(test)]
