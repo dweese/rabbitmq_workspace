@@ -15,4 +15,7 @@ pub enum MessagingError {
 
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
+
+    #[error("Lapin error: {0}")]
+    LapinError(#[from] lapin::Error),
 }

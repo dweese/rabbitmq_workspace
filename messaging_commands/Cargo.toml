@@ -1,20 +1,18 @@
 [package]
 name = "messaging_commands"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
 thiserror = "1.0"
-clap = { version = "4.4", features = ["derive"], optional = true }
 tokio = { version = "1.45.0", features = ["full"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 log = "0.4.27"
-env_logger = "0.11.8"
 lapin = "2.5.3"
 percent-encoding = "2.3.1"
 tokio-executor-trait = "2.1.0"
 
+
 [features]
-default = ["cli"]
-cli = ["clap"]

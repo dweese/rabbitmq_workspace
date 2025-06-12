@@ -1,14 +1,19 @@
 
 // src/main.rs
 
+
+// messaging_commands/src/main.rs
+// use messaging_commands::{RabbitMQClient, RabbitMQConfig, MessagingError};
+
 use clap::{Parser, Subcommand};
 use log::{debug, info};
 
 // Use crate:: to reference modules within your own crate
 // Import from the library crate
 use messaging_commands::client::RabbitMQClient;
-use messaging_commands::client::RabbitMQConfig;
 use messaging_commands::error::MessagingError;
+use rabbitmq_config::RabbitMQConfig;
+
 
 
 #[derive(Parser)]

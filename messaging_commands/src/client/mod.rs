@@ -1,67 +1,59 @@
-// was in messaging_commands/src/client.rs
-// is now: messaging_commands/src/client/mod.rs
-
+use rabbitmq_config::RabbitMQConfig;
 use crate::error::MessagingError;
-use log::{debug, info};
-// use tokio::net::TcpStream;
-use lapin::{
-    Connection, ConnectionProperties,
-};
-// use std::str::FromStr;
+use lapin::{Connection, ConnectionProperties, Channel};
+use std::sync::Arc;
 
-pub struct RabbitMQConfig {
-    pub host: String,
-    pub port: u16,
-    pub username: String,
-    pub password: String,
-    pub vhost: String,
-}
-
+/// RabbitMQ client for the messaging_commands crate
 pub struct RabbitMQClient {
     connection: Connection,
+    channel: Channel,
+    config: RabbitMQConfig,
 }
 
 impl RabbitMQClient {
+    /// Create a new RabbitMQ client with the given configuration
     pub async fn new(config: RabbitMQConfig) -> Result<Self, MessagingError> {
-        info!("Connecting to RabbitMQ at {}:{}", config.host, config.port);
-        debug!("Using vhost: {}", config.vhost);
-
-        // Build the connection URI
+        // Build the AMQP URI
         let uri = format!(
-            "amqp://{}:{}@{}:{}{}",
-            percent_encoding::percent_encode(config.username.as_bytes(), percent_encoding::NON_ALPHANUMERIC),
-            percent_encoding::percent_encode(config.password.as_bytes(), percent_encoding::NON_ALPHANUMERIC),
+            "amqp://{}:{}@{}:{}/{}",
+            config.username,
+            config.password,
             config.host,
             config.port,
             config.vhost
         );
 
-        // Create the connection
-        let connection = match Connection::connect(
-            &uri,
-            ConnectionProperties::default()
-                .with_executor(tokio_executor_trait::Tokio::current())
-        ).await {
-            Ok(conn) => conn,
-            Err(err) => {
-                return Err(MessagingError::ConnectionError(format!("Failed to connect: {}", err)));
-            }
-        };
+        // Connect to RabbitMQ
+        let connection = Connection::connect(&uri, ConnectionProperties::default()).await?;
+        
+        // Create a channel
+        let channel = connection.create_channel().await?;
 
-        info!("Successfully connected to RabbitMQ");
-        Ok(Self { connection })
+        Ok(RabbitMQClient {
+            connection,
+            channel,
+            config,
+        })
     }
 
+    /// Get a reference to the channel
+    pub fn channel(&self) -> &Channel {
+        &self.channel
+    }
+
+    /// Get a reference to the connection
+    pub fn connection(&self) -> &Connection {
+        &self.connection
+    }
+
+    /// Get a reference to the config
+    pub fn config(&self) -> &RabbitMQConfig {
+        &self.config
+    }
+
+    /// Close the connection
     pub async fn close(self) -> Result<(), MessagingError> {
-        info!("Closing RabbitMQ connection");
-        match self.connection.close(0, "Normal shutdown").await {
-            Ok(_) => {
-                info!("RabbitMQ connection closed successfully");
-                Ok(())
-            },
-            Err(err) => {
-                Err(MessagingError::ConnectionError(format!("Failed to close connection: {}", err)))
-            }
-        }
+        self.connection.close(200, "Normal shutdown").await?;
+        Ok(())
     }
 }

@@ -1,0 +1,17 @@
+[package]
+name = "messaging_cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# CLI dependencies
+clap = { version = "4.0", features = ["derive"] }
+env_logger = "0.10"
+log = "0.4"
+
+# Async runtime
+tokio = { workspace = true }
+
+# Local workspace dependencies
+messaging_commands = { path = "../messaging_commands" }
+rabbitmq-config = { workspace = true }

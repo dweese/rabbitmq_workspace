@@ -3,8 +3,8 @@ members = [
     "rabbitmq-config",
     "rabbitmq-info",
     "rabbitmq-ui",
-    "egui-components"
-, "messaging_commands"]
+    "egui-components",
+    "messaging_commands", "messaging_cli"]
 
 resolver = "2"
 
