@@ -1,0 +1,471 @@
+.
+├── artifacts
+│   ├── package.json
+│   ├── rabbit_fedora_2025-5-23.json
+│   └── rabbitmq_config.json
+├── bestinf.sh
+├── bestinf.txt
+├── Cargo.lock
+├── Cargo.toml
+├── dwt.sh
+├── egui-components
+│   ├── Cargo.toml
+│   ├── .gitignore
+│   ├── README.md
+│   └── src
+│       ├── border_layout.rs
+│       ├── event_tree.rs
+│       ├── lib.rs
+│       ├── tree_node_id.rs
+│       ├── tree.rs
+│       └── tree_vis
+│           ├── mod.rs
+│           ├── topology.rs
+│           └── tree_view.rs
+├── find_rust_files.sh
+├── .gitignore
+├── .idea
+│   ├── .gitignore
+│   ├── modules.xml
+│   ├── rabbitmq_workspace.iml
+│   ├── vcs.xml
+│   └── workspace.xml
+├── messaging_cli
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+├── messaging_commands
+│   ├── Cargo.toml
+│   ├── README.md
+│   └── src
+│       ├── client
+│       │   └── mod.rs
+│       ├── clients
+│       │   ├── amqp
+│       │   │   └── mod.rs
+│       │   ├── mod.rs
+│       │   ├── mqtt
+│       │   │   └── mod.rs
+│       │   └── stomp
+│       │       └── mod.rs
+│       ├── common
+│       │   └── mod.rs
+│       ├── config
+│       │   └── mod.rs
+│       ├── error.rs
+│       ├── lib.rs
+│       ├── main.rs
+│       ├── protocol
+│       │   └── mod.rs
+│       ├── tests
+│       │   └── mod.rs
+│       ├── traits
+│       │   └── mod.rs
+│       ├── utils
+│       │   └── mod.rs
+│       └── version
+│           └── mod.rs
+├── rabbitmq-config
+│   ├── Cargo.toml
+│   ├── config.tree
+│   ├── .gitignore
+│   ├── README.md
+│   ├── src
+│   │   ├── client.rs
+│   │   ├── config.rs
+│   │   ├── error.rs
+│   │   ├── lib.rs
+│   │   ├── models.rs
+│   │   └── topology.rs
+│   └── tests
+│       ├── client
+│       │   ├── integration_tests.rs
+│       │   ├── mocked_tests.rs
+│       │   └── unit_tests.rs
+│       ├── common
+│       │   └── test_utils.rs
+│       ├── config
+│       │   ├── manipulation_tests.rs
+│       │   ├── rabbitmq_def_tests.rs
+│       │   ├── serialization_tests.rs
+│       │   └── validation_tests.rs
+│       ├── connection_test.rs
+│       ├── fixtures
+│       │   └── sample_config
+│       ├── lib.rs
+│       └── simple_connection_test.rs
+├── rabbitmq-info
+│   ├── Cargo.toml
+│   └── src
+│       ├── api
+│       │   └── mod.rs
+│       ├── collector
+│       │   └── mod.rs
+│       ├── export
+│       │   └── mod.rs
+│       └── lib.rs
+├── rabbitmq-ui
+│   ├── Cargo.toml
+│   ├── .gitignore
+│   └── src
+│       ├── app.rs
+│       ├── connection
+│       │   ├── config.rs
+│       │   └── mod.rs
+│       ├── exchanges
+│       │   ├── create.rs
+│       │   ├── list.rs
+│       │   └── mod.rs
+│       ├── main.rs
+│       ├── messages
+│       │   ├── consume.rs
+│       │   ├── mod.rs
+│       │   └── publish.rs
+│       └── queues
+│           ├── create.rs
+│           ├── list.rs
+│           └── mod.rs
+├── README.md
+├── rsfind.sh
+├── tests
+│   ├── client
+│   │   ├── integration_tests.rs
+│   │   ├── mocked_tests,rs
+│   │   └── unit_tests.rs
+│   ├── common
+│   ├── config
+│   ├── fixtures
+│   │   └── sample_configs
+│   ├── integration_test.rs
+│   └── lib.rs
+└── yak_json
+    ├── Cargo.toml
+    └── src
+        └── main.rs
+
+49 directories, 95 files
+-rw-r--r--. 1 dweese dweese    453 Jun 11 22:22 ./Cargo.toml
+-rw-r--r--. 1 dweese dweese    368 May 21 10:38 ./egui-components/Cargo.toml
+-rw-r--r--. 1 dweese dweese   7814 May 13 20:53 ./egui-components/src/border_layout.rs
+-rw-r--r--. 1 dweese dweese   5899 May 26 18:27 ./egui-components/src/event_tree.rs
+-rw-r--r--. 1 dweese dweese    256 May 22 18:56 ./egui-components/src/lib.rs
+-rw-r--r--. 1 dweese dweese   1641 May 21 10:35 ./egui-components/src/tree_node_id.rs
+-rw-r--r--. 1 dweese dweese   4900 May 26 18:28 ./egui-components/src/tree.rs
+-rw-r--r--. 1 dweese dweese     37 May 21 17:55 ./egui-components/src/tree_vis/mod.rs
+-rw-r--r--. 1 dweese dweese   5664 May 22 19:29 ./egui-components/src/tree_vis/topology.rs
+-rw-r--r--. 1 dweese dweese      0 May 21 17:56 ./egui-components/src/tree_vis/tree_view.rs
+-rw-r--r--. 1 dweese dweese    357 Jun  8 18:26 ./messaging_cli/Cargo.toml
+-rw-r--r--. 1 dweese dweese   2370 Jun  8 19:57 ./messaging_cli/src/main.rs
+-rw-r--r--. 1 dweese dweese    389 Jun  4 19:22 ./messaging_commands/Cargo.toml
+-rw-r--r--. 1 dweese dweese   1560 Jun  3 22:19 ./messaging_commands/src/client/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/amqp/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/mqtt/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/stomp/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/common/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/config/mod.rs
+-rw-r--r--. 1 dweese dweese    448 Jun  3 22:21 ./messaging_commands/src/error.rs
+-rw-r--r--. 1 dweese dweese   1913 Jun  4 20:13 ./messaging_commands/src/lib.rs
+-rw-r--r--. 1 dweese dweese   2908 Jun  3 22:24 ./messaging_commands/src/main.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/protocol/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/tests/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/traits/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/utils/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/version/mod.rs
+-rw-r--r--. 1 dweese dweese    566 May 27 17:55 ./rabbitmq-config/Cargo.toml
+-rw-r--r--. 1 dweese dweese  10388 May 31 17:39 ./rabbitmq-config/src/client.rs
+-rw-r--r--. 1 dweese dweese   9247 May 27 17:53 ./rabbitmq-config/src/config.rs
+-rw-r--r--. 1 dweese dweese    831 May 23 20:41 ./rabbitmq-config/src/error.rs
+-rw-r--r--. 1 dweese dweese    796 May 27 11:09 ./rabbitmq-config/src/lib.rs
+-rw-r--r--. 1 dweese dweese   4986 May 27 11:34 ./rabbitmq-config/src/models.rs
+-rw-r--r--. 1 dweese dweese   1642 May 27 11:19 ./rabbitmq-config/src/topology.rs
+-rw-r--r--. 1 dweese dweese    498 May 20 22:11 ./rabbitmq-config/tests/client/integration_tests.rs
+-rw-r--r--. 1 dweese dweese    272 May 20 22:11 ./rabbitmq-config/tests/client/mocked_tests.rs
+-rw-r--r--. 1 dweese dweese   1125 May 23 17:40 ./rabbitmq-config/tests/client/unit_tests.rs
+-rw-r--r--. 1 dweese dweese   1373 May 27 18:00 ./rabbitmq-config/tests/common/test_utils.rs
+-rw-r--r--. 1 dweese dweese      0 May 20 22:11 ./rabbitmq-config/tests/config/manipulation_tests.rs
+-rw-r--r--. 1 dweese dweese   2074 May 27 11:04 ./rabbitmq-config/tests/config/rabbitmq_def_tests.rs
+-rw-r--r--. 1 dweese dweese    885 May 27 11:46 ./rabbitmq-config/tests/config/serialization_tests.rs
+-rw-r--r--. 1 dweese dweese    801 May 27 12:37 ./rabbitmq-config/tests/config/validation_tests.rs
+-rw-r--r--. 1 dweese dweese   1028 May 20 22:11 ./rabbitmq-config/tests/connection_test.rs
+-rw-r--r--. 1 dweese dweese    398 May 20 22:11 ./rabbitmq-config/tests/lib.rs
+-rw-r--r--. 1 dweese dweese    817 May 20 22:11 ./rabbitmq-config/tests/simple_connection_test.rs
+-rw-r--r--. 1 dweese dweese    380 May 22 22:03 ./rabbitmq-info/Cargo.toml
+-rw-r--r--. 1 dweese dweese   2981 May 22 21:14 ./rabbitmq-info/src/api/mod.rs
+-rw-r--r--. 1 dweese dweese   6233 May 23 05:53 ./rabbitmq-info/src/collector/mod.rs
+-rw-r--r--. 1 dweese dweese   3698 May 22 21:49 ./rabbitmq-info/src/export/mod.rs
+-rw-r--r--. 1 dweese dweese   1971 May 28 17:59 ./rabbitmq-info/src/lib.rs
+-rw-r--r--. 1 dweese dweese    393 May 26 19:03 ./rabbitmq-ui/Cargo.toml
+-rw-r--r--. 1 dweese dweese  20838 May 27 18:12 ./rabbitmq-ui/src/app.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/config.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/create.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/list.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/mod.rs
+-rw-r--r--. 1 dweese dweese  21435 May 27 18:18 ./rabbitmq-ui/src/main.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/consume.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/mod.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/publish.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/queues/create.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/queues/list.rs
+-rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/queues/mod.rs
+-rw-r--r--. 1 dweese dweese  56132 Jun 11 22:22 ./target/debug/build/glutin_egl_sys-cb93bf2bad05dc89/out/egl_bindings.rs
+-rw-r--r--. 1 dweese dweese  39902 Jun 11 22:22 ./target/debug/build/glutin_glx_sys-a6ffbf542655d876/out/glx_bindings.rs
+-rw-r--r--. 1 dweese dweese  45050 Jun 11 22:22 ./target/debug/build/glutin_glx_sys-a6ffbf542655d876/out/glx_extra_bindings.rs
+-rw-r--r--. 1 dweese dweese   5928 Jun 11 22:22 ./target/debug/build/khronos_api-a6450dee76900363/out/webgl_exts.rs
+-rw-r--r--. 1 dweese dweese      0 Jun 11 22:22 ./target/debug/build/mime_guess2-a09c07213cee347e/out/mime_types_generated.rs
+-rw-r--r--. 1 dweese dweese  35510 Jun 11 22:22 ./target/debug/build/oid-registry-f54b0134b64bc69c/out/oid_db.rs
+-rw-r--r--. 1 dweese dweese 622641 Jun 11 22:22 ./target/debug/build/typenum-4d45f54f451f066b/out/tests.rs
+-rw-r--r--. 1 dweese dweese 487759 Jun 11 22:22 ./target/debug/build/wayland-client-6afe086c7a8f72e3/out/wayland_api.rs
+-rw-r--r--. 1 dweese dweese  36133 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/fullscreen-shell-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  50925 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/gtk-primary-selection_client_api.rs
+-rw-r--r--. 1 dweese dweese  17276 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/idle-inhibit-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  79068 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/input-method-unstable-v2_client_api.rs
+-rw-r--r--. 1 dweese dweese  76756 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/input-method-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  27485 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/input-timestamps-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22158 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/keyboard-shortcuts-inhibit-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  49439 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/linux-dmabuf-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  38422 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/linux-explicit-synchronization-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  51503 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/pointer-constraints-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  45863 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/pointer-gestures-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  31164 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/presentation-time_client_api.rs
+-rw-r--r--. 1 dweese dweese  51162 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/primary-selection-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22111 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/relative-pointer-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  23580 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/server-decoration_client_api.rs
+-rw-r--r--. 1 dweese dweese  88716 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/tablet-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese 177361 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/tablet-v2_client_api.rs
+-rw-r--r--. 1 dweese dweese  69265 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/text-input-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  60643 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/text-input-v3_client_api.rs
+-rw-r--r--. 1 dweese dweese  26840 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/viewporter_client_api.rs
+-rw-r--r--. 1 dweese dweese  59048 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-data-control-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  33587 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-export-dmabuf-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  52777 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-foreign-toplevel-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22134 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-gamma-control-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  15226 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-input-inhibitor-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  53848 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-layer-shell-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  93651 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-output-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22133 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-output-power-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  42415 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-screencopy-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  38296 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/wlr-virtual-pointer-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  30459 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-activation-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  26499 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-decoration-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  38737 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-foreign-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  40471 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-foreign-v2_client_api.rs
+-rw-r--r--. 1 dweese dweese  28256 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-output-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese 166832 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-shell_client_api.rs
+-rw-r--r--. 1 dweese dweese  88470 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-shell-v5_client_api.rs
+-rw-r--r--. 1 dweese dweese 145289 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xdg-shell-v6_client_api.rs
+-rw-r--r--. 1 dweese dweese  18565 Jun 11 22:22 ./target/debug/build/wayland-protocols-195a20958325566c/out/xwayland-keyboard-grab-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  19206 Jun 11 22:22 ./target/debug/build/winit-f8fbb9ca1f46e8e4/out/fractional_scale_v1.rs
+-rw-r--r--. 1 dweese dweese    777 Jun 11 22:22 ./target/debug/build/x11-dl-d45222b9851b1867/out/config.rs
+-rw-r--r--. 1 dweese dweese      0 May 20 22:11 ./tests/client/integration_tests.rs
+-rw-r--r--. 1 dweese dweese   4924 May 20 22:11 ./tests/client/unit_tests.rs
+-rw-r--r--. 1 dweese dweese    845 May 23 05:20 ./tests/integration_test.rs
+-rw-r--r--. 1 dweese dweese    400 May 20 22:11 ./tests/lib.rs
+-rw-r--r--. 1 dweese dweese     79 Jun 11 22:22 ./yak_json/Cargo.toml
+-rw-r--r--. 1 dweese dweese     45 Jun 11 22:22 ./yak_json/src/main.rs
+[workspace]
+members = [
+    "rabbitmq-config",
+    "rabbitmq-info",
+    "rabbitmq-ui",
+    "egui-components",
+    "messaging_commands", "messaging_cli", "yak_json"]
+
+resolver = "2"
+
+
+[workspace.dependencies]
+rabbitmq-config = { path = "./rabbitmq-config" }
+rabbitmq-info = { path = "./rabbitmq-info" }
+tokio = { version = "1", features = ["full", "rt", "macros"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+#### egui-components/Cargo.toml
+[package]
+name = "egui-components"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Use a direct reference to eframe with version instead of workspace
+eframe = "0.24.1"
+env_logger = "0.11.8"
+tokio = "1.45.0"
+serde = { version = "1.0.219", features = ["derive"] }
+thiserror = "1.0.69"
+serde_json = "1.0.140"
+futures-util = "0.3.31"
+
+[package]
+name = "messaging_cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# CLI dependencies
+clap = { version = "4.0", features = ["derive"] }
+env_logger = "0.10"
+log = "0.4"
+
+# Async runtime
+tokio = { workspace = true }
+
+# Local workspace dependencies
+messaging_commands = { path = "../messaging_commands" }
+rabbitmq-config = { workspace = true }[package]
+name = "messaging_commands"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+thiserror = "1.0"
+tokio = { version = "1.45.0", features = ["full"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+log = "0.4.27"
+lapin = "2.5.3"
+percent-encoding = "2.3.1"
+tokio-executor-trait = "2.1.0"
+
+
+[features]
+## rabbitmq-config/Cargo.toml
+
+[package]
+name = "rabbitmq-config"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+tokio-executor-trait = "2.1.1"
+
+serde_json = "1.0"
+
+tokio = { version = "1", features = ["full"] }
+lapin = "2.5.3"
+thiserror = "1.0"
+futures-util = "0.3.31"
+# Use version 7.2.3 which is compatible with lapin 2.5.3
+amq-protocol-uri = "7.2.3"
+percent-encoding = "2.3.1"
+log = "0.4.27"
+sha2 = "0.10.9"
+rand = "0.8.5"  # Change from 0.9.1 to 0.8.5
+base64 = "0.21.5"  # Change from 0.22.1 to 0.21.5
+
+
+
+
+## rabbitmq-info/Cargo.toml
+[package]
+name = "rabbitmq-info"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full", "rt", "macros"] }
+thiserror = "1.0"
+reqwest = { version = "0.11", features = ["json"] }
+base64 = "0.21"## rabbitmq-ui/Cargo.toml
+[package]
+name = "rabbitmq-ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+egui-components = { path = "../egui-components" }
+eframe = "0.24.0"  # Replace with actual version you need
+tokio = { version = "1", features = ["full"] }
+env_logger = "0.11.8"
+egui_extras = "0.24.0"  # Add this line for table support
+[package]
+name = "yak_json"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+==> egui-components/src/lib.rs <==
+// egui-components/src/lib.rs
+mod border_layout;
+mod event_tree;
+mod tree_node_id;
+mod tree;
+pub use border_layout::BorderLayout;
+pub use tree::Tree;
+pub use event_tree::{EventTree, TreeEvent, TreeNode};
+pub use tree_node_id::TreeNodeId;
+pub mod tree_vis;
+
+==> messaging_commands/src/lib.rs <==
+//! Messaging Commands Library
+//! 
+//! A comprehensive library for handling messaging operations with various protocols,
+//! primarily focused on RabbitMQ connectivity and message handling.
+//! 
+//! # Quick Start
+//! 
+//! ```rust
+//! use messaging_commands::prelude::*;
+//! 
+//! #[tokio::main]
+//! async fn main() -> Result<(), MessagingError> {
+//!     let config = RabbitMQConfig::new()
+//!         .host("localhost")
+//!         .port(5672);
+//!     
+//!     let client = RabbitMQClient::new(config).await?;
+//!     // Use the client...
+//!     Ok(())
+//! }
+
+==> rabbitmq-config/src/lib.rs <==
+// rabbitmq-config/src/lib.rs
+
+use serde::{Serialize, Deserialize};
+
+// Module declarations
+mod client;
+mod config;
+mod error;
+mod topology;
+mod models;
+
+
+// Re-exports of core types
+pub use client::RabbitMQClient;
+pub use config::RabbitMQConfig;
+pub use error::RabbitMQError;
+
+// Re-export the models needed by the UI
+pub use models::{
+    MessageProperties,
+
+==> rabbitmq-info/src/lib.rs <==
+// rabbitmq-info/src/lib.rs
+
+// Import necessary dependencies
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use thiserror::Error;
+
+// Define the modules
+pub mod api;
+pub mod collector;
+pub mod export;
+// Public modules
+// Define all the modules that exist in your file system
+pub mod client;
+pub mod clients;
+pub mod common;
+pub mod config;
+pub mod error;
+pub mod protocol;
+pub mod tests;  // This points to tests/mod.rs

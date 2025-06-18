@@ -4,7 +4,7 @@ members = [
     "rabbitmq-info",
     "rabbitmq-ui",
     "egui-components",
-    "messaging_commands", "messaging_cli"]
+    "messaging_commands", "messaging_cli", "yak_json", "pg_vault"]
 
 resolver = "2"
 

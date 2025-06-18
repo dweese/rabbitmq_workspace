@@ -1,0 +1,27 @@
+[package]
+name = "pg_vault"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "pg_vault"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+tokio-postgres = "0.7"
+sha2 = "0.10"
+base64 = "0.21"
+
+# Hardware Yubikey support (optional)
+yubico = { version = "0.11", optional = true }
+chrono = "0.4.41"
+
+[features]
+default = []
+hardware-yubikey = ["yubico"]
+
+[dev-dependencies]
+tokio-test = "0.4"
