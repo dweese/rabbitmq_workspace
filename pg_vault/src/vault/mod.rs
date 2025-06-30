@@ -1,3 +1,4 @@
+// pg_vault/src/vault/mod.rs
 //! Vault module for pg_vault
 //! 
 //! Provides secure PostgreSQL connections with hardware token authentication.
@@ -38,6 +39,9 @@ pub enum VaultError {
     
     #[error("Connection pool error: {0}")]
     Pool(String),
+    
+    #[error("Timeout error: {0}")]
+    Timeout(String),
 }
 
 /// Configuration for database connections
@@ -160,6 +164,7 @@ pub struct Vault {
     /// Authentication provider
     auth_provider: Arc<dyn YubikeyAuth>,
     /// Authentication configuration
+    #[allow(dead_code)]
     auth_config: AuthConfig,
     /// Database configuration
     db_config: DatabaseConfig,

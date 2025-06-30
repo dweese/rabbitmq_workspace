@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use rfd::FileDialog;
 
 use eframe::egui;
 use egui_components::TreeNodeId;  // Remove unused imports

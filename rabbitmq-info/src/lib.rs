@@ -9,18 +9,7 @@ use thiserror::Error;
 pub mod api;
 pub mod collector;
 pub mod export;
-// Public modules
-// Define all the modules that exist in your file system
-pub mod client;
-pub mod clients;
-pub mod common;
-pub mod config;
-pub mod error;
-pub mod protocol;
-pub mod tests;  // This points to tests/mod.rs
-pub mod traits;
-pub mod utils;
-pub mod version;
+
 
 // Define the data structures
 #[derive(Debug, Clone, Serialize, Deserialize)]

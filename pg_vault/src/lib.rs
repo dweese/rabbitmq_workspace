@@ -1,3 +1,4 @@
+// pg_vault/src/lib.rs
 //! pg_vault - Secure PostgreSQL with Hardware Token Authentication
 //!
 //! A Rust library providing secure PostgreSQL connections with hardware token

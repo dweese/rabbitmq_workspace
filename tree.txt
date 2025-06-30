@@ -1,0 +1,179 @@
+.
+├── artifacts
+│   ├── package.json
+│   ├── pagila
+│   │   ├── pagila-data.sql
+│   │   ├── pagila-schema.sql
+│   │   └── README.md
+│   ├── pagila-master
+│   │   ├── docker-compose.yml
+│   │   ├── LICENSE.txt
+│   │   ├── pagila-data-apt-jsonb.backup
+│   │   ├── pagila-data.sql
+│   │   ├── pagila-data-yum-jsonb.backup
+│   │   ├── pagila-insert-data.sql
+│   │   ├── pagila-schema-diagram.png
+│   │   ├── pagila-schema-jsonb.sql
+│   │   ├── pagila-schema.sql
+│   │   ├── pgadmin
+│   │   │   ├── pgadmin_pass
+│   │   │   └── pgadmin_servers.json
+│   │   ├── README.md
+│   │   └── restore-pagila-data-jsonb.sh
+│   ├── rabbit_fedora_2025-5-23.json
+│   └── rabbitmq_config.json
+├── bestinf.sh
+├── bestinf.txt
+├── Cargo.lock
+├── Cargo.toml
+├── check.txt
+├── dwt.sh
+├── egui-components
+│   ├── Cargo.toml
+│   ├── README.md
+│   └── src
+│       ├── border_layout.rs
+│       ├── event_tree.rs
+│       ├── lib.rs
+│       ├── tree_node_id.rs
+│       ├── tree.rs
+│       └── tree_vis
+│           ├── mod.rs
+│           ├── topology.rs
+│           └── tree_view.rs
+├── find_rust_files.sh
+├── messaging_cli
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+├── messaging_commands
+│   ├── Cargo.toml
+│   ├── README.md
+│   └── src
+│       ├── client
+│       │   └── mod.rs
+│       ├── clients
+│       │   ├── amqp
+│       │   │   └── mod.rs
+│       │   ├── mod.rs
+│       │   ├── mqtt
+│       │   │   └── mod.rs
+│       │   └── stomp
+│       │       └── mod.rs
+│       ├── common
+│       │   └── mod.rs
+│       ├── config
+│       │   └── mod.rs
+│       ├── error.rs
+│       ├── lib.rs
+│       ├── main.rs
+│       ├── protocol
+│       │   └── mod.rs
+│       ├── tests
+│       │   └── mod.rs
+│       ├── traits
+│       │   └── mod.rs
+│       ├── utils
+│       │   └── mod.rs
+│       └── version
+│           └── mod.rs
+├── pg_vault
+│   ├── Cargo.toml
+│   ├── check_psql.sh
+│   ├── justpost.sh
+│   ├── sql
+│   │   ├── 01_create_schema.sql
+│   │   ├── 02_create_tables.sql 
+│   │   ├── 03_sample_data.sql
+│   │   └── northwind
+│   └── src
+│       ├── auth
+│       │   ├── mock.rs
+│       │   ├── mod.rs
+│       │   └── yubikey.rs
+│       ├── lib.rs
+│       ├── main.rs
+│       └── vault
+│           ├── connection.rs
+│           └── mod.rs
+├── rabbitmq-config
+│   ├── Cargo.toml
+│   ├── config.tree
+│   ├── README.md
+│   ├── src
+│   │   ├── client.rs
+│   │   ├── config.rs
+│   │   ├── error.rs
+│   │   ├── lib.rs
+│   │   ├── models.rs
+│   │   └── topology.rs
+│   └── tests
+│       ├── client
+│       │   ├── integration_tests.rs
+│       │   ├── mocked_tests.rs
+│       │   └── unit_tests.rs
+│       ├── common
+│       │   └── test_utils.rs
+│       ├── config
+│       │   ├── manipulation_tests.rs
+│       │   ├── rabbitmq_def_tests.rs
+│       │   ├── serialization_tests.rs
+│       │   └── validation_tests.rs
+│       ├── connection_test.rs
+│       ├── fixtures
+│       │   └── sample_config
+│       ├── lib.rs
+│       └── simple_connection_test.rs
+├── rabbitmq-info
+│   ├── Cargo.toml
+│   └── src
+│       ├── api
+│       │   └── mod.rs
+│       ├── collector
+│       │   └── mod.rs
+│       ├── export
+│       │   └── mod.rs
+│       └── lib.rs
+├── rabbitmq-ui
+│   ├── Cargo.toml
+│   └── src
+│       ├── app.rs
+│       ├── connection
+│       │   ├── config.rs
+│       │   └── mod.rs
+│       ├── exchanges
+│       │   ├── create.rs
+│       │   ├── list.rs
+│       │   └── mod.rs
+│       ├── main.rs
+│       ├── messages
+│       │   ├── consume.rs
+│       │   ├── mod.rs
+│       │   └── publish.rs
+│       └── queues
+│           ├── create.rs
+│           ├── list.rs
+│           └── mod.rs
+├── README.md
+├── tests
+│   ├── client
+│   │   ├── integration_tests.rs
+│   │   ├── mocked_tests,rs
+│   │   └── unit_tests.rs
+│   ├── common
+│   ├── config
+│   ├── fixtures
+│   │   └── sample_configs
+│   ├── integration_test.rs
+│   └── lib.rs
+├── traverse_projects.sh
+├── tree.txt
+└── yak_json
+    ├── 2cbuild.txt
+    ├── Cargo.toml
+    ├── cbuild.txt
+    ├── src
+    │   └── main.rs
+    └── test.json
+
+57 directories, 120 files

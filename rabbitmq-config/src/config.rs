@@ -1,14 +1,6 @@
 // rabbitmq-config/src/config.rs
-use crate::error::RabbitMQError;  // Import from error module, not client
-use sha2::{Sha256, Digest};
-use rand::{thread_rng, Rng};
-use rand::distributions::Alphanumeric;
-use base64::{Engine as _, engine::general_purpose};
-
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
-use std::path::Path;
-use std::fs;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RabbitMQConfig {
@@ -30,6 +22,7 @@ impl Default for RabbitMQConfig {
         }
     }
 }
+
 
 // Keep your existing code for RabbitMQFullConfig and other structures here
 // For rabbitmq-config/src/config.rs
@@ -81,10 +74,6 @@ impl RabbitMQConfig {
         }
     }
 
-
-
-
-
     pub fn from_connection_config(conn: &ConnectionConfig) -> Self {
         Self {
             host: conn.host.clone(),
@@ -95,117 +84,6 @@ impl RabbitMQConfig {
         }
     }
 }
-
-//impl Default for RabbitMQConfig {
-//    fn default() -> Self {
-//        Self {
-//            host: "localhost".to_string(),
-//            port: 5672,
-//            username: "guest".to_string(),
-//            password: "guest".to_string(),
-//            vhost: "/".to_string(),
-//        }
-//    }
-//}
-
-// // Main comprehensive configuration structure
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct RabbitMQFullConfig {
-//     pub connection: ConnectionConfig,
-//     pub channels: ChannelConfig,
-//     #[serde(default)]
-//     pub exchanges: Vec<ExchangeConfig>,
-//     #[serde(default)]
-//     pub queues: Vec<QueueConfig>,
-//     #[serde(default)]
-//     pub bindings: Vec<BindingConfig>,
-//     #[serde(default)]
-//     pub consumers: Vec<ConsumerConfig>,
-//     #[serde(default)]
-//     pub publishers: Vec<PublisherConfig>,
-//     pub retry: RetryConfig,
-//     pub logging: LoggingConfig,
-// }
-// 
-// // Add to RabbitMQFullConfig implementation
-// impl RabbitMQFullConfig {
-//     // Load configuration from a file
-//     pub fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self, RabbitMQError> {
-//         let file = fs::File::open(path)?;
-//         let reader = std::io::BufReader::new(file);
-//         let config = serde_json::from_reader(reader)?;
-//         Ok(config)
-//     }
-// 
-//     // Save configuration to a file
-//     pub fn save_to_file<P: AsRef<Path>>(&self, path: P) -> Result<(), RabbitMQError> {
-//         let file = fs::File::create(path)?;
-//         let writer = std::io::BufWriter::new(file);
-//         serde_json::to_writer_pretty(writer, self)?;
-//         Ok(())
-//     }
-// 
-//     // Create a new default configuration
-//     pub fn default() -> Self {
-//         Self {
-//             connection: ConnectionConfig {
-//                 host: "localhost".to_string(),
-//                 port: 5672,
-//                 vhost: "/".to_string(),
-//                 username: "guest".to_string(),
-//                 password: "guest".to_string(),
-//                 connection_timeout_ms: 30000,
-//                 heartbeat_interval_sec: 60,
-//                 connection_name: "rust-rabbitmq-client".to_string(),
-//                 use_tls: false,
-//                 tls_options: TlsOptions {
-//                     verify_hostname: true,
-//                     ca_cert_path: "/path/to/ca_certificate.pem".to_string(),
-//                     client_cert_path: None,
-//                     client_key_path: None,
-//                 },
-//             },
-//             channels: ChannelConfig {
-//                 default_prefetch_count: 10,
-//                 default_prefetch_size: 0,
-//                 confirm_deliveries: true,
-//             },
-//             exchanges: vec![],
-//             queues: vec![],
-//             bindings: vec![],
-//             consumers: vec![],
-//             publishers: vec![],
-//             retry: RetryConfig {
-//                 max_retries: 5,
-//                 initial_interval_ms: 100,
-//                 multiplier: 2.0,
-//                 max_interval_ms: 30000,
-//                 randomization_factor: 0.5,
-//             },
-//             logging: LoggingConfig {
-//                 level: "info".to_string(),
-//                 include_connection_events: true,
-//                 include_channel_events: true,
-//                 include_consumer_events: true,
-//                 include_publisher_events: true,
-//             },
-//         }
-//     }
-// 
-// 
-// 
-//     pub fn to_simple_config(&self) -> RabbitMQConfig {
-//         RabbitMQConfig {
-//             host: self.connection.host.clone(),
-//             port: self.connection.port,
-//             username: self.connection.username.clone(),
-//             password: self.connection.password.clone(),
-//             vhost: self.connection.vhost.clone(),
-//         }
-//     }
-//     
-//     
-// }
 
 // Connection configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,3 +1,5 @@
+// pg_vault/src/main.rs
+
 use pg_vault::prelude::*;
 use pg_vault::vault::{DatabaseConfig, Vault, SslMode};
 use std::sync::Arc;

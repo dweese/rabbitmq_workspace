@@ -1,7 +1,6 @@
 use rabbitmq_config::RabbitMQConfig;
 use crate::error::MessagingError;
 use lapin::{Connection, ConnectionProperties, Channel};
-use std::sync::Arc;
 
 /// RabbitMQ client for the messaging_commands crate
 pub struct RabbitMQClient {

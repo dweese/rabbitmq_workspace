@@ -2,11 +2,11 @@
 // rabbitmq_ui/src/main.rs
 mod app;
 
-use eframe::NativeOptions;
+// use eframe::NativeOptions;
 use eframe::egui::{self, Color32, RichText, ScrollArea}; // Remove Stroke
 
 use std::collections::HashMap;
-use egui_components::{BorderLayout, TreeNodeId}; // Keep BorderLayout, remove Tree
+use egui_components::{TreeNodeId}; // Keep BorderLayout, remove Tree
 
 
 use rabbitmq_config::{
@@ -28,9 +28,13 @@ pub enum UiAction {
 }
 
 // Application state that contains all data needed by the UI
+#[allow(dead_code)]
 pub struct TreeState {
+    #[allow(dead_code)]
     queue_tree_nodes: HashMap<TreeNodeId, String>,
+    #[allow(dead_code)]
     queue_children: HashMap<TreeNodeId, Vec<TreeNodeId>>,
+    #[allow(dead_code)]
     selected_queue: Option<TreeNodeId>,
 }
 
@@ -63,6 +67,7 @@ pub struct AppState {
     show_exchange_dialog: bool,
 
     // Tree state in a separate struct
+    #[allow(dead_code)]
     tree_state: TreeState,
 }
 

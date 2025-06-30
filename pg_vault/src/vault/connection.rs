@@ -1,3 +1,5 @@
+// pg_vault/src/vault/connection.rs
+
 //! High-level database connection with security and convenience features
 
 use crate::vault::{SessionInfo, VaultError, VaultResult};
@@ -249,9 +251,7 @@ impl Connection {
                     let mut metrics = self.metrics.lock().await;
                     metrics.update_error_stats();
                 }
-                Err(VaultError::Database(
-                    tokio_postgres::Error::__private_api_timeout()
-                ))
+                Err(VaultError::Timeout(format!("Query timeout after {}s", self.config.query_timeout)))
             }
         }
     }
@@ -299,9 +299,7 @@ impl Connection {
                     let mut metrics = self.metrics.lock().await;
                     metrics.update_error_stats();
                 }
-                Err(VaultError::Database(
-                    tokio_postgres::Error::__private_api_timeout()
-                ))
+                Err(VaultError::Timeout(format!("Execute timeout after {}s", self.config.query_timeout)))
             }
         }
     }
@@ -358,9 +356,7 @@ impl Connection {
                     let mut metrics = self.metrics.lock().await;
                     metrics.update_error_stats();
                 }
-                Err(VaultError::Database(
-                    tokio_postgres::Error::__private_api_timeout()
-                ))
+                Err(VaultError::Timeout(format!("Query prepared timeout after {}s", self.config.query_timeout)))
             }
         }
     }
@@ -409,9 +405,7 @@ impl Connection {
                     let mut metrics = self.metrics.lock().await;
                     metrics.update_error_stats();
                 }
-                Err(VaultError::Database(
-                    tokio_postgres::Error::__private_api_timeout()
-                ))
+                Err(VaultError::Timeout(format!("Execute prepared timeout after {}s", self.config.query_timeout)))
             }
         }
     }
@@ -457,11 +451,11 @@ impl Connection {
             let version: String = row.get(0);
             Ok(version)
         } else {
-            Err(VaultError::Database(
-                tokio_postgres::Error::__private_api_timeout() // Use available error constructor
-            ))
-        }
+        Err(VaultError::Configuration(
+            "No version returned from database".to_string()
+        ))
     }
+}
     
     async fn update_session_activity(&self) {
         let mut sessions = self.sessions.lock().await;

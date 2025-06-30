@@ -1,3 +1,5 @@
+// pg_vault/src/auth/mock.rs
+
 //! Mock Yubikey implementation for development and testing
 //! 
 //! Provides a simulated hardware token that behaves like a real Yubikey

@@ -14,5 +14,8 @@ lapin = "2.5.3"
 percent-encoding = "2.3.1"
 tokio-executor-trait = "2.1.0"
 
+# CLI dependencies needed for main.rs
+clap = { version = "4.0", features = ["derive"] }
+env_logger = "0.10"
 
 [features]

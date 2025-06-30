@@ -4,10 +4,6 @@ use eframe::egui::{self, Color32, RichText};
 use std::collections::HashMap;
 use egui_components::TreeNodeId;
 
-// Keep the import for table support
-use egui_extras::{Column, TableBuilder};
-
-
 use rabbitmq_config::{
     RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
     MessageProperties, QueueInfo, ExchangeInfo,
@@ -26,10 +22,13 @@ pub enum UiAction {
     DeclareExchange,
 }
 
-// Application state that contains all data needed by the UI
+// Application state that contains all data nee ded by the UI
 pub struct TreeState {
+    #[allow(dead_code)]
     queue_tree_nodes: HashMap<TreeNodeId, String>,
+    #[allow(dead_code)]
     queue_children: HashMap<TreeNodeId, Vec<TreeNodeId>>,
+    #[allow(dead_code)]
     selected_queue: Option<TreeNodeId>,
 }
 
@@ -64,6 +63,7 @@ pub struct AppState {
     show_exchange_dialog: bool,
 
     // Tree state in a separate struct
+    #[allow(dead_code)]
     tree_state: TreeState,
 }
 

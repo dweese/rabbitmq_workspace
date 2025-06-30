@@ -29,6 +29,7 @@ pub struct Binding {
     pub arguments: HashMap<String, String>,
 }
 
+#[allow(dead_code)] // Future topology management feature
 pub trait TopologyDataSource {
     fn get_exchanges(&self) -> Vec<Exchange>;
     fn get_queues(&self) -> Vec<Queue>;

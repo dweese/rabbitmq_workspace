@@ -1,6 +1,6 @@
 // rabbitmq-config/src/lib.rs
 
-use serde::{Serialize, Deserialize};
+
 
 // Module declarations
 mod client;
@@ -9,8 +9,7 @@ mod error;
 mod topology;
 mod models;
 
-
-// Re-exports of core types
+// Re-export the models needed by the UI
 pub use client::RabbitMQClient;
 pub use config::RabbitMQConfig;
 pub use error::RabbitMQError;
@@ -31,5 +30,6 @@ pub use models::{
     ExchangeDefinition,
     BindingDefinition,
 };
+
 
 // Remove the QueueInfo struct definition from here since we're now using the one from models

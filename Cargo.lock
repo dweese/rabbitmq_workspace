@@ -2559,6 +2559,8 @@ dependencies = [
 name = "messaging_commands"
 version = "0.1.0"
 dependencies = [
+ "clap",
+ "env_logger 0.10.2",
  "lapin",
  "log",
  "percent-encoding",

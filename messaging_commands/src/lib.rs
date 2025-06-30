@@ -10,10 +10,7 @@
 //! 
 //! #[tokio::main]
 //! async fn main() -> Result<(), MessagingError> {
-//!     let config = RabbitMQConfig::new()
-//!         .host("localhost")
-//!         .port(5672);
-//!     
+//!     let config = RabbitMQConfig::default();
 //!     let client = RabbitMQClient::new(config).await?;
 //!     // Use the client...
 //!     Ok(())
@@ -22,34 +19,35 @@
 
 // Core module declarations
 pub mod client;
-pub mod config;
-pub mod error;
 pub mod clients;
 pub mod common;
+pub mod config;
 pub mod protocol;
+pub mod tests;
 pub mod traits;
 pub mod utils;
 pub mod version;
+pub mod error;
 
-// Re-exports of core types for easy access
+// Re-export commonly used items
 pub use client::RabbitMQClient;
-pub use rabbitmq_config::RabbitMQConfig;
 pub use error::MessagingError;
 
-// Additional convenient re-exports based on your modules
-pub use traits::*;
-pub use common::*;
+// Re-exports of core types for easy access
+pub use rabbitmq_config::RabbitMQConfig;
 
 /// Prelude module for convenient imports
 /// 
 /// This module re-exports the most commonly used types and traits.
 /// Import everything with: `use messaging_commands::prelude::*;`
 pub mod prelude {
-    pub use crate::{RabbitMQClient, RabbitMQConfig, MessagingError};
-    pub use crate::traits::*;
-    pub use crate::common::*;
-    pub use crate::protocol::*;
-    pub use crate::utils::*;
+    pub use crate::{RabbitMQClient, MessagingError};
+    pub use rabbitmq_config::RabbitMQConfig;
+    // Note: Commented out modules that are currently empty
+    // pub use crate::traits::*;
+    // pub use crate::common::*;
+    // pub use crate::protocol::*;
+    // pub use crate::utils::*;
 }
 
 // Result type alias for convenience
@@ -57,6 +55,7 @@ pub type Result<T> = std::result::Result<T, MessagingError>;
 
 // Version information
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 
 // Tests module (integration tests should be in tests/ directory)
 #[cfg(test)]

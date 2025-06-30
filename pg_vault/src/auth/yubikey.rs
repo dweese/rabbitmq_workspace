@@ -1,6 +1,6 @@
+// pg_vault/src/auth/yubikey.rs
 //! Real Yubikey hardware token implementation
-//! 
-//! This module provides integration with actual Yubikey hardware tokens
+//! This module provides iegration with actual Yubikey hardware tokens
 //! using the yubico crate for challenge-response authentication.
 
 use super::{AuthConfig, AuthError, AuthResult, TokenInfo, YubikeyAuth};
@@ -13,16 +13,20 @@ use yubico::{Yubico, YubicoError};
 
 /// Real Yubikey device implementation
 pub struct YubikeyDevice {
+    #[allow(dead_code)] // Used conditionally and in future implementation
     config: AuthConfig,
     #[cfg(feature = "hardware-yubikey")]
     device: Arc<Mutex<Option<Yubico>>>,
     #[cfg(not(feature = "hardware-yubikey"))]
     _phantom: std::marker::PhantomData<()>,
     /// Cache device info to avoid repeated queries
+    #[allow(dead_code)] // Used in token_info method
     cached_info: Arc<Mutex<Option<CachedDeviceInfo>>>,
 }
 
+
 #[derive(Debug, Clone)]
+#[allow(dead_code)] // Fields are used in token_info method and future implementation
 struct CachedDeviceInfo {
     serial: Option<String>,
     version: Option<String>,
@@ -31,11 +35,14 @@ struct CachedDeviceInfo {
     last_updated: Instant,
 }
 
+
 impl CachedDeviceInfo {
+    #[allow(dead_code)] // Used for cache expiration in future implementation
     fn is_expired(&self, max_age: Duration) -> bool {
         self.last_updated.elapsed() > max_age
     }
 }
+
 
 impl YubikeyDevice {
     /// Create a new Yubikey device instance

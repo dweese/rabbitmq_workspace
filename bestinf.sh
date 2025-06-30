@@ -1,3 +1,4 @@
+#!/bin/bash
 # /home/dweese/dev/rust/rabbitmq_workspace/bestinf.sh
 # Project structure overview
 tree -I 'target|node_modules|.git' -a

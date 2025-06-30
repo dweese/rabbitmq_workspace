@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use log::{info, error};
+use log::{info};
 
 #[derive(Parser)]
 #[command(name = "messaging_cli")]
@@ -55,7 +55,8 @@ async fn main() {
     let cli = Cli::parse();
     
     match &cli.command {
-        Commands::Connect { protocol, host, port, username, password } => {
+        Commands::Connect { protocol, host, port, username, password: _password }
+        => {
             info!("Connecting to {}://{}:{}", protocol, host, port);
             
             if let Some(user) = username {

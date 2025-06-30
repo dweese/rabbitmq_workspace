@@ -1,3 +1,5 @@
+// pg_vault/src/auth/mod.rs
+
 //! Authentication module for pg_vault
 //! 
 //! Provides hardware token-based authentication for secure PostgreSQL connections.
