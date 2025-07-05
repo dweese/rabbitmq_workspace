@@ -23,7 +23,8 @@ pub mod clients;
 pub mod common;
 pub mod config;
 pub mod protocol;
-pub mod tests;
+// Remove this line to avoid conflict with the #[cfg(test)] module below
+// pub mod tests;
 pub mod traits;
 pub mod utils;
 pub mod version;
@@ -55,7 +56,6 @@ pub type Result<T> = std::result::Result<T, MessagingError>;
 
 // Version information
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-
 
 // Tests module (integration tests should be in tests/ directory)
 #[cfg(test)]
