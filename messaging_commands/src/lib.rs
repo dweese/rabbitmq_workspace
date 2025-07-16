@@ -64,12 +64,13 @@ mod tests {
 
     #[test]
     fn version_is_set() {
+        // Test that VERSION is not empty and has a valid format
         assert!(!VERSION.is_empty());
+        assert!(VERSION.contains('.'));  // Should contain at least one dot (semantic versioning)
     }
 
     #[test]
     fn prelude_imports_work() {
-        use crate::prelude::*;
         // Test that main types are available
         let _version = VERSION;
     }

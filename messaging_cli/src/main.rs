@@ -57,14 +57,14 @@ async fn main() {
     match &cli.command {
         Commands::Connect { protocol, host, port, username, password: _password }
         => {
-            info!("Connecting to {}://{}:{}", protocol, host, port);
+            info!("Connecting to {protocol}://{host}:{port}");
             
             if let Some(user) = username {
-                info!("Using username: {}", user);
+                info!("Using username: {user}");
             }
             
             // TODO: Implement actual connection logic using your messaging_commands crate
-            println!("Would connect to {}://{}:{}", protocol, host, port);
+            println!("Would connect to {protocol}://{host}:{port}");
         }
         Commands::List { resource } => {
             match resource {

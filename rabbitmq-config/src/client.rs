@@ -82,12 +82,12 @@ impl RabbitMQClient {
         let connection = timeout(connection_timeout, connection_future)
             .await
             .map_err(|_| RabbitMQError::TimeoutError("Connection timeout".to_string()))?
-            .map_err(|e| RabbitMQError::ConnectionError(format!("{}", e)))?;
+            .map_err(|e| RabbitMQError::ConnectionError(format!("{e}")))?;
 
         // Create a channel
         let channel = connection.create_channel()
             .await
-            .map_err(|e| RabbitMQError::ChannelError(format!("{}", e)))?;
+            .map_err(|e| RabbitMQError::ChannelError(format!("{e}")))?;
 
         self.connection = Some(connection);
         self.channel = Some(channel);
@@ -102,7 +102,7 @@ impl RabbitMQClient {
         if let Some(connection) = &self.connection {
             connection.close(0, "Closing connection")
                 .await
-                .map_err(|e| RabbitMQError::ConnectionError(format!("Error closing connection: {}", e)))?;
+                .map_err(|e| RabbitMQError::ConnectionError(format!("Error closing connection: {e}")))?;
         }
 
         Ok(())
@@ -147,7 +147,7 @@ impl RabbitMQClient {
             // Declare the queue
             channel.queue_declare(&queue_info.name, options, FieldTable::default())
                 .await
-                .map_err(|e| RabbitMQError::QueueError(format!("Failed to declare queue: {}", e)))?;
+                .map_err(|e| RabbitMQError::QueueError(format!("Failed to declare queue: {e}")))?;
 
             Ok(())
         } else {
@@ -181,7 +181,7 @@ impl RabbitMQClient {
             // Declare the exchange
             channel.exchange_declare(&exchange_info.name, kind, options, FieldTable::default())
                 .await
-                .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to declare exchange: {}", e)))?;
+                .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to declare exchange: {e}")))?;
 
             Ok(())
         } else {
@@ -220,11 +220,11 @@ impl RabbitMQClient {
                 &message.exchange,
                 &message.routing_key,
                 BasicPublishOptions::default(),
-                &payload,
+                payload,
                 properties
             )
                 .await
-                .map_err(|e| RabbitMQError::PublishError(format!("Failed to publish message: {}", e)))?;
+                .map_err(|e| RabbitMQError::PublishError(format!("Failed to publish message: {e}")))?;
 
             Ok(())
         } else {
@@ -234,8 +234,7 @@ impl RabbitMQClient {
 
     /// Binds a queue to an exchange
     pub async fn bind_queue(&self, queue_name: &str, exchange_name: &str, routing_key: &str) -> Result<(), RabbitMQError> {
-        info!("component=RabbitMQClient action=bind_queue queue={} exchange={} routing_key={}", 
-              queue_name, exchange_name, routing_key);
+        info!("component=RabbitMQClient action=bind_queue queue={queue_name} exchange={exchange_name} routing_key={routing_key}");
 
         if let Some(channel) = &self.channel {
             channel.queue_bind(
@@ -246,7 +245,7 @@ impl RabbitMQClient {
                 FieldTable::default()
             )
                 .await
-                .map_err(|e| RabbitMQError::BindingError(format!("Failed to bind queue: {}", e)))?;
+                .map_err(|e| RabbitMQError::BindingError(format!("Failed to bind queue: {e}")))?;
 
             Ok(())
         } else {
@@ -256,7 +255,7 @@ impl RabbitMQClient {
 
     /// Deletes a queue
     pub async fn delete_queue(&self, queue_name: &str) -> Result<(), RabbitMQError> {
-        info!("component=RabbitMQClient action=delete_queue queue={}", queue_name);
+        info!("component=RabbitMQClient action=delete_queue queue={queue_name}");
 
         if let Some(channel) = &self.channel {
             channel.queue_delete(
@@ -264,7 +263,7 @@ impl RabbitMQClient {
                 QueueDeleteOptions::default()
             )
                 .await
-                .map_err(|e| RabbitMQError::QueueError(format!("Failed to delete queue: {}", e)))?;
+                .map_err(|e| RabbitMQError::QueueError(format!("Failed to delete queue: {e}")))?;
 
             Ok(())
         } else {
@@ -274,7 +273,7 @@ impl RabbitMQClient {
 
     /// Deletes an exchange
     pub async fn delete_exchange(&self, exchange_name: &str) -> Result<(), RabbitMQError> {
-        info!("component=RabbitMQClient action=delete_exchange exchange={}", exchange_name);
+        info!("component=RabbitMQClient action=delete_exchange exchange={exchange_name}");
 
         if let Some(channel) = &self.channel {
             channel.exchange_delete(
@@ -282,7 +281,7 @@ impl RabbitMQClient {
                 ExchangeDeleteOptions::default()
             )
                 .await
-                .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to delete exchange: {}", e)))?;
+                .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to delete exchange: {e}")))?;
 
             Ok(())
         } else {
@@ -298,5 +297,3 @@ pub struct Queue {
     pub messages: u32,
     pub consumers: u32,
 }
-
-

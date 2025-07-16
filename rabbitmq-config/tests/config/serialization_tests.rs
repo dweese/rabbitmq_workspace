@@ -1,5 +1,4 @@
 use rabbitmq_config::*;
-use std::path::Path;
 use crate::common::test_utils::create_test_config;
 
 #[test]

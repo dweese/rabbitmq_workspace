@@ -62,7 +62,7 @@ impl RabbitMQExporter {
                                       ex.internal
             ));
         }
-        content.push_str("\n");
+        content.push('\n');  // Changed from content.push_str("\n");
 
         // Header for queues
         content.push_str("# Queues\n");
@@ -79,7 +79,7 @@ impl RabbitMQExporter {
                                       q.messages_unacknowledged.unwrap_or(0)
             ));
         }
-        content.push_str("\n");
+        content.push('\n');  // Changed from content.push_str("\n");
 
         // Header for bindings
         content.push_str("# Bindings\n");

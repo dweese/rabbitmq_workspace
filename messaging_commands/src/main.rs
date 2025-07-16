@@ -1,13 +1,7 @@
 // messaging_commands/src/main.rs
 
 use clap::{Parser, Subcommand};
-use log::{debug, info};
-use env_logger; // Add this import
-
-// Import from the library crate
-use messaging_commands::client::RabbitMQClient;
-use messaging_commands::error::MessagingError;
-use rabbitmq_config::RabbitMQConfig;
+use log::info;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -51,46 +45,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     // CLI command handling logic
-    match cli.command {
-        Commands::Connect { protocol, host, port, username, password } => {
-            info!("Connecting to {}://{}:{}", protocol, host, port);
-            debug!("Username: {:?}, Password: {}", 
-                   username, 
-                   if password.is_some() { "[REDACTED]" } else { "None" });
-
-            // Only handle AMQP protocol for now
-            if protocol.to_lowercase() != "amqp" {
-                eprintln!("Error: Only AMQP protocol is supported currently");
-                return Ok(());
+    match &cli.command {
+        Commands::Connect { protocol, host, port, username, password: _password }
+        => {
+            info!("Connecting to {protocol}://{host}:{port}");
+            
+            if let Some(user) = username {
+                info!("Using username: {user}");
             }
-
-            // Use tokio runtime for async operations
-            let rt = tokio::runtime::Runtime::new()?;
-
-            // Create RabbitMQ config
-            let config = RabbitMQConfig {
-                host,
-                port,
-                username: username.unwrap_or_else(|| "guest".to_string()),
-                password: password.unwrap_or_else(|| "guest".to_string()),
-                vhost: "/".to_string(),
-            };
-
-            // Try to connect
-            let result = rt.block_on(async {
-                let client = RabbitMQClient::new(config).await?;
-                println!("Successfully connected to RabbitMQ!");
-
-                // Close the connection
-                client.close().await?;
-                println!("Connection closed");
-
-                Ok::<_, MessagingError>(())
-            });
-
-            if let Err(err) = result {
-                eprintln!("Error: {}", err);
-            }
+            
+            // TODO: Implement actual connection logic using your messaging_commands crate
+            println!("Would connect to {protocol}://{host}:{port}");
         },
         // Other command handlers
     }

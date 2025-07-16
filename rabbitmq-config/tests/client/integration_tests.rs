@@ -1,4 +1,4 @@
-use rabbitmq_config::*;
+
 
 #[test]
 #[ignore] // This test is ignored as it requires a real RabbitMQ server

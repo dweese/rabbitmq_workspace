@@ -36,29 +36,4 @@ pub trait TopologyDataSource {
     fn get_bindings(&self) -> Vec<Binding>;
 }
 
-// Add these to your topology.rs file or create a new message.rs file
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MessageProperties {
-    pub content_type: Option<String>,
-    pub content_encoding: Option<String>,
-    pub delivery_mode: Option<u8>,
-}
-
-impl Default for MessageProperties {
-    fn default() -> Self {
-        Self {
-            content_type: None,
-            content_encoding: None,
-            delivery_mode: Some(1), // Non-persistent by default
-        }
-    }
-}
-
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct RabbitMQMessage {
-//     pub exchange: String,
-//     pub routing_key: String,
-//     pub payload: String,
-//     pub properties: Option<MessageProperties>,
-// }
+// Remove the duplicate MessageProperties - it belongs in models.rs

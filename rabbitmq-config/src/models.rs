@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 
 // Message-related models (already in your code)
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct MessageProperties {
     pub content_type: Option<String>,
     pub content_encoding: Option<String>,
@@ -18,23 +18,24 @@ pub struct MessageProperties {
     pub app_id: Option<String>,
 }
 
-impl Default for MessageProperties {
-    fn default() -> Self {
-        Self {
-            content_type: None,
-            content_encoding: None,
-            delivery_mode: None,
-            priority: None,
-            correlation_id: None,
-            reply_to: None,
-            expiration: None,
-            message_id: None,
-            timestamp: None,
-            user_id: None,
-            app_id: None,
-        }
-    }
-}
+// Remove this entire impl block - it's now handled by #[derive(Default)]
+// impl Default for MessageProperties {
+//     fn default() -> Self {
+//         Self {
+//             content_type: None,
+//             content_encoding: None,
+//             delivery_mode: None,
+//             priority: None,
+//             correlation_id: None,
+//             reply_to: None,
+//             expiration: None,
+//             message_id: None,
+//             timestamp: None,
+//             user_id: None,
+//             app_id: None,
+//         }
+//     }
+// }
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,4 +1,3 @@
-## AI Assistant
 # 🏗️ **RabbitMQ Workspace - Enterprise Messaging & Security Infrastructure**
 
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
@@ -272,6 +271,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ and 🦀 by the RabbitMQ Workspace team**
+**Built with ❤️ and 🦀 by Dan Weese and Claude 40**
 
 *Secure infrastructure tooling for the modern enterprise*
+ 

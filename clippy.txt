@@ -1,0 +1,802 @@
+warning: this expression always evaluates to false
+  --> messaging_commands/src/lib.rs:68:18
+   |
+68 |         assert!(!VERSION.is_empty());
+   |                  ^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#const_is_empty
+   = note: `#[warn(clippy::const_is_empty)]` on by default
+
+warning: unused import: `crate::common::test_utils::create_test_config`
+ --> rabbitmq-config/tests/config/serialization_tests.rs:2:5
+  |
+2 | use crate::common::test_utils::create_test_config;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `std::collections::HashMap`
+ --> rabbitmq-config/tests/config/validation_tests.rs:2:5
+  |
+2 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> rabbitmq-config/tests/common/test_utils.rs:4:5
+  |
+4 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variables can be used directly in the `format!` string
+  --> rabbitmq-config/tests/client/unit_tests.rs:34:21
+   |
+34 |     let debug_str = format!("{:?}", err);
+   |                     ^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+   = note: `#[warn(clippy::uninlined_format_args)]` on by default
+help: change this to
+   |
+34 -     let debug_str = format!("{:?}", err);
+34 +     let debug_str = format!("{err:?}");
+   |
+
+warning: `assert!(true)` will be optimized out by the compiler
+ --> rabbitmq-config/tests/client/integration_tests.rs:7:5
+  |
+7 |     assert!(true);
+  |     ^^^^^^^^^^^^^
+  |
+  = help: remove it
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assertions_on_constants
+  = note: `#[warn(clippy::assertions_on_constants)]` on by default
+
+warning: `assert!(true)` will be optimized out by the compiler
+  --> rabbitmq-config/tests/client/integration_tests.rs:15:5
+   |
+15 |     assert!(true);
+   |     ^^^^^^^^^^^^^
+   |
+   = help: remove it
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assertions_on_constants
+
+warning: `assert!(true)` will be optimized out by the compiler
+ --> rabbitmq-config/tests/client/mocked_tests.rs:8:5
+  |
+8 |     assert!(true);
+  |     ^^^^^^^^^^^^^
+  |
+  = help: remove it
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assertions_on_constants
+
+warning: field assignment outside of initializer for an instance created with Default::default()
+ --> rabbitmq-config/tests/config/validation_tests.rs:8:5
+  |
+8 |     config.host = "".to_string();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+note: consider initializing the variable with `rabbitmq_config::RabbitMQConfig { host: "".to_string(), ..Default::default() }` and removing relevant reassignments
+ --> rabbitmq-config/tests/config/validation_tests.rs:7:5
+  |
+7 |     let mut config = RabbitMQConfig::default();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#field_reassign_with_default
+  = note: `#[warn(clippy::field_reassign_with_default)]` on by default
+
+warning: variables can be used directly in the `format!` string
+  --> rabbitmq-config/tests/common/test_utils.rs:30:37
+   |
+30 |     let config_path = test_dir.join(format!("temp_config_{}.json", timestamp));
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+   |
+30 -     let config_path = test_dir.join(format!("temp_config_{}.json", timestamp));
+30 +     let config_path = test_dir.join(format!("temp_config_{timestamp}.json"));
+   |
+
+warning: `messaging_commands` (lib test) generated 1 warning
+warning: `rabbitmq-config` (test "lib") generated 9 warnings (run `cargo clippy --fix --test "lib"` to apply 5 suggestions)
+warning: this block may be rewritten with the `?` operator
+   --> egui-components/src/event_tree.rs:116:9
+    |
+116 | /         if node_data.is_none() {
+117 | |             return None;
+118 | |         }
+    | |_________^ help: replace it with: `node_data.as_ref()?;`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#question_mark
+    = note: `#[warn(clippy::question_mark)]` on by default
+
+warning: this `map_or` can be simplified
+   --> egui-components/src/event_tree.rs:121:27
+    |
+121 |         let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unnecessary_map_or
+    = note: `#[warn(clippy::unnecessary_map_or)]` on by default
+help: use a standard comparison instead
+    |
+121 -         let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+121 +         let is_selected = self.selected_node.as_ref() == Some(id);
+    |
+
+warning: you should consider adding a `Default` implementation for `Tree<ID>`
+  --> egui-components/src/tree.rs:41:5
+   |
+41 | /     pub fn new() -> Self {
+42 | |         Self {
+43 | |             nodes: HashMap::new(),
+44 | |             states: HashMap::new(),
+...  |
+48 | |     }
+   | |_____^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#new_without_default
+   = note: `#[warn(clippy::new_without_default)]` on by default
+help: try adding this
+   |
+40 + impl<ID: Clone + Eq + Hash + Debug> Default for Tree<ID> {
+41 +     fn default() -> Self {
+42 +         Self::new()
+43 +     }
+44 + }
+   |
+
+warning: this `map_or` can be simplified
+   --> egui-components/src/tree.rs:106:35
+    |
+106 |                 let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unnecessary_map_or
+help: use a standard comparison instead
+    |
+106 -                 let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+106 +                 let is_selected = self.selected_node.as_ref() == Some(id);
+    |
+
+warning: you should consider adding a `Default` implementation for `TopologyVisualizer`
+  --> egui-components/src/tree_vis/topology.rs:50:5
+   |
+50 | /     pub fn new() -> Self {
+51 | |         Self {
+52 | |             tree: EventTree::new("topology_tree".to_string()),
+53 | |             nodes: HashMap::new(),
+...  |
+56 | |     }
+   | |_____^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#new_without_default
+help: try adding this
+   |
+49 + impl Default for TopologyVisualizer {
+50 +     fn default() -> Self {
+51 +         Self::new()
+52 +     }
+53 + }
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> egui-components/src/tree_vis/topology.rs:76:44
+   |
+76 |         let exchange_id = TreeNodeId { id: format!("exchange:{}", name) };
+   |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+   = note: `#[warn(clippy::uninlined_format_args)]` on by default
+help: change this to
+   |
+76 -         let exchange_id = TreeNodeId { id: format!("exchange:{}", name) };
+76 +         let exchange_id = TreeNodeId { id: format!("exchange:{name}") };
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> egui-components/src/tree_vis/topology.rs:97:41
+   |
+97 |         let queue_id = TreeNodeId { id: format!("queue:{}", name) };
+   |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+   |
+97 -         let queue_id = TreeNodeId { id: format!("queue:{}", name) };
+97 +         let queue_id = TreeNodeId { id: format!("queue:{name}") };
+   |
+
+warning: `egui-components` (lib) generated 7 warnings (run `cargo clippy --fix --lib -p egui-components` to apply 7 suggestions)
+warning: `egui-components` (lib test) generated 7 warnings (7 duplicates)
+    Checking pg_vault v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/pg_vault)
+warning: this `impl` can be derived
+  --> rabbitmq-ui/src/app.rs:36:1
+   |
+36 | / impl Default for TreeState {
+37 | |     fn default() -> Self {
+38 | |         Self {
+39 | |             queue_tree_nodes: HashMap::new(),
+...  |
+44 | | }
+   | |_^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#derivable_impls
+   = note: `#[warn(clippy::derivable_impls)]` on by default
+help: replace the manual implementation with a derive attribute
+   |
+26 + #[derive(Default)]
+27 ~ pub struct TreeState {
+   |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:130:39
+    |
+130 |                 self.status_message = format!("Connection failed: {:?}", err);
+    |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+    = note: `#[warn(clippy::uninlined_format_args)]` on by default
+help: change this to
+    |
+130 -                 self.status_message = format!("Connection failed: {:?}", err);
+130 +                 self.status_message = format!("Connection failed: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:150:43
+    |
+150 |                     self.status_message = format!("Error during disconnect: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+150 -                     self.status_message = format!("Error during disconnect: {:?}", err);
+150 +                     self.status_message = format!("Error during disconnect: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:177:43
+    |
+177 |                     self.status_message = format!("Failed to fetch queues: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+177 -                     self.status_message = format!("Failed to fetch queues: {:?}", err);
+177 +                     self.status_message = format!("Failed to fetch queues: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:196:47
+    |
+196 |                         self.status_message = format!("Failed to fetch exchanges: {:?}", err);
+    |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+196 -                         self.status_message = format!("Failed to fetch exchanges: {:?}", err);
+196 +                         self.status_message = format!("Failed to fetch exchanges: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:219:43
+    |
+219 |                     self.status_message = format!("Failed to publish message: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+219 -                     self.status_message = format!("Failed to publish message: {:?}", err);
+219 +                     self.status_message = format!("Failed to publish message: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:242:43
+    |
+242 |                     self.status_message = format!("Queue '{}' created successfully", queue_name);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+242 -                     self.status_message = format!("Queue '{}' created successfully", queue_name);
+242 +                     self.status_message = format!("Queue '{queue_name}' created successfully");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:250:43
+    |
+250 |                     self.status_message = format!("Failed to create queue: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+250 -                     self.status_message = format!("Failed to create queue: {:?}", err);
+250 +                     self.status_message = format!("Failed to create queue: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:273:43
+    |
+273 |                     self.status_message = format!("Exchange '{}' created successfully", exchange_name);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+273 -                     self.status_message = format!("Exchange '{}' created successfully", exchange_name);
+273 +                     self.status_message = format!("Exchange '{exchange_name}' created successfully");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:281:43
+    |
+281 |                     self.status_message = format!("Failed to create exchange: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+281 -                     self.status_message = format!("Failed to create exchange: {:?}", err);
+281 +                     self.status_message = format!("Failed to create exchange: {err:?}");
+    |
+
+warning: this `impl` can be derived
+   --> rabbitmq-ui/src/app.rs:295:1
+    |
+295 | / impl Default for App {
+296 | |     fn default() -> Self {
+297 | |         Self {
+298 | |             state: AppState::default(),
+...   |
+301 | | }
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#derivable_impls
+help: replace the manual implementation with a derive attribute
+    |
+291 + #[derive(Default)]
+292 ~ pub struct App {
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:419:57
+    |
+419 | ...                   self.state.status_message = format!("Selected queue: {}", queue);
+    |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+419 -                             self.state.status_message = format!("Selected queue: {}", queue);
+419 +                             self.state.status_message = format!("Selected queue: {queue}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/app.rs:429:57
+    |
+429 | ...                   self.state.status_message = format!("Selected exchange: {}", exchange);
+    |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+429 -                             self.state.status_message = format!("Selected exchange: {}", exchange);
+429 +                             self.state.status_message = format!("Selected exchange: {exchange}");
+    |
+
+warning: this `impl` can be derived
+  --> rabbitmq-ui/src/main.rs:41:1
+   |
+41 | / impl Default for TreeState {
+42 | |     fn default() -> Self {
+43 | |         Self {
+44 | |             queue_tree_nodes: HashMap::new(),
+...  |
+49 | | }
+   | |_^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#derivable_impls
+help: replace the manual implementation with a derive attribute
+   |
+32 + #[derive(Default)]
+33 ~ pub struct TreeState {
+   |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:132:39
+    |
+132 |                 self.status_message = format!("Connection failed: {:?}", err);
+    |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+132 -                 self.status_message = format!("Connection failed: {:?}", err);
+132 +                 self.status_message = format!("Connection failed: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:152:43
+    |
+152 |                     self.status_message = format!("Error during disconnect: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+152 -                     self.status_message = format!("Error during disconnect: {:?}", err);
+152 +                     self.status_message = format!("Error during disconnect: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:180:43
+    |
+180 |                     self.status_message = format!("Failed to fetch queues: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+180 -                     self.status_message = format!("Failed to fetch queues: {:?}", err);
+180 +                     self.status_message = format!("Failed to fetch queues: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:199:47
+    |
+199 |                         self.status_message = format!("Failed to fetch exchanges: {:?}", err);
+    |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+199 -                         self.status_message = format!("Failed to fetch exchanges: {:?}", err);
+199 +                         self.status_message = format!("Failed to fetch exchanges: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:223:43
+    |
+223 |                     self.status_message = format!("Failed to publish message: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+223 -                     self.status_message = format!("Failed to publish message: {:?}", err);
+223 +                     self.status_message = format!("Failed to publish message: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:246:43
+    |
+246 |                     self.status_message = format!("Queue '{}' created successfully", queue_name);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+246 -                     self.status_message = format!("Queue '{}' created successfully", queue_name);
+246 +                     self.status_message = format!("Queue '{queue_name}' created successfully");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:252:43
+    |
+252 |                     self.status_message = format!("Failed to create queue: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+252 -                     self.status_message = format!("Failed to create queue: {:?}", err);
+252 +                     self.status_message = format!("Failed to create queue: {err:?}");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:275:43
+    |
+275 |                     self.status_message = format!("Exchange '{}' created successfully", exchange_name);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+275 -                     self.status_message = format!("Exchange '{}' created successfully", exchange_name);
+275 +                     self.status_message = format!("Exchange '{exchange_name}' created successfully");
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> rabbitmq-ui/src/main.rs:281:43
+    |
+281 |                     self.status_message = format!("Failed to create exchange: {:?}", err);
+    |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+281 -                     self.status_message = format!("Failed to create exchange: {:?}", err);
+281 +                     self.status_message = format!("Failed to create exchange: {err:?}");
+    |
+
+warning: this `impl` can be derived
+   --> rabbitmq-ui/src/main.rs:295:1
+    |
+295 | / impl Default for App {
+296 | |     fn default() -> Self {
+297 | |         Self {
+298 | |             state: AppState::default(),
+...   |
+301 | | }
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#derivable_impls
+help: replace the manual implementation with a derive attribute
+    |
+291 + #[derive(Default)]
+292 ~ pub struct App {
+    |
+
+warning: you are using an explicit closure for cloning elements
+   --> rabbitmq-ui/src/main.rs:357:53
+    |
+357 |                       let owned_queues: Vec<String> = self.state.available_queues
+    |  _____________________________________________________^
+358 | |                         .iter()
+359 | |                         .map(|s| s.clone())
+    | |___________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#map_clone
+    = note: `#[warn(clippy::map_clone)]` on by default
+help: consider calling the dedicated `cloned` method
+    |
+357 ~                     let owned_queues: Vec<String> = self.state.available_queues
+358 +                         .iter().cloned()
+    |
+
+warning: you are using an explicit closure for cloning elements
+   --> rabbitmq-ui/src/main.rs:362:56
+    |
+362 |                       let owned_exchanges: Vec<String> = self.state.available_exchanges
+    |  ________________________________________________________^
+363 | |                         .iter()
+364 | |                         .map(|s| s.clone())
+    | |___________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#map_clone
+help: consider calling the dedicated `cloned` method
+    |
+362 ~                     let owned_exchanges: Vec<String> = self.state.available_exchanges
+363 +                         .iter().cloned()
+    |
+
+warning: this `impl` can be derived
+  --> yak_json/src/main.rs:36:1
+   |
+36 | / impl Default for JsonState {
+37 | |     fn default() -> Self {
+38 | |         Self {
+39 | |             tree_nodes: HashMap::new(),
+...  |
+45 | | }
+   | |_^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#derivable_impls
+   = note: `#[warn(clippy::derivable_impls)]` on by default
+help: replace the manual implementation with a derive attribute
+   |
+17 + #[derive(Default)]
+18 ~ pub struct JsonState {
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> yak_json/src/main.rs:83:25
+   |
+83 |                         println!("Successfully loaded JSON file: {:?}", path);  // Changed from log
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+   = note: `#[warn(clippy::uninlined_format_args)]` on by default
+help: change this to
+   |
+83 -                         println!("Successfully loaded JSON file: {:?}", path);  // Changed from log
+83 +                         println!("Successfully loaded JSON file: {path:?}");  // Changed from log
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> yak_json/src/main.rs:86:47
+   |
+86 |                         self.status_message = format!("JSON parse error: {}", e);
+   |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+   |
+86 -                         self.status_message = format!("JSON parse error: {}", e);
+86 +                         self.status_message = format!("JSON parse error: {e}");
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> yak_json/src/main.rs:87:25
+   |
+87 |                         eprintln!("JSON parse error: {}", e);  // Changed from log
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+   |
+87 -                         eprintln!("JSON parse error: {}", e);  // Changed from log
+87 +                         eprintln!("JSON parse error: {e}");  // Changed from log
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> yak_json/src/main.rs:92:39
+   |
+92 |                 self.status_message = format!("File read error: {}", e);
+   |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+   |
+92 -                 self.status_message = format!("File read error: {}", e);
+92 +                 self.status_message = format!("File read error: {e}");
+   |
+
+warning: variables can be used directly in the `format!` string
+  --> yak_json/src/main.rs:93:17
+   |
+93 |                 eprintln!("File read error: {}", e);  // Changed from log
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+   |
+93 -                 eprintln!("File read error: {}", e);  // Changed from log
+93 +                 eprintln!("File read error: {e}");  // Changed from log
+   |
+
+warning: variables can be used directly in the `format!` string
+   --> yak_json/src/main.rs:127:25
+    |
+127 |                         format!("{}.{}", path, key) 
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+127 -                         format!("{}.{}", path, key) 
+127 +                         format!("{path}.{key}") 
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> yak_json/src/main.rs:145:52
+    |
+145 |                     let child_id = parent_id.child(format!("array_{}", idx));  // Use the child() method
+    |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+145 -                     let child_id = parent_id.child(format!("array_{}", idx));  // Use the child() method
+145 +                     let child_id = parent_id.child(format!("array_{idx}"));  // Use the child() method
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> yak_json/src/main.rs:147:25
+    |
+147 |                         format!("[{}]", idx) 
+    |                         ^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+147 -                         format!("[{}]", idx) 
+147 +                         format!("[{idx}]") 
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> yak_json/src/main.rs:149:25
+    |
+149 |                         format!("{}[{}]", path, idx) 
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+149 -                         format!("{}[{}]", path, idx) 
+149 +                         format!("{path}[{idx}]") 
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> yak_json/src/main.rs:153:30
+    |
+153 |                         key: format!("[{}]", idx),
+    |                              ^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+153 -                         key: format!("[{}]", idx),
+153 +                         key: format!("[{idx}]"),
+    |
+
+warning: variables can be used directly in the `format!` string
+   --> yak_json/src/main.rs:193:21
+    |
+193 |                     format!("\"{}\"", s)
+    |                     ^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
+help: change this to
+    |
+193 -                     format!("\"{}\"", s)
+193 +                     format!("\"{s}\"")
+    |
+
+warning: you seem to want to iterate on a map's values
+   --> yak_json/src/main.rs:272:48
+    |
+272 | ...                   for (_id, data) in &self.state.json_state.tree_nodes {  // Fixed: prefix with underscore
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#for_kv_map
+    = note: `#[warn(clippy::for_kv_map)]` on by default
+help: use the corresponding method
+    |
+272 -                             for (_id, data) in &self.state.json_state.tree_nodes {  // Fixed: prefix with underscore
+272 +                             for data in self.state.json_state.tree_nodes.values() {  // Fixed: prefix with underscore
+    |
+
+warning: `rabbitmq-ui` (bin "rabbitmq-ui" test) generated 26 warnings (run `cargo clippy --fix --bin "rabbitmq-ui" --tests` to apply 26 suggestions)
+warning: `yak_json` (bin "yak_json") generated 13 warnings (run `cargo clippy --fix --bin "yak_json"` to apply 13 suggestions)
+warning: `yak_json` (bin "yak_json" test) generated 13 warnings (13 duplicates)
+warning: `rabbitmq-ui` (bin "rabbitmq-ui") generated 26 warnings (26 duplicates)
+error[E0432]: unresolved import `yubico::Yubico`
+  --> pg_vault/src/auth/yubikey.rs:12:14
+   |
+12 | use yubico::{Yubico, YubicoError};
+   |              ^^^^^^ no `Yubico` in the root
+
+error[E0433]: failed to resolve: could not find `Slot` in `yubico`
+   --> pg_vault/src/auth/yubikey.rs:178:68
+    |
+178 |             yubico.challenge_response_hmac(&challenge_buf, yubico::Slot::Slot2)
+    |                                                                    ^^^^ could not find `Slot` in `yubico`
+    |
+help: consider importing this enum
+    |
+6   + use yubico::config::Slot;
+    |
+help: if you import `Slot`, refer to it directly
+    |
+178 -             yubico.challenge_response_hmac(&challenge_buf, yubico::Slot::Slot2)
+178 +             yubico.challenge_response_hmac(&challenge_buf, Slot::Slot2)
+    |
+
+error[E0603]: enum `YubicoError` is private
+  --> pg_vault/src/auth/yubikey.rs:12:22
+   |
+12 | use yubico::{Yubico, YubicoError};
+   |                      ^^^^^^^^^^^ private enum
+   |
+note: the enum `YubicoError` is defined here
+  --> /home/dweese/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/yubico-0.11.0/src/lib.rs:15:5
+   |
+15 | use yubicoerror::YubicoError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+help: import `YubicoError` directly
+   |
+12 | use yubico::{Yubico, yubico::yubicoerror::YubicoError};
+   |                      +++++++++++++++++++++
+
+Some errors have detailed explanations: E0432, E0433, E0603.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `pg_vault` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `pg_vault` (lib test) due to 3 previous errors
