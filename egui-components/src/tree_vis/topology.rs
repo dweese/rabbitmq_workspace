@@ -46,6 +46,12 @@ pub struct TopologyVisualizer {
     selected_node: Option<TreeNodeId>,
 }
 
+impl Default for TopologyVisualizer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TopologyVisualizer {
     pub fn new() -> Self {
         Self {
@@ -73,7 +79,7 @@ impl TopologyVisualizer {
     // Add allow(dead_code) to methods that are defined but not yet used
     #[allow(dead_code)]
     fn add_exchange(&mut self, vhost_id: TreeNodeId, name: &str, ex_type: &str) -> TreeNodeId {
-        let exchange_id = TreeNodeId { id: format!("exchange:{}", name) };
+        let exchange_id = TreeNodeId { id: format!("exchange:{name}") };
 
         // Create a topology node
         let node = TopologyNode {
@@ -94,7 +100,7 @@ impl TopologyVisualizer {
 
     #[allow(dead_code)]
     fn add_queue(&mut self, vhost_id: TreeNodeId, name: &str) -> TreeNodeId {
-        let queue_id = TreeNodeId { id: format!("queue:{}", name) };
+        let queue_id = TreeNodeId { id: format!("queue:{name}") };
 
         // Create a topology node
         let node = TopologyNode {

@@ -1,5 +1,4 @@
 use rabbitmq_config::*;
-use crate::common::test_utils::create_test_config;
 
 #[test]
 fn test_basic_config_serialization() {

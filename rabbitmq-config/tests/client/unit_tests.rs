@@ -31,7 +31,7 @@ fn test_rabbitmq_config_to_uri() {
 fn test_rabbitmq_error_debug() {
     // Test that RabbitMQError can be formatted for debugging
     let err = RabbitMQError::ConfigError("Test error".to_string());
-    let debug_str = format!("{:?}", err);
+    let debug_str = format!("{err:?}");
     assert!(debug_str.contains("ConfigError"));
     assert!(debug_str.contains("Test error"));
 }

@@ -113,12 +113,10 @@ impl<ID: Clone + Eq + Hash + Debug> EventTree<ID> {
             }
         });
 
-        if node_data.is_none() {
-            return None;
-        }
+        node_data.as_ref()?;
 
         let node_data = node_data.unwrap();
-        let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+        let is_selected = self.selected_node.as_ref() == Some(id);
 
         // Handle UI and events
         let mut event = None;

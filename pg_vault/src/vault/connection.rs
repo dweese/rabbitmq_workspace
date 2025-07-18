@@ -138,7 +138,7 @@ impl ConnectionMetrics {
         self.total_execution_time += execution_time;
         self.avg_execution_time = self.total_execution_time / self.total_queries as u32;
         
-        let type_key = format!("{:?}", query_type);
+        let type_key = format!("{query_type:?}");
         *self.queries_by_type.entry(type_key).or_insert(0) += 1;
         
         self.last_query_time = Some(SystemTime::now());
@@ -434,10 +434,7 @@ impl Connection {
     /// Check if the connection is still valid
     pub async fn is_valid(&self) -> bool {
         // Try to execute a simple query
-        match self.client.query("SELECT 1", &[]).await {
-            Ok(_) => true,
-            Err(_) => false,
-        }
+        (self.client.query("SELECT 1", &[]).await).is_ok()
     }
     
     /// Get database version

@@ -23,6 +23,7 @@ pub enum UiAction {
 }
 
 // Application state that contains all data nee ded by the UI
+#[derive(Default)]
 pub struct TreeState {
     #[allow(dead_code)]
     queue_tree_nodes: HashMap<TreeNodeId, String>,
@@ -33,15 +34,6 @@ pub struct TreeState {
 }
 
 // Add this to your app.rs file where TreeState is defined
-impl Default for TreeState {
-    fn default() -> Self {
-        Self {
-            queue_tree_nodes: HashMap::new(),
-            queue_children: HashMap::new(),
-            selected_queue: None,
-        }
-    }
-}
 
 
 pub struct AppState {
@@ -127,7 +119,7 @@ impl AppState {
                 self.refresh_queues_and_exchanges();
             },
             Err(err) => {
-                self.status_message = format!("Connection failed: {:?}", err);
+                self.status_message = format!("Connection failed: {err:?}");
             }
         }
     }
@@ -147,7 +139,7 @@ impl AppState {
                     self.status_message = "Disconnected from RabbitMQ".to_string();
                 },
                 Err(err) => {
-                    self.status_message = format!("Error during disconnect: {:?}", err);
+                    self.status_message = format!("Error during disconnect: {err:?}");
                 }
             }
         }
@@ -174,7 +166,7 @@ impl AppState {
                     self.available_queues = queues;
                 },
                 Err(err) => {
-                    self.status_message = format!("Failed to fetch queues: {:?}", err);
+                    self.status_message = format!("Failed to fetch queues: {err:?}");
                 }
             }
 
@@ -193,7 +185,7 @@ impl AppState {
                         self.available_exchanges = exchanges;
                     },
                     Err(err) => {
-                        self.status_message = format!("Failed to fetch exchanges: {:?}", err);
+                        self.status_message = format!("Failed to fetch exchanges: {err:?}");
                     }
                 }
             }
@@ -216,7 +208,7 @@ impl AppState {
                     self.status_message = "Message published successfully".to_string();
                 },
                 Err(err) => {
-                    self.status_message = format!("Failed to publish message: {:?}", err);
+                    self.status_message = format!("Failed to publish message: {err:?}");
                 }
             }
         } else {
@@ -239,7 +231,7 @@ impl AppState {
 
             match runtime.block_on(queue_future) {
                 Ok(_) => {
-                    self.status_message = format!("Queue '{}' created successfully", queue_name);
+                    self.status_message = format!("Queue '{queue_name}' created successfully");
                     // Reset form and hide dialog
                     self.new_queue.name = "".to_string();
                     self.show_queue_dialog = false;
@@ -247,7 +239,7 @@ impl AppState {
                     self.refresh_queues_and_exchanges();
                 },
                 Err(err) => {
-                    self.status_message = format!("Failed to create queue: {:?}", err);
+                    self.status_message = format!("Failed to create queue: {err:?}");
                 }
             }
         } else {
@@ -270,7 +262,7 @@ impl AppState {
 
             match runtime.block_on(exchange_future) {
                 Ok(_) => {
-                    self.status_message = format!("Exchange '{}' created successfully", exchange_name);
+                    self.status_message = format!("Exchange '{exchange_name}' created successfully");
                     // Reset form and hide dialog
                     self.new_exchange.name = "".to_string();
                     self.show_exchange_dialog = false;
@@ -278,7 +270,7 @@ impl AppState {
                     self.refresh_queues_and_exchanges();
                 },
                 Err(err) => {
-                    self.status_message = format!("Failed to create exchange: {:?}", err);
+                    self.status_message = format!("Failed to create exchange: {err:?}");
                 }
             }
         } else {
@@ -288,17 +280,11 @@ impl AppState {
 }
 
 // The main App struct
+#[derive(Default)]
 pub struct App {
     state: AppState,
 }
 
-impl Default for App {
-    fn default() -> Self {
-        Self {
-            state: AppState::default(),
-        }
-    }
-}
 
 impl eframe::App for App {
 
@@ -416,7 +402,7 @@ impl eframe::App for App {
 
                     for queue in &self.state.available_queues {
                         if ui.selectable_label(false, queue).clicked() {
-                            self.state.status_message = format!("Selected queue: {}", queue);
+                            self.state.status_message = format!("Selected queue: {queue}");
                         }
                     }
 
@@ -426,7 +412,7 @@ impl eframe::App for App {
 
                     for exchange in &self.state.available_exchanges {
                         if ui.selectable_label(false, exchange).clicked() {
-                            self.state.status_message = format!("Selected exchange: {}", exchange);
+                            self.state.status_message = format!("Selected exchange: {exchange}");
                         }
                     }
 

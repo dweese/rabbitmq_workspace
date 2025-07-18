@@ -1,5 +1,4 @@
 use rabbitmq_config::*;
-use std::collections::HashMap;
 
 #[test]
 fn test_empty_fields() {

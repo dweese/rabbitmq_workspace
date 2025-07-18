@@ -37,6 +37,12 @@ struct NodeDisplayData<ID: Clone + Eq + Hash + Debug> {
     label: String,
 }
 
+impl<ID: Clone + Eq + Hash + Debug> Default for Tree<ID> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<ID: Clone + Eq + Hash + Debug> Tree<ID> {
     pub fn new() -> Self {
         Self {
@@ -103,7 +109,7 @@ impl<ID: Clone + Eq + Hash + Debug> Tree<ID> {
                     children: node.children.clone(),
                 };
                 let state_expanded = state.expanded;
-                let is_selected = self.selected_node.as_ref().map_or(false, |sel_id| sel_id == id);
+                let is_selected = self.selected_node.as_ref() == Some(id);
                 (Some(node_data), state_expanded, is_selected)
             },
             _ => (None, false, false),

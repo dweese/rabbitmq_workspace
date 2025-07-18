@@ -4,7 +4,6 @@
 
 use messaging_commands::prelude::*;
 use clap::{Parser, Subcommand};
-use env_logger;
 use log::info;
 
 #[derive(Parser)]
@@ -82,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     client.close().await?;
                 }
                 Err(e) => {
-                    println!("❌ Connection failed: {}", e);
+                    println!("❌ Connection failed: {e}");
                     return Err(e.into());
                 }
             }
@@ -97,8 +96,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             // Here you would implement message sending logic
             // using the client.channel()
             
-            println!("📨 Message sent to exchange '{}' with routing key '{}'", exchange, routing_key);
-            println!("Message: {}", message);
+            println!("📨 Message sent to exchange '{exchange}' with routing key '{routing_key}'");
+            println!("Message: {message}");
             
             client.close().await?;
         }

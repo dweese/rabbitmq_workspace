@@ -1,7 +1,6 @@
 // rabbitmq-config/tests/common/test_utils.rs
 
 use rabbitmq_config::*;
-use std::collections::HashMap;
 use std::path::Path;
 
 /// Creates a standard test configuration for RabbitMQ connections
@@ -27,7 +26,7 @@ pub fn save_config_to_temp(config: &RabbitMQConfig) -> std::path::PathBuf {
         .expect("Time went backwards")
         .as_secs();
 
-    let config_path = test_dir.join(format!("temp_config_{}.json", timestamp));
+    let config_path = test_dir.join(format!("temp_config_{timestamp}.json"));
 
     // Save the configuration
     let file = std::fs::File::create(&config_path).expect("Failed to create config file");

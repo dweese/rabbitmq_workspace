@@ -14,6 +14,7 @@ pub enum JsonAction {
     SaveExpandedState,
 }
 
+#[derive(Default)]
 pub struct JsonState {
     tree_nodes: HashMap<TreeNodeId, JsonNodeData>,
     tree_children: HashMap<TreeNodeId, Vec<TreeNodeId>>,
@@ -33,16 +34,6 @@ pub struct JsonNodeData {
     pub path: String,
 }
 
-impl Default for JsonState {
-    fn default() -> Self {
-        Self {
-            tree_nodes: HashMap::new(),
-            tree_children: HashMap::new(),
-            selected_node: None,
-            expanded_nodes: std::collections::HashSet::new(),
-        }
-    }
-}
 
 pub struct AppState {
     json_content: Option<Value>,
@@ -80,17 +71,17 @@ impl AppState {
                         self.file_path = Some(path.clone());
                         self.status_message = format!("Loaded: {:?}", path.file_name().unwrap_or_default());
                         self.build_tree_from_json(&json);
-                        println!("Successfully loaded JSON file: {:?}", path);  // Changed from log
+                        println!("Successfully loaded JSON file: {path:?}");  // Changed from log
                     }
                     Err(e) => {
-                        self.status_message = format!("JSON parse error: {}", e);
-                        eprintln!("JSON parse error: {}", e);  // Changed from log
+                        self.status_message = format!("JSON parse error: {e}");
+                        eprintln!("JSON parse error: {e}");  // Changed from log
                     }
                 }
             }
             Err(e) => {
-                self.status_message = format!("File read error: {}", e);
-                eprintln!("File read error: {}", e);  // Changed from log
+                self.status_message = format!("File read error: {e}");
+                eprintln!("File read error: {e}");  // Changed from log
             }
         }
     }
@@ -124,7 +115,7 @@ impl AppState {
                     let child_path = if path.is_empty() { 
                         key.clone() 
                     } else { 
-                        format!("{}.{}", path, key) 
+                        format!("{path}.{key}") 
                     };
                     
                     let child_data = JsonNodeData {
@@ -142,15 +133,15 @@ impl AppState {
             }
             Value::Array(arr) => {
                 arr.iter().enumerate().map(|(idx, val)| {
-                    let child_id = parent_id.child(format!("array_{}", idx));  // Use the child() method
+                    let child_id = parent_id.child(format!("array_{idx}"));  // Use the child() method
                     let child_path = if path.is_empty() { 
-                        format!("[{}]", idx) 
+                        format!("[{idx}]") 
                     } else { 
-                        format!("{}[{}]", path, idx) 
+                        format!("{path}[{idx}]") 
                     };
                     
                     let child_data = JsonNodeData {
-                        key: format!("[{}]", idx),
+                        key: format!("[{idx}]"),
                         value_type: self.get_value_type(val),
                         preview: self.get_value_preview(val),
                         full_value: val.to_string(),
@@ -190,7 +181,7 @@ impl AppState {
                 if s.len() > 50 {
                     format!("\"{}...\"", &s[..47])
                 } else {
-                    format!("\"{}\"", s)
+                    format!("\"{s}\"")
                 }
             }
             Value::Array(arr) => format!("[{} items]", arr.len()),
@@ -269,7 +260,7 @@ impl eframe::App for App {
                             // Show some basic info
                             ui.separator();
                             
-                            for (_id, data) in &self.state.json_state.tree_nodes {  // Fixed: prefix with underscore
+                            for data in self.state.json_state.tree_nodes.values() {  // Fixed: prefix with underscore
                                 if !data.path.is_empty() {
                                     ui.horizontal(|ui| {
                                         ui.label(&data.path);

@@ -39,11 +39,11 @@ impl fmt::Display for AuthError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             AuthError::TokenNotFound => write!(f, "Hardware token not found or not accessible"),
-            AuthError::ChallengeFailed(msg) => write!(f, "Authentication challenge failed: {}", msg),
+            AuthError::ChallengeFailed(msg) => write!(f, "Authentication challenge failed: {msg}"),
             AuthError::UserInteractionRequired => write!(f, "Hardware token requires user interaction"),
             AuthError::InvalidResponse => write!(f, "Invalid response from hardware token"),
-            AuthError::CommunicationError(msg) => write!(f, "Communication error: {}", msg),
-            AuthError::ConfigurationError(msg) => write!(f, "Configuration error: {}", msg),
+            AuthError::CommunicationError(msg) => write!(f, "Communication error: {msg}"),
+            AuthError::ConfigurationError(msg) => write!(f, "Configuration error: {msg}"),
         }
     }
 }

@@ -381,14 +381,14 @@ impl Vault {
         // Debug: Print the connection string (remove password for security)
         let debug_string = connection_string.replace(&format!("password={}", 
             self.db_config.password.as_ref().unwrap_or(&"NONE".to_string())), "password=***");
-        println!("🔧 Connection string: {}", debug_string);
+        println!("🔧 Connection string: {debug_string}");
         
         let (client, connection) = tokio_postgres::connect(&connection_string, NoTls).await?;
         
         // Spawn the connection task
         tokio::spawn(async move {
             if let Err(e) = connection.await {
-                eprintln!("Database connection error: {}", e);
+                eprintln!("Database connection error: {e}");
             }
         });
         
@@ -406,11 +406,11 @@ impl Vault {
         
         // CRITICAL: Add password if provided
         if let Some(ref password) = self.db_config.password {
-            parts.push(format!("password={}", password));
+            parts.push(format!("password={password}"));
         }
         
         if let Some(ref app_name) = self.db_config.application_name {
-            parts.push(format!("application_name={}", app_name));
+            parts.push(format!("application_name={app_name}"));
         }
         
         // Add SSL mode
@@ -421,7 +421,7 @@ impl Vault {
             SslMode::Require => "require",
             SslMode::VerifyFull => "verify-full",
         };
-        parts.push(format!("sslmode={}", ssl_mode));
+        parts.push(format!("sslmode={ssl_mode}"));
         
         parts.join(" ")
     }
