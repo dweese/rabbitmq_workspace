@@ -1,5 +1,4 @@
 .
-├── 2clippy.txt
 ├── artifacts
 │   ├── package.json
 │   ├── pagila
@@ -216,19 +215,19 @@
     │   └── main.rs
     └── test.json
 
-67 directories, 150 files
+67 directories, 149 files
 -rw-r--r--. 1 dweese dweese    465 Jun 17 22:56 ./Cargo.toml
 -rw-r--r--. 1 dweese dweese    368 May 21 10:38 ./egui-components/Cargo.toml
 -rw-r--r--. 1 dweese dweese   7814 May 13 20:53 ./egui-components/src/border_layout.rs
--rw-r--r--. 1 dweese dweese   5899 May 26 18:27 ./egui-components/src/event_tree.rs
+-rw-r--r--. 1 dweese dweese   5835 Jul 18 02:34 ./egui-components/src/event_tree.rs
 -rw-r--r--. 1 dweese dweese    256 May 22 18:56 ./egui-components/src/lib.rs
 -rw-r--r--. 1 dweese dweese   1641 May 21 10:35 ./egui-components/src/tree_node_id.rs
--rw-r--r--. 1 dweese dweese   4900 May 26 18:28 ./egui-components/src/tree.rs
+-rw-r--r--. 1 dweese dweese   4990 Jul 18 02:34 ./egui-components/src/tree.rs
 -rw-r--r--. 1 dweese dweese     37 May 21 17:55 ./egui-components/src/tree_vis/mod.rs
--rw-r--r--. 1 dweese dweese   5664 May 22 19:29 ./egui-components/src/tree_vis/topology.rs
+-rw-r--r--. 1 dweese dweese   5754 Jul 18 02:34 ./egui-components/src/tree_vis/topology.rs
 -rw-r--r--. 1 dweese dweese      0 May 21 17:56 ./egui-components/src/tree_vis/tree_view.rs
 -rw-r--r--. 1 dweese dweese    357 Jun  8 18:26 ./messaging_cli/Cargo.toml
--rw-r--r--. 1 dweese dweese   2368 Jul 16 02:06 ./messaging_cli/src/main.rs
+-rw-r--r--. 1 dweese dweese   2368 Jul 18 02:29 ./messaging_cli/src/main.rs
 -rw-r--r--. 1 dweese dweese    497 Jun 30 12:02 ./messaging_commands/Cargo.toml
 -rw-r--r--. 1 dweese dweese   1540 Jun 30 12:29 ./messaging_commands/src/client/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/amqp/mod.rs
@@ -238,52 +237,52 @@
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/common/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/config/mod.rs
 -rw-r--r--. 1 dweese dweese    448 Jun  3 22:21 ./messaging_commands/src/error.rs
--rw-r--r--. 1 dweese dweese   2114 Jul 16 02:06 ./messaging_commands/src/lib.rs
--rw-r--r--. 1 dweese dweese   1569 Jul 16 02:06 ./messaging_commands/src/main.rs
+-rw-r--r--. 1 dweese dweese   2114 Jul 18 02:29 ./messaging_commands/src/lib.rs
+-rw-r--r--. 1 dweese dweese   1569 Jul 18 02:29 ./messaging_commands/src/main.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/protocol/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/tests/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/traits/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/utils/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/version/mod.rs
--rw-r--r--. 1 dweese dweese    633 Jul 16 02:06 ./pg_vault/Cargo.toml
+-rw-r--r--. 1 dweese dweese    633 Jul 18 02:29 ./pg_vault/Cargo.toml
 -rw-r--r--. 1 dweese dweese  11088 Jun 19 23:39 ./pg_vault/src/auth/mock.rs
--rw-r--r--. 1 dweese dweese   6530 Jun 19 23:38 ./pg_vault/src/auth/mod.rs
--rw-r--r--. 1 dweese dweese   8774 Jun 30 12:23 ./pg_vault/src/auth/yubikey.rs
+-rw-r--r--. 1 dweese dweese   6524 Jul 18 02:34 ./pg_vault/src/auth/mod.rs
+-rw-r--r--. 1 dweese dweese   8093 Jul 18 02:34 ./pg_vault/src/auth/yubikey.rs
 -rw-r--r--. 1 dweese dweese   1008 Jun 19 23:41 ./pg_vault/src/lib.rs
--rw-r--r--. 1 dweese dweese   2954 Jul  5 10:23 ./pg_vault/src/main.rs
--rw-r--r--. 1 dweese dweese  15764 Jun 19 23:59 ./pg_vault/src/vault/connection.rs
--rw-r--r--. 1 dweese dweese  16678 Jun 30 13:31 ./pg_vault/src/vault/mod.rs
+-rw-r--r--. 1 dweese dweese   2930 Jul 18 02:34 ./pg_vault/src/main.rs
+-rw-r--r--. 1 dweese dweese  15698 Jul 18 02:34 ./pg_vault/src/vault/connection.rs
+-rw-r--r--. 1 dweese dweese  16668 Jul 18 02:34 ./pg_vault/src/vault/mod.rs
 -rw-r--r--. 1 dweese dweese    566 May 27 17:55 ./rabbitmq-config/Cargo.toml
--rw-r--r--. 1 dweese dweese  10341 Jul 16 02:06 ./rabbitmq-config/src/client.rs
+-rw-r--r--. 1 dweese dweese  10341 Jul 18 02:29 ./rabbitmq-config/src/client.rs
 -rw-r--r--. 1 dweese dweese   5114 Jun 30 12:21 ./rabbitmq-config/src/config.rs
 -rw-r--r--. 1 dweese dweese    831 May 23 20:41 ./rabbitmq-config/src/error.rs
 -rw-r--r--. 1 dweese dweese    773 Jun 30 12:08 ./rabbitmq-config/src/lib.rs
--rw-r--r--. 1 dweese dweese   5120 Jul 16 02:06 ./rabbitmq-config/src/models.rs
--rw-r--r--. 1 dweese dweese   1042 Jul 16 02:06 ./rabbitmq-config/src/topology.rs
--rw-r--r--. 1 dweese dweese    475 Jul 16 02:06 ./rabbitmq-config/tests/client/integration_tests.rs
+-rw-r--r--. 1 dweese dweese   5120 Jul 18 02:29 ./rabbitmq-config/src/models.rs
+-rw-r--r--. 1 dweese dweese   1042 Jul 18 02:29 ./rabbitmq-config/src/topology.rs
+-rw-r--r--. 1 dweese dweese    475 Jul 18 02:29 ./rabbitmq-config/tests/client/integration_tests.rs
 -rw-r--r--. 1 dweese dweese    272 May 20 22:11 ./rabbitmq-config/tests/client/mocked_tests.rs
--rw-r--r--. 1 dweese dweese   1125 May 23 17:40 ./rabbitmq-config/tests/client/unit_tests.rs
--rw-r--r--. 1 dweese dweese   1373 May 27 18:00 ./rabbitmq-config/tests/common/test_utils.rs
+-rw-r--r--. 1 dweese dweese   1123 Jul 18 02:34 ./rabbitmq-config/tests/client/unit_tests.rs
+-rw-r--r--. 1 dweese dweese   1340 Jul 18 02:34 ./rabbitmq-config/tests/common/test_utils.rs
 -rw-r--r--. 1 dweese dweese      0 May 20 22:11 ./rabbitmq-config/tests/config/manipulation_tests.rs
 -rw-r--r--. 1 dweese dweese   2074 May 27 11:04 ./rabbitmq-config/tests/config/rabbitmq_def_tests.rs
--rw-r--r--. 1 dweese dweese    864 Jul 16 02:06 ./rabbitmq-config/tests/config/serialization_tests.rs
--rw-r--r--. 1 dweese dweese    801 May 27 12:37 ./rabbitmq-config/tests/config/validation_tests.rs
+-rw-r--r--. 1 dweese dweese    813 Jul 18 02:34 ./rabbitmq-config/tests/config/serialization_tests.rs
+-rw-r--r--. 1 dweese dweese    770 Jul 18 02:34 ./rabbitmq-config/tests/config/validation_tests.rs
 -rw-r--r--. 1 dweese dweese   1028 May 20 22:11 ./rabbitmq-config/tests/connection_test.rs
 -rw-r--r--. 1 dweese dweese    398 May 20 22:11 ./rabbitmq-config/tests/lib.rs
 -rw-r--r--. 1 dweese dweese    817 May 20 22:11 ./rabbitmq-config/tests/simple_connection_test.rs
 -rw-r--r--. 1 dweese dweese    380 May 22 22:03 ./rabbitmq-info/Cargo.toml
 -rw-r--r--. 1 dweese dweese   2981 May 22 21:14 ./rabbitmq-info/src/api/mod.rs
 -rw-r--r--. 1 dweese dweese   6233 May 23 05:53 ./rabbitmq-info/src/collector/mod.rs
--rw-r--r--. 1 dweese dweese   3772 Jul 16 02:06 ./rabbitmq-info/src/export/mod.rs
+-rw-r--r--. 1 dweese dweese   3772 Jul 18 02:29 ./rabbitmq-info/src/export/mod.rs
 -rw-r--r--. 1 dweese dweese   1704 Jun 30 12:01 ./rabbitmq-info/src/lib.rs
 -rw-r--r--. 1 dweese dweese    393 May 26 19:03 ./rabbitmq-ui/Cargo.toml
--rw-r--r--. 1 dweese dweese  20855 Jun 30 13:35 ./rabbitmq-ui/src/app.rs
+-rw-r--r--. 1 dweese dweese  20535 Jul 18 02:34 ./rabbitmq-ui/src/app.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/config.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/create.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/list.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/mod.rs
--rw-r--r--. 1 dweese dweese  21540 Jun 30 13:34 ./rabbitmq-ui/src/main.rs
+-rw-r--r--. 1 dweese dweese  21020 Jul 18 02:34 ./rabbitmq-ui/src/main.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/consume.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/publish.rs
@@ -344,7 +343,7 @@
 -rw-r--r--. 1 dweese dweese    845 May 23 05:20 ./tests/integration_test.rs
 -rw-r--r--. 1 dweese dweese    400 May 20 22:11 ./tests/lib.rs
 -rw-r--r--. 1 dweese dweese    334 Jun 16 21:57 ./yak_json/Cargo.toml
--rw-r--r--. 1 dweese dweese  11552 Jun 30 13:24 ./yak_json/src/main.rs
+-rw-r--r--. 1 dweese dweese  11279 Jul 18 02:34 ./yak_json/src/main.rs
 [workspace]
 members = [
     "rabbitmq-config",

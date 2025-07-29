@@ -1,0 +1,115 @@
+    Checking messaging_cli v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/messaging_cli)
+    Checking messaging_commands v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/messaging_commands)
+    Checking rabbitmq-config v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/rabbitmq-config)
+    Checking pg_vault v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/pg_vault)
+    Checking egui-components v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/egui-components)
+    Checking rabbitmq-info v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/rabbitmq-info)
+warning: `assert!(true)` will be optimized out by the compiler
+ --> rabbitmq-config/tests/client/integration_tests.rs:7:5
+  |
+7 |     assert!(true);
+  |     ^^^^^^^^^^^^^
+  |
+  = help: remove it
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assertions_on_constants
+  = note: `#[warn(clippy::assertions_on_constants)]` on by default
+
+warning: `assert!(true)` will be optimized out by the compiler
+  --> rabbitmq-config/tests/client/integration_tests.rs:15:5
+   |
+15 |     assert!(true);
+   |     ^^^^^^^^^^^^^
+   |
+   = help: remove it
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assertions_on_constants
+
+warning: `assert!(true)` will be optimized out by the compiler
+ --> rabbitmq-config/tests/client/mocked_tests.rs:8:5
+  |
+8 |     assert!(true);
+  |     ^^^^^^^^^^^^^
+  |
+  = help: remove it
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assertions_on_constants
+
+warning: field assignment outside of initializer for an instance created with Default::default()
+ --> rabbitmq-config/tests/config/validation_tests.rs:7:5
+  |
+7 |     config.host = "".to_string();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+note: consider initializing the variable with `rabbitmq_config::RabbitMQConfig { host: "".to_string(), ..Default::default() }` and removing relevant reassignments
+ --> rabbitmq-config/tests/config/validation_tests.rs:6:5
+  |
+6 |     let mut config = RabbitMQConfig::default();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#field_reassign_with_default
+  = note: `#[warn(clippy::field_reassign_with_default)]` on by default
+
+warning: `rabbitmq-config` (test "lib") generated 4 warnings
+warning: this expression always evaluates to false
+  --> messaging_commands/src/lib.rs:68:18
+   |
+68 |         assert!(!VERSION.is_empty());
+   |                  ^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#const_is_empty
+   = note: `#[warn(clippy::const_is_empty)]` on by default
+
+warning: `messaging_commands` (lib test) generated 1 warning
+warning: field assignment outside of initializer for an instance created with Default::default()
+  --> pg_vault/src/auth/mock.rs:71:9
+   |
+71 |         state.requires_touch = true;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: consider initializing the variable with `auth::mock::MockState { requires_touch: true, ..Default::default() }` and removing relevant reassignments
+  --> pg_vault/src/auth/mock.rs:70:9
+   |
+70 |         let mut state = MockState::default();
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#field_reassign_with_default
+   = note: `#[warn(clippy::field_reassign_with_default)]` on by default
+
+warning: field assignment outside of initializer for an instance created with Default::default()
+  --> pg_vault/src/auth/mock.rs:81:9
+   |
+81 |         state.is_present = false;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: consider initializing the variable with `auth::mock::MockState { is_present: false, ..Default::default() }` and removing relevant reassignments
+  --> pg_vault/src/auth/mock.rs:80:9
+   |
+80 |         let mut state = MockState::default();
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#field_reassign_with_default
+
+warning: field assignment outside of initializer for an instance created with Default::default()
+  --> pg_vault/src/auth/mock.rs:91:9
+   |
+91 |         state.serial_number = serial;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: consider initializing the variable with `auth::mock::MockState { serial_number: serial, ..Default::default() }` and removing relevant reassignments
+  --> pg_vault/src/auth/mock.rs:90:9
+   |
+90 |         let mut state = MockState::default();
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#field_reassign_with_default
+
+warning: `pg_vault` (lib test) generated 3 warnings
+warning: `pg_vault` (lib) generated 3 warnings (3 duplicates)
+    Checking yak_json v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/yak_json)
+    Checking rabbitmq-ui v0.1.0 (/home/dweese/dev/rust/rabbitmq_workspace/rabbitmq-ui)
+warning: struct update has no effect, all the fields in the struct have already been specified
+  --> pg_vault/src/main.rs:74:19
+   |
+74 |                 ..Default::default()
+   |                   ^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_update
+   = note: `#[warn(clippy::needless_update)]` on by default
+
+warning: `pg_vault` (bin "pg_vault" test) generated 1 warning
+warning: `pg_vault` (bin "pg_vault") generated 1 warning (1 duplicate)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.48s
