@@ -1,46 +1,13 @@
-// pg_vault/src/lib.rs
-//! pg_vault - Secure PostgreSQL with Hardware Token Authentication
-//!
-//! A Rust library providing secure PostgreSQL connections with hardware token
-//! authentication, specifically designed for Yubikey devices.
+//! A secure vault for PostgreSQL connections using hardware token authentication.
 
 pub mod auth;
+pub mod utils;
 pub mod vault;
 
-/// Re-exports for convenient importing
 pub mod prelude {
-    // Authentication types
-    pub use crate::auth::{
-        AuthConfig,
-        AuthError,
-        AuthResult,
-        AuthProviderFactory,
-        MockYubikey,
-        TokenInfo,
-        YubikeyAuth,
-        YubikeyDevice,
-    };
-
-    // Vault types
+    //! A "prelude" for users of the `pg_vault` library.
+    pub use crate::auth::{AuthConfig, AuthError, AuthResult, TokenInfo, YubikeyAuth};
     pub use crate::vault::{
-        Connection,
-        DatabaseConfig,
-        SecureConnection,
-        SessionInfo,
-        SslMode,
-        Vault,
-        VaultConfig,
-        VaultError,
-        VaultResult,
-    };
-
-    // Connection types
-    pub use crate::vault::connection::{
-        ConnectionConfig,
-        ConnectionMetrics,
-        QueryParams,
-        QueryResult,
-        QueryType,
-        Transaction,
+        DatabaseConfig, SecureConnection, SessionInfo, Vault, VaultConfig, VaultError, VaultResult,
     };
 }

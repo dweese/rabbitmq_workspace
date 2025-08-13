@@ -1,31 +1,33 @@
 [package]
 name = "pg_vault"
 version = "0.1.0"
-edition = "2021"
+edition = "2021" # Using the current stable edition to avoid toolchain issues
 
 [[bin]]
 name = "pg_vault"
 path = "src/main.rs"
 
 [dependencies]
-messaging_commands = { path = "../messaging_commands" }
-clap = { version = "4.0", features = ["derive"] }
-env_logger = "0.10"
-log = "0.4"
-tokio = { version = "1.0", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
-thiserror = "1.0"
-tokio-postgres = "0.7"
-sha2 = "0.10"
-base64 = "0.21"
-chrono = "0.4.41"
+messaging_commands = { workspace = true }
+rabbitmq-config = { workspace = true }
+clap = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio-postgres = { workspace = true }
+sha2 = { workspace = true }
+base64 = { workspace = true }
+chrono = { workspace = true }
+
 
 # Hardware Yubikey support (optional)
-yubico = { version = "0.11", optional = true }
+yubikey = { workspace = true, optional = true }
 
 [features]
 default = []
-hardware-yubikey = ["yubico"]
+hardware-yubikey = ["dep:yubikey"]
 
 [dev-dependencies]
-tokio-test = "0.4"
+tokio-test = { workspace = true }
