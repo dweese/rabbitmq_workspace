@@ -1,8 +1,8 @@
 // egui-components/src/tree.rs
+use eframe::egui;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::Hash;
-use std::collections::HashMap;
-use eframe::egui;
 
 // Internal state tracking
 #[derive(Debug, Clone)]
@@ -12,7 +12,6 @@ struct TreeNodeState {
 
 // TreeNode holds data for each node
 pub struct TreeNode<ID: Clone + Eq + Hash + Debug> {
-    
     #[allow(dead_code)]
     pub id: ID,
     #[allow(dead_code)]
@@ -62,7 +61,8 @@ impl<ID: Clone + Eq + Hash + Debug> Tree<ID> {
         };
 
         // Initialize state
-        self.states.insert(id.clone(), TreeNodeState { expanded: false });
+        self.states
+            .insert(id.clone(), TreeNodeState { expanded: false });
 
         // If this node has a parent, add it to the parent's children
         if let Some(parent_id) = &parent {
@@ -101,19 +101,20 @@ impl<ID: Clone + Eq + Hash + Debug> Tree<ID> {
         let mut clicked_node = None;
 
         // First, collect all the data we need
-        let (node_data, state_expanded, is_selected) = match (self.nodes.get(id), self.states.get(id)) {
-            (Some(node), Some(state)) => {
-                let node_data = NodeDisplayData {
-                    id: id.clone(),
-                    label: node.label.clone(),
-                    children: node.children.clone(),
-                };
-                let state_expanded = state.expanded;
-                let is_selected = self.selected_node.as_ref() == Some(id);
-                (Some(node_data), state_expanded, is_selected)
-            },
-            _ => (None, false, false),
-        };
+        let (node_data, state_expanded, is_selected) =
+            match (self.nodes.get(id), self.states.get(id)) {
+                (Some(node), Some(state)) => {
+                    let node_data = NodeDisplayData {
+                        id: id.clone(),
+                        label: node.label.clone(),
+                        children: node.children.clone(),
+                    };
+                    let state_expanded = state.expanded;
+                    let is_selected = self.selected_node.as_ref() == Some(id);
+                    (Some(node_data), state_expanded, is_selected)
+                }
+                _ => (None, false, false),
+            };
 
         if let Some(node_data) = node_data {
             let is_leaf = node_data.children.is_empty();

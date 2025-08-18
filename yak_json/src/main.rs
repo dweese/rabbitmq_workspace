@@ -3,7 +3,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use eframe::egui;
-use egui_components::TreeNodeId;  // Remove unused imports
+use egui_components::TreeNodeId; // Remove unused imports
 use serde_json::Value;
 
 pub enum JsonAction {
@@ -18,12 +18,11 @@ pub enum JsonAction {
 pub struct JsonState {
     tree_nodes: HashMap<TreeNodeId, JsonNodeData>,
     tree_children: HashMap<TreeNodeId, Vec<TreeNodeId>>,
-    #[allow(dead_code)]  // Will be used later for tree interaction
+    #[allow(dead_code)] // Will be used later for tree interaction
     selected_node: Option<TreeNodeId>,
-    #[allow(dead_code)]  // Will be used later for tree expansion state
+    #[allow(dead_code)] // Will be used later for tree expansion state
     expanded_nodes: std::collections::HashSet<TreeNodeId>,
 }
-
 
 #[derive(Debug, Clone)]
 pub struct JsonNodeData {
@@ -34,18 +33,16 @@ pub struct JsonNodeData {
     pub path: String,
 }
 
-
 pub struct AppState {
     json_content: Option<Value>,
     file_path: Option<PathBuf>,
     status_message: String,
     json_state: JsonState,
     show_file_dialog: bool,
-    #[allow(dead_code)]  // Will be used later for search functionality
+    #[allow(dead_code)] // Will be used later for search functionality
     search_query: String,
     show_raw_json: bool,
 }
-
 
 impl Default for AppState {
     fn default() -> Self {
@@ -69,19 +66,20 @@ impl AppState {
                     Ok(json) => {
                         self.json_content = Some(json.clone());
                         self.file_path = Some(path.clone());
-                        self.status_message = format!("Loaded: {:?}", path.file_name().unwrap_or_default());
+                        self.status_message =
+                            format!("Loaded: {:?}", path.file_name().unwrap_or_default());
                         self.build_tree_from_json(&json);
-                        println!("Successfully loaded JSON file: {path:?}");  // Changed from log
+                        println!("Successfully loaded JSON file: {path:?}"); // Changed from log
                     }
                     Err(e) => {
                         self.status_message = format!("JSON parse error: {e}");
-                        eprintln!("JSON parse error: {e}");  // Changed from log
+                        eprintln!("JSON parse error: {e}"); // Changed from log
                     }
                 }
             }
             Err(e) => {
                 self.status_message = format!("File read error: {e}");
-                eprintln!("File read error: {e}");  // Changed from log
+                eprintln!("File read error: {e}"); // Changed from log
             }
         }
     }
@@ -93,8 +91,8 @@ impl AppState {
 
     fn build_tree_from_json(&mut self, json: &Value) {
         self.json_state = JsonState::default();
-        let root_id = TreeNodeId::new("root");  // Fixed: provide ID argument
-        
+        let root_id = TreeNodeId::new("root"); // Fixed: provide ID argument
+
         let root_data = JsonNodeData {
             key: "root".to_string(),
             value_type: self.get_value_type(json),
@@ -102,60 +100,71 @@ impl AppState {
             full_value: json.to_string(),
             path: "".to_string(),
         };
-        
-        self.json_state.tree_nodes.insert(root_id.clone(), root_data);  // Clone here
-        self.build_tree_recursive(json, root_id, "".to_string());  // Use original here
+
+        self.json_state
+            .tree_nodes
+            .insert(root_id.clone(), root_data); // Clone here
+        self.build_tree_recursive(json, root_id, "".to_string()); // Use original here
     }
 
     fn build_tree_recursive(&mut self, value: &Value, parent_id: TreeNodeId, path: String) {
         let children = match value {
             Value::Object(map) => {
-                map.iter().map(|(key, val)| {
-                    let child_id = parent_id.child(key);  // Use the child() method
-                    let child_path = if path.is_empty() { 
-                        key.clone() 
-                    } else { 
-                        format!("{path}.{key}") 
-                    };
-                    
-                    let child_data = JsonNodeData {
-                        key: key.clone(),
-                        value_type: self.get_value_type(val),
-                        preview: self.get_value_preview(val),
-                        full_value: val.to_string(),
-                        path: child_path.clone(),
-                    };
-                    
-                    self.json_state.tree_nodes.insert(child_id.clone(), child_data);  // Clone here
-                    self.build_tree_recursive(val, child_id.clone(), child_path);  // Clone here
-                    child_id  // Return original here
-                }).collect()
+                map.iter()
+                    .map(|(key, val)| {
+                        let child_id = parent_id.child(key); // Use the child() method
+                        let child_path = if path.is_empty() {
+                            key.clone()
+                        } else {
+                            format!("{path}.{key}")
+                        };
+
+                        let child_data = JsonNodeData {
+                            key: key.clone(),
+                            value_type: self.get_value_type(val),
+                            preview: self.get_value_preview(val),
+                            full_value: val.to_string(),
+                            path: child_path.clone(),
+                        };
+
+                        self.json_state
+                            .tree_nodes
+                            .insert(child_id.clone(), child_data); // Clone here
+                        self.build_tree_recursive(val, child_id.clone(), child_path); // Clone here
+                        child_id // Return original here
+                    })
+                    .collect()
             }
             Value::Array(arr) => {
-                arr.iter().enumerate().map(|(idx, val)| {
-                    let child_id = parent_id.child(format!("array_{idx}"));  // Use the child() method
-                    let child_path = if path.is_empty() { 
-                        format!("[{idx}]") 
-                    } else { 
-                        format!("{path}[{idx}]") 
-                    };
-                    
-                    let child_data = JsonNodeData {
-                        key: format!("[{idx}]"),
-                        value_type: self.get_value_type(val),
-                        preview: self.get_value_preview(val),
-                        full_value: val.to_string(),
-                        path: child_path.clone(),
-                    };
-                    
-                    self.json_state.tree_nodes.insert(child_id.clone(), child_data);  // Clone here
-                    self.build_tree_recursive(val, child_id.clone(), child_path);  // Clone here
-                    child_id  // Return original here
-                }).collect()
+                arr.iter()
+                    .enumerate()
+                    .map(|(idx, val)| {
+                        let child_id = parent_id.child(format!("array_{idx}")); // Use the child() method
+                        let child_path = if path.is_empty() {
+                            format!("[{idx}]")
+                        } else {
+                            format!("{path}[{idx}]")
+                        };
+
+                        let child_data = JsonNodeData {
+                            key: format!("[{idx}]"),
+                            value_type: self.get_value_type(val),
+                            preview: self.get_value_preview(val),
+                            full_value: val.to_string(),
+                            path: child_path.clone(),
+                        };
+
+                        self.json_state
+                            .tree_nodes
+                            .insert(child_id.clone(), child_data); // Clone here
+                        self.build_tree_recursive(val, child_id.clone(), child_path); // Clone here
+                        child_id // Return original here
+                    })
+                    .collect()
             }
             _ => Vec::new(),
         };
-        
+
         if !children.is_empty() {
             self.json_state.tree_children.insert(parent_id, children);
         }
@@ -199,10 +208,10 @@ impl Default for App {
         let mut app = Self {
             state: AppState::default(),
         };
-        
+
         // Try to load a sample file from artifacts
         app.state.load_artifacts_file("rabbitmq_config.json");
-        
+
         app
     }
 }
@@ -220,10 +229,11 @@ impl eframe::App for App {
                         self.state.load_artifacts_file("rabbitmq_config.json");
                     }
                     if ui.button("Load RabbitMQ Export").clicked() {
-                        self.state.load_artifacts_file("rabbit_fedora_2025-5-23.json");
+                        self.state
+                            .load_artifacts_file("rabbit_fedora_2025-5-23.json");
                     }
                 });
-                
+
                 ui.menu_button("View", |ui| {
                     ui.checkbox(&mut self.state.show_raw_json, "Show Raw JSON");
                     if ui.button("Expand All").clicked() {
@@ -240,7 +250,7 @@ impl eframe::App for App {
             ui.horizontal(|ui| {
                 ui.label("Status:");
                 ui.label(&self.state.status_message);
-                
+
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     if let Some(path) = &self.state.file_path {
                         ui.label(format!("File: {:?}", path.file_name().unwrap_or_default()));
@@ -256,11 +266,12 @@ impl eframe::App for App {
                         // Simple tree display for now
                         if let Some(root_data) = self.state.json_state.tree_nodes.iter().next() {
                             ui.label(format!("JSON Structure: {}", root_data.1.value_type));
-                            
+
                             // Show some basic info
                             ui.separator();
-                            
-                            for data in self.state.json_state.tree_nodes.values() {  // Fixed: prefix with underscore
+
+                            for data in self.state.json_state.tree_nodes.values() {
+                                // Fixed: prefix with underscore
                                 if !data.path.is_empty() {
                                     ui.horizontal(|ui| {
                                         ui.label(&data.path);
@@ -280,8 +291,6 @@ impl eframe::App for App {
             }
         });
 
-        
-        
         // Native file dialog
         if self.state.show_file_dialog {
             if let Some(path) = rfd::FileDialog::new()
@@ -299,8 +308,7 @@ fn main() -> Result<(), eframe::Error> {
     env_logger::init();
 
     let native_options = eframe::NativeOptions {
-        viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size([1200.0, 800.0]),
+        viewport: eframe::egui::ViewportBuilder::default().with_inner_size([1200.0, 800.0]),
         ..Default::default()
     };
 

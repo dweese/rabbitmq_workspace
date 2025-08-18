@@ -5,13 +5,11 @@ mod app;
 // use eframe::NativeOptions;
 use eframe::egui::{self, Color32, RichText, ScrollArea}; // Remove Stroke
 
-use std::collections::HashMap;
-use egui_components::{TreeNodeId}; // Keep BorderLayout, remove Tree
-
+use egui_components::TreeNodeId;
+use std::collections::HashMap; // Keep BorderLayout, remove Tree
 
 use rabbitmq_config::{
-    RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
-    MessageProperties, QueueInfo, ExchangeInfo,
+    ExchangeInfo, MessageProperties, QueueInfo, RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
 };
 use std::sync::Arc;
 use tokio::runtime::Runtime;
@@ -38,7 +36,6 @@ pub struct TreeState {
     #[allow(dead_code)]
     selected_queue: Option<TreeNodeId>,
 }
-
 
 pub struct AppState {
     runtime: Arc<Runtime>,
@@ -85,16 +82,14 @@ impl Default for AppState {
                 auto_delete: false,
                 exclusive: false,
                 arguments: HashMap::new(), // Add this line
-
             },
             new_exchange: ExchangeInfo {
                 name: "".to_string(),
                 kind: "direct".to_string(),
                 durable: true,
                 auto_delete: false,
-                internal: false,  // Add this line
+                internal: false,           // Add this line
                 arguments: HashMap::new(), // Add this line
-
             },
             show_queue_dialog: false,
             show_exchange_dialog: false,
@@ -109,9 +104,7 @@ impl AppState {
         let config = self.config.clone();
         let runtime = self.runtime.clone();
 
-        let client_future = async move {
-            RabbitMQClient::new(config).await
-        };
+        let client_future = async move { RabbitMQClient::new(config).await };
 
         match runtime.block_on(client_future) {
             Ok(client) => {
@@ -119,7 +112,7 @@ impl AppState {
                 self.connection_status = true;
                 self.status_message = format!("Connected to RabbitMQ at {}", self.config.host);
                 self.refresh_queues_and_exchanges();
-            },
+            }
             Err(err) => {
                 self.status_message = format!("Connection failed: {err:?}");
             }
@@ -139,7 +132,7 @@ impl AppState {
             match runtime.block_on(close_future) {
                 Ok(_) => {
                     self.status_message = "Disconnected from RabbitMQ".to_string();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Error during disconnect: {err:?}");
                 }
@@ -167,7 +160,7 @@ impl AppState {
             match runtime.block_on(queues_future) {
                 Ok(queues) => {
                     self.available_queues = queues;
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to fetch queues: {err:?}");
                 }
@@ -186,7 +179,7 @@ impl AppState {
                 match runtime.block_on(exchanges_future) {
                     Ok(exchanges) => {
                         self.available_exchanges = exchanges;
-                    },
+                    }
                     Err(err) => {
                         self.status_message = format!("Failed to fetch exchanges: {err:?}");
                     }
@@ -210,7 +203,7 @@ impl AppState {
             match runtime.block_on(publish_future) {
                 Ok(_) => {
                     self.status_message = "Message published successfully".to_string();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to publish message: {err:?}");
                 }
@@ -239,7 +232,7 @@ impl AppState {
                     self.new_queue.name = "".to_string();
                     self.show_queue_dialog = false;
                     self.refresh_queues_and_exchanges();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to create queue: {err:?}");
                 }
@@ -264,11 +257,12 @@ impl AppState {
 
             match runtime.block_on(exchange_future) {
                 Ok(_) => {
-                    self.status_message = format!("Exchange '{exchange_name}' created successfully");
+                    self.status_message =
+                        format!("Exchange '{exchange_name}' created successfully");
                     self.new_exchange.name = "".to_string();
                     self.show_exchange_dialog = false;
                     self.refresh_queues_and_exchanges();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to create exchange: {err:?}");
                 }
@@ -284,7 +278,6 @@ impl AppState {
 pub struct App {
     state: AppState,
 }
-
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
@@ -359,7 +352,6 @@ impl eframe::App for App {
                         });
                     });
                 });
-
             });
 
         // ======= BOTTOM PANEL (Status bar) =======
@@ -391,34 +383,45 @@ impl eframe::App for App {
                         });
 
                         ui.label("Payload:");
-                        let mut payload_text = String::from_utf8_lossy(&self.state.message.payload).to_string();
+                        let mut payload_text =
+                            String::from_utf8_lossy(&self.state.message.payload).to_string();
                         if ui.text_edit_multiline(&mut payload_text).changed() {
                             self.state.message.payload = payload_text.into_bytes();
                         }
-
-
 
                         // Message properties collapsing section
                         ui.collapsing("Message Properties", |ui| {
                             if let Some(props) = &mut self.state.message.properties {
                                 // Content Type
                                 {
-                                    let mut content_type = props.content_type.clone().unwrap_or_default();
+                                    let mut content_type =
+                                        props.content_type.clone().unwrap_or_default();
                                     ui.horizontal(|ui| {
                                         ui.label("Content Type:");
                                         if ui.text_edit_singleline(&mut content_type).changed() {
-                                            props.content_type = if content_type.is_empty() { None } else { Some(content_type) };
+                                            props.content_type = if content_type.is_empty() {
+                                                None
+                                            } else {
+                                                Some(content_type)
+                                            };
                                         }
                                     });
                                 }
 
                                 // Content Encoding
                                 {
-                                    let mut content_encoding = props.content_encoding.clone().unwrap_or_default();
+                                    let mut content_encoding =
+                                        props.content_encoding.clone().unwrap_or_default();
                                     ui.horizontal(|ui| {
                                         ui.label("Content Encoding:");
-                                        if ui.text_edit_singleline(&mut content_encoding).changed() {
-                                            props.content_encoding = if content_encoding.is_empty() { None } else { Some(content_encoding) };
+                                        if ui.text_edit_singleline(&mut content_encoding).changed()
+                                        {
+                                            props.content_encoding = if content_encoding.is_empty()
+                                            {
+                                                None
+                                            } else {
+                                                Some(content_encoding)
+                                            };
                                         }
                                     });
                                 }
@@ -433,10 +436,12 @@ impl eframe::App for App {
 
                                 // Add more properties as needed
                             }
-
                         });
 
-                        if ui.add_enabled(self.state.connection_status, egui::Button::new("Publish")).clicked() {
+                        if ui
+                            .add_enabled(self.state.connection_status, egui::Button::new("Publish"))
+                            .clicked()
+                        {
                             actions.push(UiAction::PublishMessage);
                         }
 
@@ -470,7 +475,8 @@ impl eframe::App for App {
 
                         if ui.button("Create Queue").clicked() {
                             if self.state.new_queue.name.is_empty() {
-                                self.state.status_message = "Queue name cannot be empty".to_string();
+                                self.state.status_message =
+                                    "Queue name cannot be empty".to_string();
                             } else {
                                 actions.push(UiAction::DeclareQueue);
                             }
@@ -495,10 +501,26 @@ impl eframe::App for App {
                         egui::ComboBox::from_id_source("exchange_type")
                             .selected_text(&self.state.new_exchange.kind)
                             .show_ui(ui, |ui| {
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "direct".to_string(), "Direct");
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "fanout".to_string(), "Fanout");
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "topic".to_string(), "Topic");
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "headers".to_string(), "Headers");
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "direct".to_string(),
+                                    "Direct",
+                                );
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "fanout".to_string(),
+                                    "Fanout",
+                                );
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "topic".to_string(),
+                                    "Topic",
+                                );
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "headers".to_string(),
+                                    "Headers",
+                                );
                             });
                     });
 
@@ -512,7 +534,8 @@ impl eframe::App for App {
 
                         if ui.button("Create Exchange").clicked() {
                             if self.state.new_exchange.name.is_empty() {
-                                self.state.status_message = "Exchange name cannot be empty".to_string();
+                                self.state.status_message =
+                                    "Exchange name cannot be empty".to_string();
                             } else {
                                 actions.push(UiAction::DeclareExchange);
                             }
@@ -539,8 +562,7 @@ fn main() {
     env_logger::init();
 
     let native_options = eframe::NativeOptions {
-        viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size([1024.0, 768.0]),
+        viewport: eframe::egui::ViewportBuilder::default().with_inner_size([1024.0, 768.0]),
         ..Default::default()
     };
 
@@ -548,6 +570,6 @@ fn main() {
         "RabbitMQ UI",
         native_options,
         Box::new(|_cc| Box::new(app::App::default())),
-    ).unwrap();
+    )
+    .unwrap();
 }
-

@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use log::{info};
+use log::info;
 
 #[derive(Parser)]
 #[command(name = "messaging_cli")]
@@ -16,19 +16,19 @@ enum Commands {
         /// Protocol to use (amqp, mqtt, etc.)
         #[arg(long, default_value = "amqp")]
         protocol: String,
-        
+
         /// Host to connect to
         #[arg(long, default_value = "localhost")]
         host: String,
-        
+
         /// Port to connect on
         #[arg(long, default_value = "5672")]
         port: u16,
-        
+
         /// Username for authentication
         #[arg(long)]
         username: Option<String>,
-        
+
         /// Password for authentication
         #[arg(long)]
         password: Option<String>,
@@ -51,18 +51,23 @@ enum ListResource {
 #[tokio::main]
 async fn main() {
     env_logger::init();
-    
+
     let cli = Cli::parse();
-    
+
     match &cli.command {
-        Commands::Connect { protocol, host, port, username, password: _password }
-        => {
+        Commands::Connect {
+            protocol,
+            host,
+            port,
+            username,
+            password: _password,
+        } => {
             info!("Connecting to {protocol}://{host}:{port}");
-            
+
             if let Some(user) = username {
                 info!("Using username: {user}");
             }
-            
+
             // TODO: Implement actual connection logic using your messaging_commands crate
             println!("Would connect to {protocol}://{host}:{port}");
         }

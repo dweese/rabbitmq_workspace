@@ -70,8 +70,10 @@ impl MockYubikey {
 
     /// Create a mock Yubikey that requires touch interaction
     pub fn new_with_touch() -> Self {
-        let mut state = MockState::default();
-        state.requires_touch = true;
+        let state = MockState { 
+            requires_touch: true, 
+            ..Default::default() 
+        };
 
         Self {
             state: Arc::new(Mutex::new(state)),

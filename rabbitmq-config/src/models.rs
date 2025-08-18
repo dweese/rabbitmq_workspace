@@ -1,5 +1,5 @@
 // rabbitmq-config/src/models.rs
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 // Message-related models (already in your code)
@@ -37,7 +37,6 @@ pub struct MessageProperties {
 //     }
 // }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RabbitMQMessage {
     pub exchange: String,
@@ -45,7 +44,6 @@ pub struct RabbitMQMessage {
     pub payload: Vec<u8>,
     pub properties: Option<MessageProperties>,
 }
-
 
 // Exchange info (already in your code)
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -4,18 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rabbitmq-config = { path = "../rabbitmq-config" }
-thiserror = "1.0"
-tokio = { version = "1.45.0", features = ["full"] }
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
-log = "0.4.27"
-lapin = "2.5.3"
-percent-encoding = "2.3.1"
-tokio-executor-trait = "2.1.0"
+rabbitmq-config = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+clap = { workspace = true, optional = true } # Optional for the library
 
-# CLI dependencies needed for main.rs
-clap = { version = "4.0", features = ["derive"] }
-env_logger = "0.10"
+env_logger = { workspace = true, optional = true } # Optional for the library
+chrono = { workspace = true, features = ["serde"], optional = true } # Optional for the library
+
+lapin = { workspace = true }
+percent-encoding = { workspace = true }
+async-trait = { workspace = true }
 
 [features]
+default = []
+cli = ["dep:clap", "dep:env_logger", "dep:chrono"]
+
+[[bin]]
+name = "messaging_commands"
+required-features = ["cli"]

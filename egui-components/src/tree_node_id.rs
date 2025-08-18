@@ -18,7 +18,9 @@ impl TreeNodeId {
 
     /// Create a root node ID
     pub fn root() -> Self {
-        Self { id: "root".to_string() }
+        Self {
+            id: "root".to_string(),
+        }
     }
 
     /// Get the string representation of this ID
@@ -33,7 +35,9 @@ impl TreeNodeId {
 
     /// Create a child ID from this node with the given suffix
     pub fn child<S: Display>(&self, suffix: S) -> Self {
-        Self { id: format!("{}_{}", self.id, suffix) }
+        Self {
+            id: format!("{}_{}", self.id, suffix),
+        }
     }
 }
 

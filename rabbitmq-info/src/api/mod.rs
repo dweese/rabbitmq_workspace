@@ -1,11 +1,11 @@
 // rabbitmq-info/src/api/mod.rs
 
+use base64::engine::general_purpose::STANDARD as BASE64;
+use base64::Engine;
 use rabbitmq_config::RabbitMQConfig;
 use reqwest::{Client, StatusCode};
 use serde::Deserialize;
 use std::time::Duration;
-use base64::Engine;
-use base64::engine::general_purpose::STANDARD as BASE64;
 
 #[derive(Debug)]
 pub struct RabbitMQApiClient {
@@ -23,10 +23,7 @@ pub enum ApiError {
     AuthError(String),
 
     #[error("API response error: {status_code} - {message}")]
-    ResponseError {
-        status_code: u16,
-        message: String,
-    },
+    ResponseError { status_code: u16, message: String },
 
     #[error("JSON parsing error: {0}")]
     JsonError(#[from] serde_json::Error),
@@ -35,9 +32,7 @@ pub enum ApiError {
 impl RabbitMQApiClient {
     pub fn new(config: &RabbitMQConfig) -> Result<Self, ApiError> {
         // Create HTTP client with timeout
-        let client = Client::builder()
-            .timeout(Duration::from_secs(30))
-            .build()?;
+        let client = Client::builder().timeout(Duration::from_secs(30)).build()?;
 
         // Construct base URL for management API (default port is 15672)
         let base_url = format!("http://{}:15672/api", config.host);
@@ -60,7 +55,9 @@ impl RabbitMQApiClient {
     {
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let response = self.client.get(&url)
+        let response = self
+            .client
+            .get(&url)
             .header("Authorization", &self.auth_header)
             .send()
             .await?;
@@ -71,7 +68,10 @@ impl RabbitMQApiClient {
             let json = response.json::<T>().await?;
             Ok(json)
         } else {
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
             Err(ApiError::ResponseError {
                 status_code: status.as_u16(),
                 message: error_text,

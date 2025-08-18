@@ -1,9 +1,9 @@
 // egui-components/src/event_tree.rs
+use crate::tree_node_id::TreeNodeId;
+use eframe::egui;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::Hash;
-use eframe::egui;
-use crate::tree_node_id::TreeNodeId;
 
 #[derive(Debug, Clone)]
 pub enum TreeEvent<ID: Clone + Eq + Hash + Debug> {
@@ -126,7 +126,10 @@ impl<ID: Clone + Eq + Hash + Debug> EventTree<ID> {
 
             // Show expand/collapse indicator (if not a leaf)
             if !node_data.is_leaf {
-                if ui.button(if node_data.is_expanded { "▼" } else { "►" }).clicked() {
+                if ui
+                    .button(if node_data.is_expanded { "▼" } else { "►" })
+                    .clicked()
+                {
                     // Toggle expansion state
                     let new_state = if node_data.is_expanded {
                         TreeNodeState::Collapsed
@@ -188,6 +191,8 @@ impl<ID: Clone + Eq + Hash + Debug> EventTree<ID> {
 
     #[allow(dead_code)]
     pub fn get_selected_node(&self) -> Option<&TreeNode<ID>> {
-        self.selected_node.as_ref().and_then(|id| self.nodes.get(id))
+        self.selected_node
+            .as_ref()
+            .and_then(|id| self.nodes.get(id))
     }
 }

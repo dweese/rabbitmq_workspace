@@ -1,21 +1,17 @@
-// messaging_commands/src/error.rs
-
 use thiserror::Error;
+use rabbitmq_config::RabbitMQError;
 
-#[derive(Debug, Error)]
+#[derive(Error, Debug)]
 pub enum MessagingError {
-    #[error("Connection error: {0}")]
-    ConnectionError(String),
+    #[error("Configuration Error: {0}")]
+    Config(#[from] RabbitMQError),
 
-    #[error("Configuration error: {0}")]
-    ConfigError(String),
+    #[error("AMQP protocol error: {0}")]
+    Amqp(#[from] lapin::Error),
 
-    #[error("Protocol error: {0}")]
-    ProtocolError(String),
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
 
-    #[error("IO error: {0}")]
-    IoError(#[from] std::io::Error),
-
-    #[error("Lapin error: {0}")]
-    LapinError(#[from] lapin::Error),
+    #[error("Client is not connected")]
+    NotConnected,
 }

@@ -1,5 +1,3 @@
-
-
 #[test]
 #[ignore] // This test is ignored as it requires a real RabbitMQ server
 fn test_placeholder_integration() {

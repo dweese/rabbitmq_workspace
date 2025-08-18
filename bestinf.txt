@@ -1,5 +1,6 @@
 .
 ├── artifacts
+│   ├── message_types.json
 │   ├── package.json
 │   ├── pagila
 │   │   ├── pagila-data.sql
@@ -27,6 +28,7 @@
 ├── Cargo.lock
 ├── Cargo.toml
 ├── check.txt
+├── clean_all.sh
 ├── clippy.txt
 ├── dwt.sh
 ├── egui-components
@@ -82,6 +84,7 @@
 │       └── main.rs
 ├── messaging_commands
 │   ├── Cargo.toml
+│   ├── rabbitmq_workspace.log
 │   ├── README.md
 │   └── src
 │       ├── client
@@ -89,7 +92,7 @@
 │       │   └── mod.rs:4:5
 │       ├── clients
 │       │   ├── amqp
-│       │   │   └── mod.rs
+│       │   ├── amqp.rs
 │       │   ├── mod.rs
 │       │   ├── mqtt
 │       │   │   └── mod.rs
@@ -107,9 +110,10 @@
 │       ├── tests
 │       │   └── mod.rs
 │       ├── traits
-│       │   └── mod.rs
+│       ├── traits.rs
 │       ├── utils
 │       │   └── mod.rs
+│       ├── utils.rs
 │       └── version
 │           └── mod.rs
 ├── pg_vault
@@ -121,16 +125,20 @@
 │   │   ├── 02_create_tables.sql 
 │   │   ├── 03_sample_data.sql
 │   │   └── northwind
-│   └── src
-│       ├── auth
-│       │   ├── mock.rs
-│       │   ├── mod.rs
-│       │   └── yubikey.rs
-│       ├── lib.rs
-│       ├── main.rs
-│       └── vault
-│           ├── connection.rs
-│           └── mod.rs
+│   ├── src
+│   │   ├── auth
+│   │   │   ├── mock.rs
+│   │   │   ├── mod.rs
+│   │   │   └── yubikey.rs
+│   │   ├── lib.rs
+│   │   ├── main.rs
+│   │   ├── utils.rs
+│   │   └── vault
+│   │       ├── connection.rs
+│   │       ├── mod.rs
+│   │       └── secure_connection.rs
+│   └── tests
+│       └── auth_helpers.rs
 ├── rabbitmq-config
 │   ├── Cargo.toml
 │   ├── config.tree
@@ -191,6 +199,7 @@
 │           ├── create.rs
 │           ├── list.rs
 │           └── mod.rs
+├── rabbitmq_workspace.log
 ├── README.md
 ├── summary.md
 ├── tests
@@ -215,153 +224,179 @@
     │   └── main.rs
     └── test.json
 
-67 directories, 149 files
--rw-r--r--. 1 dweese dweese    465 Jun 17 22:56 ./Cargo.toml
+68 directories, 157 files
+-rw-r--r--. 1 dweese dweese   1065 Aug 14 00:42 ./Cargo.toml
 -rw-r--r--. 1 dweese dweese    368 May 21 10:38 ./egui-components/Cargo.toml
--rw-r--r--. 1 dweese dweese   7814 May 13 20:53 ./egui-components/src/border_layout.rs
--rw-r--r--. 1 dweese dweese   5835 Jul 18 02:34 ./egui-components/src/event_tree.rs
--rw-r--r--. 1 dweese dweese    256 May 22 18:56 ./egui-components/src/lib.rs
--rw-r--r--. 1 dweese dweese   1641 May 21 10:35 ./egui-components/src/tree_node_id.rs
--rw-r--r--. 1 dweese dweese   4990 Jul 18 02:34 ./egui-components/src/tree.rs
+-rw-r--r--. 1 dweese dweese   7827 Aug 12 19:03 ./egui-components/src/border_layout.rs
+-rw-r--r--. 1 dweese dweese   5920 Aug 12 19:03 ./egui-components/src/event_tree.rs
+-rw-r--r--. 1 dweese dweese    256 Aug 12 19:03 ./egui-components/src/lib.rs
+-rw-r--r--. 1 dweese dweese   1684 Aug 12 19:03 ./egui-components/src/tree_node_id.rs
+-rw-r--r--. 1 dweese dweese   5058 Aug 12 19:03 ./egui-components/src/tree.rs
 -rw-r--r--. 1 dweese dweese     37 May 21 17:55 ./egui-components/src/tree_vis/mod.rs
--rw-r--r--. 1 dweese dweese   5754 Jul 18 02:34 ./egui-components/src/tree_vis/topology.rs
--rw-r--r--. 1 dweese dweese      0 May 21 17:56 ./egui-components/src/tree_vis/tree_view.rs
+-rw-r--r--. 1 dweese dweese   5869 Aug 12 19:03 ./egui-components/src/tree_vis/topology.rs
+-rw-r--r--. 1 dweese dweese      1 Aug 12 19:03 ./egui-components/src/tree_vis/tree_view.rs
 -rw-r--r--. 1 dweese dweese    357 Jun  8 18:26 ./messaging_cli/Cargo.toml
--rw-r--r--. 1 dweese dweese   2368 Jul 18 02:29 ./messaging_cli/src/main.rs
--rw-r--r--. 1 dweese dweese    497 Jun 30 12:02 ./messaging_commands/Cargo.toml
+-rw-r--r--. 1 dweese dweese   2364 Aug 12 19:03 ./messaging_cli/src/main.rs
+-rw-r--r--. 1 dweese dweese    772 Aug 12 19:43 ./messaging_commands/Cargo.toml
 -rw-r--r--. 1 dweese dweese   1540 Jun 30 12:29 ./messaging_commands/src/client/mod.rs
--rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/amqp/mod.rs
--rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/mod.rs
+-rw-r--r--. 1 dweese dweese   2365 Aug 12 22:39 ./messaging_commands/src/clients/amqp.rs
+-rw-r--r--. 1 dweese dweese     13 Aug 12 18:09 ./messaging_commands/src/clients/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/mqtt/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/stomp/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/common/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/config/mod.rs
--rw-r--r--. 1 dweese dweese    448 Jun  3 22:21 ./messaging_commands/src/error.rs
--rw-r--r--. 1 dweese dweese   2114 Jul 18 02:29 ./messaging_commands/src/lib.rs
--rw-r--r--. 1 dweese dweese   1569 Jul 18 02:29 ./messaging_commands/src/main.rs
+-rw-r--r--. 1 dweese dweese    383 Aug 12 17:23 ./messaging_commands/src/error.rs
+-rw-r--r--. 1 dweese dweese   1803 Aug 12 17:33 ./messaging_commands/src/lib.rs
+-rw-r--r--. 1 dweese dweese   5251 Aug 12 19:03 ./messaging_commands/src/main.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/protocol/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/tests/mod.rs
--rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/traits/mod.rs
+-rw-r--r--. 1 dweese dweese    946 Aug 12 22:47 ./messaging_commands/src/traits.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/utils/mod.rs
+-rw-r--r--. 1 dweese dweese      0 Aug 12 22:50 ./messaging_commands/src/utils.rs
 -rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/version/mod.rs
--rw-r--r--. 1 dweese dweese    633 Jul 18 02:29 ./pg_vault/Cargo.toml
--rw-r--r--. 1 dweese dweese  11088 Jun 19 23:39 ./pg_vault/src/auth/mock.rs
--rw-r--r--. 1 dweese dweese   6524 Jul 18 02:34 ./pg_vault/src/auth/mod.rs
--rw-r--r--. 1 dweese dweese   8093 Jul 18 02:34 ./pg_vault/src/auth/yubikey.rs
--rw-r--r--. 1 dweese dweese   1008 Jun 19 23:41 ./pg_vault/src/lib.rs
--rw-r--r--. 1 dweese dweese   2930 Jul 18 02:34 ./pg_vault/src/main.rs
--rw-r--r--. 1 dweese dweese  15698 Jul 18 02:34 ./pg_vault/src/vault/connection.rs
--rw-r--r--. 1 dweese dweese  16668 Jul 18 02:34 ./pg_vault/src/vault/mod.rs
+-rw-r--r--. 1 dweese dweese    776 Aug 12 23:23 ./pg_vault/Cargo.toml
+-rw-r--r--. 1 dweese dweese  11311 Aug 14 01:00 ./pg_vault/src/auth/mock.rs
+-rw-r--r--. 1 dweese dweese   5102 Aug 12 22:01 ./pg_vault/src/auth/mod.rs
+-rw-r--r--. 1 dweese dweese   4330 Aug 12 22:59 ./pg_vault/src/auth/yubikey.rs
+-rw-r--r--. 1 dweese dweese    426 Aug 12 23:04 ./pg_vault/src/lib.rs
+-rw-r--r--. 1 dweese dweese   3539 Aug 12 23:38 ./pg_vault/src/main.rs
+-rw-r--r--. 1 dweese dweese   1272 Aug 12 22:50 ./pg_vault/src/utils.rs
+-rw-r--r--. 1 dweese dweese  15915 Aug 12 19:03 ./pg_vault/src/vault/connection.rs
+-rw-r--r--. 1 dweese dweese  14857 Aug 12 23:25 ./pg_vault/src/vault/mod.rs
+-rw-r--r--. 1 dweese dweese   2165 Aug 12 23:25 ./pg_vault/src/vault/secure_connection.rs
+-rw-r--r--. 1 dweese dweese   1394 Aug 12 22:01 ./pg_vault/tests/auth_helpers.rs
 -rw-r--r--. 1 dweese dweese    566 May 27 17:55 ./rabbitmq-config/Cargo.toml
--rw-r--r--. 1 dweese dweese  10341 Jul 18 02:29 ./rabbitmq-config/src/client.rs
--rw-r--r--. 1 dweese dweese   5114 Jun 30 12:21 ./rabbitmq-config/src/config.rs
+-rw-r--r--. 1 dweese dweese  10916 Aug 12 19:03 ./rabbitmq-config/src/client.rs
+-rw-r--r--. 1 dweese dweese   6611 Aug 13 22:07 ./rabbitmq-config/src/config.rs
 -rw-r--r--. 1 dweese dweese    831 May 23 20:41 ./rabbitmq-config/src/error.rs
--rw-r--r--. 1 dweese dweese    773 Jun 30 12:08 ./rabbitmq-config/src/lib.rs
--rw-r--r--. 1 dweese dweese   5120 Jul 18 02:29 ./rabbitmq-config/src/models.rs
--rw-r--r--. 1 dweese dweese   1042 Jul 18 02:29 ./rabbitmq-config/src/topology.rs
--rw-r--r--. 1 dweese dweese    475 Jul 18 02:29 ./rabbitmq-config/tests/client/integration_tests.rs
--rw-r--r--. 1 dweese dweese    272 May 20 22:11 ./rabbitmq-config/tests/client/mocked_tests.rs
--rw-r--r--. 1 dweese dweese   1123 Jul 18 02:34 ./rabbitmq-config/tests/client/unit_tests.rs
--rw-r--r--. 1 dweese dweese   1340 Jul 18 02:34 ./rabbitmq-config/tests/common/test_utils.rs
--rw-r--r--. 1 dweese dweese      0 May 20 22:11 ./rabbitmq-config/tests/config/manipulation_tests.rs
+-rw-r--r--. 1 dweese dweese    770 Aug 12 19:03 ./rabbitmq-config/src/lib.rs
+-rw-r--r--. 1 dweese dweese   5119 Aug 12 19:03 ./rabbitmq-config/src/models.rs
+-rw-r--r--. 1 dweese dweese   1043 Aug 12 19:03 ./rabbitmq-config/src/topology.rs
+-rw-r--r--. 1 dweese dweese    474 Aug 12 19:03 ./rabbitmq-config/tests/client/integration_tests.rs
+-rw-r--r--. 1 dweese dweese    272 Aug 12 19:03 ./rabbitmq-config/tests/client/mocked_tests.rs
+-rw-r--r--. 1 dweese dweese   1146 Aug 12 19:03 ./rabbitmq-config/tests/client/unit_tests.rs
+-rw-r--r--. 1 dweese dweese   1341 Aug 12 19:03 ./rabbitmq-config/tests/common/test_utils.rs
+-rw-r--r--. 1 dweese dweese      1 Aug 12 19:03 ./rabbitmq-config/tests/config/manipulation_tests.rs
 -rw-r--r--. 1 dweese dweese   2074 May 27 11:04 ./rabbitmq-config/tests/config/rabbitmq_def_tests.rs
 -rw-r--r--. 1 dweese dweese    813 Jul 18 02:34 ./rabbitmq-config/tests/config/serialization_tests.rs
--rw-r--r--. 1 dweese dweese    770 Jul 18 02:34 ./rabbitmq-config/tests/config/validation_tests.rs
--rw-r--r--. 1 dweese dweese   1028 May 20 22:11 ./rabbitmq-config/tests/connection_test.rs
--rw-r--r--. 1 dweese dweese    398 May 20 22:11 ./rabbitmq-config/tests/lib.rs
--rw-r--r--. 1 dweese dweese    817 May 20 22:11 ./rabbitmq-config/tests/simple_connection_test.rs
+-rw-r--r--. 1 dweese dweese    761 Aug 12 19:03 ./rabbitmq-config/tests/config/validation_tests.rs
+-rw-r--r--. 1 dweese dweese   1073 Aug 12 19:03 ./rabbitmq-config/tests/connection_test.rs
+-rw-r--r--. 1 dweese dweese    399 Aug 12 19:03 ./rabbitmq-config/tests/lib.rs
+-rw-r--r--. 1 dweese dweese    848 Aug 12 19:03 ./rabbitmq-config/tests/simple_connection_test.rs
 -rw-r--r--. 1 dweese dweese    380 May 22 22:03 ./rabbitmq-info/Cargo.toml
--rw-r--r--. 1 dweese dweese   2981 May 22 21:14 ./rabbitmq-info/src/api/mod.rs
--rw-r--r--. 1 dweese dweese   6233 May 23 05:53 ./rabbitmq-info/src/collector/mod.rs
--rw-r--r--. 1 dweese dweese   3772 Jul 18 02:29 ./rabbitmq-info/src/export/mod.rs
--rw-r--r--. 1 dweese dweese   1704 Jun 30 12:01 ./rabbitmq-info/src/lib.rs
+-rw-r--r--. 1 dweese dweese   3011 Aug 12 19:03 ./rabbitmq-info/src/api/mod.rs
+-rw-r--r--. 1 dweese dweese   6464 Aug 12 19:03 ./rabbitmq-info/src/collector/mod.rs
+-rw-r--r--. 1 dweese dweese   3155 Aug 12 19:03 ./rabbitmq-info/src/export/mod.rs
+-rw-r--r--. 1 dweese dweese   1704 Aug 12 19:03 ./rabbitmq-info/src/lib.rs
 -rw-r--r--. 1 dweese dweese    393 May 26 19:03 ./rabbitmq-ui/Cargo.toml
--rw-r--r--. 1 dweese dweese  20535 Jul 18 02:34 ./rabbitmq-ui/src/app.rs
+-rw-r--r--. 1 dweese dweese  21269 Aug 12 19:03 ./rabbitmq-ui/src/app.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/config.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/create.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/list.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/mod.rs
--rw-r--r--. 1 dweese dweese  21020 Jul 18 02:34 ./rabbitmq-ui/src/main.rs
+-rw-r--r--. 1 dweese dweese  22288 Aug 12 19:03 ./rabbitmq-ui/src/main.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/consume.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/mod.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/publish.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/queues/create.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/queues/list.rs
 -rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/queues/mod.rs
--rw-r--r--. 1 dweese dweese  56132 Jul 15 22:17 ./target/debug/build/glutin_egl_sys-c39b3f1d23d34a82/out/egl_bindings.rs
--rw-r--r--. 1 dweese dweese  39902 Jul 15 22:17 ./target/debug/build/glutin_glx_sys-c5aa3da904cdb928/out/glx_bindings.rs
--rw-r--r--. 1 dweese dweese  45050 Jul 15 22:17 ./target/debug/build/glutin_glx_sys-c5aa3da904cdb928/out/glx_extra_bindings.rs
--rw-r--r--. 1 dweese dweese   5928 Jul 15 22:16 ./target/debug/build/khronos_api-8997f954036f22de/out/webgl_exts.rs
--rw-r--r--. 1 dweese dweese      0 Jul 15 22:17 ./target/debug/build/mime_guess2-68e5a61c9d9aa4f2/out/mime_types_generated.rs
--rw-r--r--. 1 dweese dweese  35510 Jul 15 22:16 ./target/debug/build/oid-registry-c1f0a8bd0e71a4e5/out/oid_db.rs
--rw-r--r--. 1 dweese dweese 622641 Jul 15 22:16 ./target/debug/build/typenum-93ec83b436bf1eae/out/tests.rs
--rw-r--r--. 1 dweese dweese 487759 Jul 15 22:17 ./target/debug/build/wayland-client-6698025fc382acfc/out/wayland_api.rs
--rw-r--r--. 1 dweese dweese  36133 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/fullscreen-shell-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  50925 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/gtk-primary-selection_client_api.rs
--rw-r--r--. 1 dweese dweese  17276 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/idle-inhibit-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  79068 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/input-method-unstable-v2_client_api.rs
--rw-r--r--. 1 dweese dweese  76756 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/input-method-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  27485 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/input-timestamps-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  22158 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/keyboard-shortcuts-inhibit-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  49439 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/linux-dmabuf-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  38422 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/linux-explicit-synchronization-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  51503 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/pointer-constraints-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  45863 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/pointer-gestures-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  31164 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/presentation-time_client_api.rs
--rw-r--r--. 1 dweese dweese  51162 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/primary-selection-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  22111 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/relative-pointer-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  23580 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/server-decoration_client_api.rs
--rw-r--r--. 1 dweese dweese  88716 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/tablet-v1_client_api.rs
--rw-r--r--. 1 dweese dweese 177361 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/tablet-v2_client_api.rs
--rw-r--r--. 1 dweese dweese  69265 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/text-input-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  60643 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/text-input-v3_client_api.rs
--rw-r--r--. 1 dweese dweese  26840 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/viewporter_client_api.rs
--rw-r--r--. 1 dweese dweese  59048 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-data-control-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  33587 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-export-dmabuf-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  52777 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-foreign-toplevel-management-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  22134 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-gamma-control-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  15226 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-input-inhibitor-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  53848 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-layer-shell-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  93651 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-output-management-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  22133 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-output-power-management-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  42415 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-screencopy-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  38296 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/wlr-virtual-pointer-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  30459 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-activation-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  26499 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-decoration-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  38737 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-foreign-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  40471 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-foreign-v2_client_api.rs
--rw-r--r--. 1 dweese dweese  28256 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-output-v1_client_api.rs
--rw-r--r--. 1 dweese dweese 166832 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-shell_client_api.rs
--rw-r--r--. 1 dweese dweese  88470 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-shell-v5_client_api.rs
--rw-r--r--. 1 dweese dweese 145289 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xdg-shell-v6_client_api.rs
--rw-r--r--. 1 dweese dweese  18565 Jul 15 22:17 ./target/debug/build/wayland-protocols-34f44ca3b78638a0/out/xwayland-keyboard-grab-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  19206 Jul 15 22:17 ./target/debug/build/winit-9a65be7369022daa/out/fractional_scale_v1.rs
--rw-r--r--. 1 dweese dweese    777 Jul 15 22:16 ./target/debug/build/x11-dl-1ae1c979ee0aa1e0/out/config.rs
+-rw-r--r--. 1 dweese dweese  56132 Aug 14 22:32 ./target/debug/build/glutin_egl_sys-b0e8c6245ec60cb0/out/egl_bindings.rs
+-rw-r--r--. 1 dweese dweese  56858 Aug 14 22:32 ./target/debug/build/glutin_egl_sys-d56fa370f862249c/out/egl_bindings.rs
+-rw-r--r--. 1 dweese dweese  39902 Aug 14 22:32 ./target/debug/build/glutin_glx_sys-0644ce40a0a1476d/out/glx_bindings.rs
+-rw-r--r--. 1 dweese dweese  45050 Aug 14 22:32 ./target/debug/build/glutin_glx_sys-0644ce40a0a1476d/out/glx_extra_bindings.rs
+-rw-r--r--. 1 dweese dweese  39902 Aug 14 22:32 ./target/debug/build/glutin_glx_sys-6c4a2995331fb73b/out/glx_bindings.rs
+-rw-r--r--. 1 dweese dweese  45050 Aug 14 22:32 ./target/debug/build/glutin_glx_sys-6c4a2995331fb73b/out/glx_extra_bindings.rs
+-rw-r--r--. 1 dweese dweese   5928 Aug 14 22:32 ./target/debug/build/khronos_api-b84cade0f53a7f1c/out/webgl_exts.rs
+-rw-r--r--. 1 dweese dweese      0 Aug 14 22:32 ./target/debug/build/mime_guess2-68af7700e953b20f/out/mime_types_generated.rs
+-rw-r--r--. 1 dweese dweese  35510 Aug 14 22:32 ./target/debug/build/oid-registry-c6fa0897205b2867/out/oid_db.rs
+-rw-r--r--. 1 dweese dweese 622641 Aug 14 22:32 ./target/debug/build/typenum-ecb45726e3f0c886/out/tests.rs
+-rw-r--r--. 1 dweese dweese 487759 Aug 14 22:32 ./target/debug/build/wayland-client-0ee0f398b5db67ef/out/wayland_api.rs
+-rw-r--r--. 1 dweese dweese  36133 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/fullscreen-shell-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  50925 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/gtk-primary-selection_client_api.rs
+-rw-r--r--. 1 dweese dweese  17276 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/idle-inhibit-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  79068 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/input-method-unstable-v2_client_api.rs
+-rw-r--r--. 1 dweese dweese  76756 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/input-method-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  27485 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/input-timestamps-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22158 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/keyboard-shortcuts-inhibit-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  49439 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/linux-dmabuf-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  38422 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/linux-explicit-synchronization-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  51503 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/pointer-constraints-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  45863 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/pointer-gestures-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  31164 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/presentation-time_client_api.rs
+-rw-r--r--. 1 dweese dweese  51162 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/primary-selection-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22111 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/relative-pointer-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  23580 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/server-decoration_client_api.rs
+-rw-r--r--. 1 dweese dweese  88716 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/tablet-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese 177361 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/tablet-v2_client_api.rs
+-rw-r--r--. 1 dweese dweese  69265 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/text-input-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  60643 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/text-input-v3_client_api.rs
+-rw-r--r--. 1 dweese dweese  26840 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/viewporter_client_api.rs
+-rw-r--r--. 1 dweese dweese  59048 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-data-control-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  33587 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-export-dmabuf-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  52777 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-foreign-toplevel-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22134 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-gamma-control-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  15226 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-input-inhibitor-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  53848 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-layer-shell-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  93651 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-output-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22133 Aug 14 22:33 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-output-power-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  42415 Aug 14 22:33 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-screencopy-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  38296 Aug 14 22:33 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/wlr-virtual-pointer-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  30459 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-activation-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  26499 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-decoration-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  38737 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-foreign-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  40471 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-foreign-v2_client_api.rs
+-rw-r--r--. 1 dweese dweese  28256 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-output-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese 166832 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-shell_client_api.rs
+-rw-r--r--. 1 dweese dweese  88470 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-shell-v5_client_api.rs
+-rw-r--r--. 1 dweese dweese 145289 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xdg-shell-v6_client_api.rs
+-rw-r--r--. 1 dweese dweese  18565 Aug 14 22:32 ./target/debug/build/wayland-protocols-8dc4d9ac2c367011/out/xwayland-keyboard-grab-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  19206 Aug 14 22:32 ./target/debug/build/winit-95a47ac99e1bb1f4/out/fractional_scale_v1.rs
+-rw-r--r--. 1 dweese dweese    777 Aug 14 22:32 ./target/debug/build/x11-dl-9b3d2c981ad0d476/out/config.rs
 -rw-r--r--. 1 dweese dweese      0 May 20 22:11 ./tests/client/integration_tests.rs
 -rw-r--r--. 1 dweese dweese   4924 May 20 22:11 ./tests/client/unit_tests.rs
 -rw-r--r--. 1 dweese dweese    845 May 23 05:20 ./tests/integration_test.rs
 -rw-r--r--. 1 dweese dweese    400 May 20 22:11 ./tests/lib.rs
--rw-r--r--. 1 dweese dweese    334 Jun 16 21:57 ./yak_json/Cargo.toml
--rw-r--r--. 1 dweese dweese  11279 Jul 18 02:34 ./yak_json/src/main.rs
+-rw-r--r--. 1 dweese dweese    416 Aug 14 00:50 ./yak_json/Cargo.toml
+-rw-r--r--. 1 dweese dweese  11483 Aug 12 19:03 ./yak_json/src/main.rs
 [workspace]
 members = [
     "rabbitmq-config",
     "rabbitmq-info",
     "rabbitmq-ui",
     "egui-components",
-    "messaging_commands", "messaging_cli", "yak_json", "pg_vault"]
+    "messaging_commands",
+    "messaging_cli",
+    "yak_json",
+    "pg_vault",
+]
 
 resolver = "2"
 
 
 [workspace.dependencies]
+async-trait = "0.1.80"
+base64 = "0.21.7"
+chrono = { version = "0.4.38", features = ["serde"] }
+clap = { version = "4.5.4", features = ["derive", "env"] }
+eframe = { version = "0.27.2", default-features = false, features = ["accesskit", "default_fonts", "glow", "persistence"] }
+egui = "0.27.2"
+env_logger = "0.11.3"
+lapin = "2.5.3" # Standardizing on the newer version
+log = "0.4.21"
+messaging_commands = { path = "./messaging_commands" }
+percent-encoding = "2.3.1"
 rabbitmq-config = { path = "./rabbitmq-config" }
 rabbitmq-info = { path = "./rabbitmq-info" }
-tokio = { version = "1", features = ["full", "rt", "macros"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+sha2 = "0.10.8"
 thiserror = "1.0"
+tokio = { version = "1.38.0", features = ["full"] }
+tokio-postgres = "0.7.10"
+tokio-test = "0.4.4"
+yubikey = "0.7.0" # Switched from yubico to yubikey for PIV support
 #### egui-components/Cargo.toml
 [package]
 name = "egui-components"
@@ -397,55 +432,63 @@ messaging_commands = { path = "../messaging_commands" }
 rabbitmq-config = { workspace = true }[package]
 name = "messaging_commands"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-rabbitmq-config = { path = "../rabbitmq-config" }
-thiserror = "1.0"
-tokio = { version = "1.45.0", features = ["full"] }
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
-log = "0.4.27"
-lapin = "2.5.3"
-percent-encoding = "2.3.1"
-tokio-executor-trait = "2.1.0"
+rabbitmq-config = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+clap = { workspace = true, optional = true } # Optional for the library
 
-# CLI dependencies needed for main.rs
-clap = { version = "4.0", features = ["derive"] }
-env_logger = "0.10"
+env_logger = { workspace = true, optional = true } # Optional for the library
+chrono = { workspace = true, features = ["serde"], optional = true } # Optional for the library
+
+lapin = { workspace = true }
+percent-encoding = { workspace = true }
+async-trait = { workspace = true }
 
 [features]
-[package]
+default = []
+cli = ["dep:clap", "dep:env_logger", "dep:chrono"]
+
+[[bin]]
+name = "messaging_commands"
+required-features = ["cli"][package]
 name = "pg_vault"
 version = "0.1.0"
-edition = "2021"
+edition = "2021" # Using the current stable edition to avoid toolchain issues
 
 [[bin]]
 name = "pg_vault"
 path = "src/main.rs"
 
 [dependencies]
-messaging_commands = { path = "../messaging_commands" }
-clap = { version = "4.0", features = ["derive"] }
-env_logger = "0.10"
-log = "0.4"
-tokio = { version = "1.0", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
-thiserror = "1.0"
-tokio-postgres = "0.7"
-sha2 = "0.10"
-base64 = "0.21"
-chrono = "0.4.41"
+messaging_commands = { workspace = true }
+rabbitmq-config = { workspace = true }
+clap = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio-postgres = { workspace = true }
+sha2 = { workspace = true }
+base64 = { workspace = true }
+chrono = { workspace = true }
+
 
 # Hardware Yubikey support (optional)
-yubico = { version = "0.11", optional = true }
+yubikey = { workspace = true, optional = true }
 
 [features]
 default = []
-hardware-yubikey = ["yubico"]
+hardware-yubikey = ["dep:yubikey"]
 
 [dev-dependencies]
-tokio-test = "0.4"## rabbitmq-config/Cargo.toml
+tokio-test = { workspace = true }## rabbitmq-config/Cargo.toml
 
 [package]
 name = "rabbitmq-config"
@@ -499,7 +542,6 @@ eframe = "0.24.0"  # Replace with actual version you need
 tokio = { version = "1", features = ["full"] }
 env_logger = "0.11.8"
 egui_extras = "0.24.0"  # Add this line for table support
-
 [package]
 name = "yak_json"
 version = "0.1.0"
@@ -508,80 +550,69 @@ edition = "2021"
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
-eframe = "0.24.1"
+eframe = { workspace = true }  # Use workspace version instead of "0.24.1"
 egui-components = { path = "../egui-components" }
 env_logger = "0.11.8"
 log = "0.4"
 rabbitmq-config = { workspace = true }
-rfd = { version = "0.14" }  # Simple file dialog
-
+rfd = { version = "0.15" }  # Update to newer version that uses newer ashpd
 ==> egui-components/src/lib.rs <==
 // egui-components/src/lib.rs
 mod border_layout;
 mod event_tree;
-mod tree_node_id;
 mod tree;
+mod tree_node_id;
 pub use border_layout::BorderLayout;
-pub use tree::Tree;
 pub use event_tree::{EventTree, TreeEvent, TreeNode};
+pub use tree::Tree;
 pub use tree_node_id::TreeNodeId;
 pub mod tree_vis;
 
 ==> messaging_commands/src/lib.rs <==
 //! Messaging Commands Library
-//! 
+//!
 //! A comprehensive library for handling messaging operations with various protocols,
 //! primarily focused on RabbitMQ connectivity and message handling.
-//! 
+//!
 //! # Quick Start
-//! 
+//!
 //! ```rust
-//! use messaging_commands::prelude::*;
-//! 
+//! # use messaging_commands::prelude::*;
+//! # use rabbitmq_config::RabbitMQConfig;
+//! #
 //! #[tokio::main]
 //! async fn main() -> Result<(), MessagingError> {
-//!     let config = RabbitMQConfig::default();
-//!     let client = RabbitMQClient::new(config).await?;
-//!     // Use the client...
-//!     Ok(())
-//! }
-//! ```
-
-// Core module declarations
+//!     // 1. Create a configuration
+//!     let config = RabbitMQConfig::default(); // Assumes a local RabbitMQ instance
+//!
+//!     // 2. Create a new client for a specific protocol
+//!     let mut client = AmqpClient::new(config);
+//!
+//!     // 3. Connect to the broker
 
 ==> pg_vault/src/lib.rs <==
-// pg_vault/src/lib.rs
-//! pg_vault - Secure PostgreSQL with Hardware Token Authentication
-//!
-//! A Rust library providing secure PostgreSQL connections with hardware token
-//! authentication, specifically designed for Yubikey devices.
+//! A secure vault for PostgreSQL connections using hardware token authentication.
 
 pub mod auth;
+pub mod utils;
 pub mod vault;
 
-/// Re-exports for convenient importing
 pub mod prelude {
-    // Authentication types
-    pub use crate::auth::{
-        AuthConfig,
-        AuthError,
-        AuthResult,
-        AuthProviderFactory,
-        MockYubikey,
-        TokenInfo,
-        YubikeyAuth,
-
+    //! A "prelude" for users of the `pg_vault` library.
+    pub use crate::auth::{AuthConfig, AuthError, AuthResult, TokenInfo, YubikeyAuth};
+    pub use crate::vault::{
+        DatabaseConfig, SecureConnection, SessionInfo, Vault, VaultConfig, VaultError, VaultResult,
+    };
+}
 ==> rabbitmq-config/src/lib.rs <==
 // rabbitmq-config/src/lib.rs
-
-
 
 // Module declarations
 mod client;
 mod config;
 mod error;
-mod topology;
 mod models;
+mod topology;
 
 // Re-export the models needed by the UI
 pub use client::RabbitMQClient;
@@ -590,8 +621,10 @@ pub use error::RabbitMQError;
 
 // Re-export the models needed by the UI
 pub use models::{
-    MessageProperties,
-    RabbitMQMessage,
+    BindingDefinition,
+    ExchangeDefinition,
+    ExchangeInfo,
+    GlobalParameterDefinition,
 
 ==> rabbitmq-info/src/lib.rs <==
 // rabbitmq-info/src/lib.rs
@@ -606,7 +639,6 @@ pub mod api;
 pub mod collector;
 pub mod export;
 
-
 // Define the data structures
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServerInfo {
@@ -614,3 +646,4 @@ pub struct ServerInfo {
     pub erlang_version: String,
     pub cluster_name: String,
     pub management_version: String,
+    pub uptime: u64,

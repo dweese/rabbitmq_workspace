@@ -1,12 +1,11 @@
 // rabbitmq_ui/src/main.rs
 
 use eframe::egui::{self, Color32, RichText};
-use std::collections::HashMap;
 use egui_components::TreeNodeId;
+use std::collections::HashMap;
 
 use rabbitmq_config::{
-    RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
-    MessageProperties, QueueInfo, ExchangeInfo,
+    ExchangeInfo, MessageProperties, QueueInfo, RabbitMQClient, RabbitMQConfig, RabbitMQMessage,
 };
 use std::sync::Arc;
 use tokio::runtime::Runtime;
@@ -35,7 +34,6 @@ pub struct TreeState {
 
 // Add this to your app.rs file where TreeState is defined
 
-
 pub struct AppState {
     runtime: Arc<Runtime>,
     client: Option<Arc<Mutex<RabbitMQClient>>>,
@@ -59,7 +57,6 @@ pub struct AppState {
     tree_state: TreeState,
 }
 
-
 impl Default for AppState {
     fn default() -> Self {
         Self {
@@ -70,7 +67,7 @@ impl Default for AppState {
             message: RabbitMQMessage {
                 exchange: "".to_string(),
                 routing_key: "".to_string(),
-                payload: Vec::new(),  // Empty Vec<u8>
+                payload: Vec::new(), // Empty Vec<u8>
                 properties: Some(MessageProperties::default()),
             },
             status_message: "Welcome to RabbitMQ UI".to_string(),
@@ -94,7 +91,6 @@ impl Default for AppState {
             show_queue_dialog: false,
             show_exchange_dialog: false,
             tree_state: TreeState::default(), // Add this line
-
         }
     }
 }
@@ -105,9 +101,7 @@ impl AppState {
         let runtime = self.runtime.clone();
 
         // Use runtime to perform async connection
-        let client_future = async move {
-            RabbitMQClient::new(config).await
-        };
+        let client_future = async move { RabbitMQClient::new(config).await };
 
         match runtime.block_on(client_future) {
             Ok(client) => {
@@ -117,7 +111,7 @@ impl AppState {
 
                 // Refresh the lists upon connection
                 self.refresh_queues_and_exchanges();
-            },
+            }
             Err(err) => {
                 self.status_message = format!("Connection failed: {err:?}");
             }
@@ -137,7 +131,7 @@ impl AppState {
             match runtime.block_on(close_future) {
                 Ok(_) => {
                     self.status_message = "Disconnected from RabbitMQ".to_string();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Error during disconnect: {err:?}");
                 }
@@ -164,7 +158,7 @@ impl AppState {
             match runtime.block_on(queues_future) {
                 Ok(queues) => {
                     self.available_queues = queues;
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to fetch queues: {err:?}");
                 }
@@ -183,7 +177,7 @@ impl AppState {
                 match runtime.block_on(exchanges_future) {
                     Ok(exchanges) => {
                         self.available_exchanges = exchanges;
-                    },
+                    }
                     Err(err) => {
                         self.status_message = format!("Failed to fetch exchanges: {err:?}");
                     }
@@ -206,7 +200,7 @@ impl AppState {
             match runtime.block_on(publish_future) {
                 Ok(_) => {
                     self.status_message = "Message published successfully".to_string();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to publish message: {err:?}");
                 }
@@ -237,7 +231,7 @@ impl AppState {
                     self.show_queue_dialog = false;
                     // Refresh the queue list
                     self.refresh_queues_and_exchanges();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to create queue: {err:?}");
                 }
@@ -262,13 +256,14 @@ impl AppState {
 
             match runtime.block_on(exchange_future) {
                 Ok(_) => {
-                    self.status_message = format!("Exchange '{exchange_name}' created successfully");
+                    self.status_message =
+                        format!("Exchange '{exchange_name}' created successfully");
                     // Reset form and hide dialog
                     self.new_exchange.name = "".to_string();
                     self.show_exchange_dialog = false;
                     // Refresh the exchange list
                     self.refresh_queues_and_exchanges();
-                },
+                }
                 Err(err) => {
                     self.status_message = format!("Failed to create exchange: {err:?}");
                 }
@@ -285,9 +280,7 @@ pub struct App {
     state: AppState,
 }
 
-
 impl eframe::App for App {
-
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Create our own manual layout
         let screen_rect = ctx.screen_rect();
@@ -333,7 +326,8 @@ impl eframe::App for App {
                 ui.set_max_size(north_rect.size());
                 ui.set_width(north_rect.width());
                 ui.set_height(north_rect.height());
-                ui.painter().rect_filled(north_rect, 0.0, Color32::from_rgb(173, 216, 230)); // Light blue
+                ui.painter()
+                    .rect_filled(north_rect, 0.0, Color32::from_rgb(173, 216, 230)); // Light blue
 
                 ui.horizontal(|ui| {
                     // Connection status indicator
@@ -380,7 +374,8 @@ impl eframe::App for App {
                 ui.set_max_size(south_rect.size());
                 ui.set_width(south_rect.width());
                 ui.set_height(south_rect.height());
-                ui.painter().rect_filled(south_rect, 0.0, Color32::from_rgb(144, 238, 144)); // Light green
+                ui.painter()
+                    .rect_filled(south_rect, 0.0, Color32::from_rgb(144, 238, 144)); // Light green
 
                 ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                     ui.label(&self.state.status_message);
@@ -394,7 +389,8 @@ impl eframe::App for App {
                 ui.set_max_size(west_rect.size());
                 ui.set_width(west_rect.width());
                 ui.set_height(west_rect.height());
-                ui.painter().rect_filled(west_rect, 0.0, Color32::from_rgb(255, 218, 185)); // Peach
+                ui.painter()
+                    .rect_filled(west_rect, 0.0, Color32::from_rgb(255, 218, 185)); // Peach
 
                 ui.vertical(|ui| {
                     ui.heading("Queues");
@@ -434,7 +430,8 @@ impl eframe::App for App {
                 ui.set_max_size(center_rect.size());
                 ui.set_width(center_rect.width());
                 ui.set_height(center_rect.height());
-                ui.painter().rect_filled(center_rect, 0.0, Color32::from_rgb(230, 230, 250)); // Lavender
+                ui.painter()
+                    .rect_filled(center_rect, 0.0, Color32::from_rgb(230, 230, 250)); // Lavender
 
                 ui.vertical(|ui| {
                     ui.heading("Publish Message");
@@ -451,11 +448,11 @@ impl eframe::App for App {
                     });
 
                     ui.label("Payload:");
-                    let mut payload_text = String::from_utf8_lossy(&self.state.message.payload).to_string();
+                    let mut payload_text =
+                        String::from_utf8_lossy(&self.state.message.payload).to_string();
                     if ui.text_edit_multiline(&mut payload_text).changed() {
                         self.state.message.payload = payload_text.into_bytes();
                     }
-
 
                     if ui.button("Publish").clicked() {
                         actions.push(UiAction::PublishMessage);
@@ -489,7 +486,8 @@ impl eframe::App for App {
 
                         if ui.button("Create Queue").clicked() {
                             if self.state.new_queue.name.is_empty() {
-                                self.state.status_message = "Queue name cannot be empty".to_string();
+                                self.state.status_message =
+                                    "Queue name cannot be empty".to_string();
                             } else {
                                 actions.push(UiAction::DeclareQueue);
                             }
@@ -514,10 +512,26 @@ impl eframe::App for App {
                         egui::ComboBox::from_id_source("exchange_type")
                             .selected_text(&self.state.new_exchange.kind)
                             .show_ui(ui, |ui| {
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "direct".to_string(), "Direct");
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "fanout".to_string(), "Fanout");
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "topic".to_string(), "Topic");
-                                ui.selectable_value(&mut self.state.new_exchange.kind, "headers".to_string(), "Headers");
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "direct".to_string(),
+                                    "Direct",
+                                );
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "fanout".to_string(),
+                                    "Fanout",
+                                );
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "topic".to_string(),
+                                    "Topic",
+                                );
+                                ui.selectable_value(
+                                    &mut self.state.new_exchange.kind,
+                                    "headers".to_string(),
+                                    "Headers",
+                                );
                             });
                     });
 
@@ -531,7 +545,8 @@ impl eframe::App for App {
 
                         if ui.button("Create Exchange").clicked() {
                             if self.state.new_exchange.name.is_empty() {
-                                self.state.status_message = "Exchange name cannot be empty".to_string();
+                                self.state.status_message =
+                                    "Exchange name cannot be empty".to_string();
                             } else {
                                 actions.push(UiAction::DeclareExchange);
                             }
@@ -552,5 +567,4 @@ impl eframe::App for App {
             }
         }
     }
-    
 }

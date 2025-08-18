@@ -1,4 +1,3 @@
-
 [package]
 name = "yak_json"
 version = "0.1.0"
@@ -7,10 +6,9 @@ edition = "2021"
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
-eframe = "0.24.1"
+eframe = { workspace = true }  # Use workspace version instead of "0.24.1"
 egui-components = { path = "../egui-components" }
 env_logger = "0.11.8"
 log = "0.4"
 rabbitmq-config = { workspace = true }
-rfd = { version = "0.14" }  # Simple file dialog
-
+rfd = { version = "0.15" }  # Update to newer version that uses newer ashpd

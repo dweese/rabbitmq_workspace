@@ -3,7 +3,7 @@
 //! A command-line interface for interacting with the secure PostgreSQL vault.
 
 use clap::{Parser, Subcommand};
-use log::{error, info};
+use log::info;
 use pg_vault::prelude::*;
 
 #[derive(Parser)]

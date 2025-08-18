@@ -1,9 +1,8 @@
 // rabbitmq-info/src/collector/mod.rs
 
+use crate::api::{ApiError, RabbitMQApiClient};
 use crate::{BindingInfo, ExchangeInfo, QueueInfo, ServerInfo};
-use crate::api::{RabbitMQApiClient, ApiError};
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 // Define the RabbitMQInfo struct
 #[derive(Debug, Serialize, Deserialize)]
@@ -51,8 +50,6 @@ impl RabbitMQInfoCollector {
         let bindings_future = self.client.get_bindings();
         let vhosts_future = self.client.get_vhosts();
 
-    
-
         // Await all futures
         let (overview, exchanges, queues, bindings, vhosts) = tokio::join!(
             overview_future,
@@ -69,7 +66,9 @@ impl RabbitMQInfoCollector {
         let bindings = self.process_bindings(bindings?);
         let vhosts = self.process_vhosts(vhosts?);
 
-        Ok(RabbitMQInfo::new(server, exchanges, queues, bindings, vhosts))
+        Ok(RabbitMQInfo::new(
+            server, exchanges, queues, bindings, vhosts,
+        ))
     }
 
     // Process the overview response from the API
@@ -86,62 +85,74 @@ impl RabbitMQInfoCollector {
 
     // Process exchanges response from the API
     fn process_exchanges(&self, exchanges: Vec<serde_json::Value>) -> Vec<ExchangeInfo> {
-        exchanges.into_iter().map(|exchange| {
-            ExchangeInfo {
+        exchanges
+            .into_iter()
+            .map(|exchange| ExchangeInfo {
                 name: self.extract_string(&exchange, "name"),
                 vhost: self.extract_string(&exchange, "vhost"),
                 exchange_type: self.extract_string(&exchange, "type"),
                 durable: self.extract_bool(&exchange, "durable").unwrap_or(false),
                 auto_delete: self.extract_bool(&exchange, "auto_delete").unwrap_or(false),
                 internal: self.extract_bool(&exchange, "internal").unwrap_or(false),
-                arguments: self.extract_value(&exchange, "arguments").unwrap_or_else(|| serde_json::json!({})),
-            }
-        }).collect()
-        
+                arguments: self
+                    .extract_value(&exchange, "arguments")
+                    .unwrap_or_else(|| serde_json::json!({})),
+            })
+            .collect()
     }
 
     // Process queues response from the API
     fn process_queues(&self, queues: Vec<serde_json::Value>) -> Vec<QueueInfo> {
-        queues.into_iter().map(|queue| {
-            QueueInfo {
+        queues
+            .into_iter()
+            .map(|queue| QueueInfo {
                 name: self.extract_string(&queue, "name"),
                 vhost: self.extract_string(&queue, "vhost"),
                 durable: self.extract_bool(&queue, "durable").unwrap_or(false),
                 auto_delete: self.extract_bool(&queue, "auto_delete").unwrap_or(false),
                 exclusive: self.extract_bool(&queue, "exclusive").unwrap_or(false),
-                arguments: self.extract_value(&queue, "arguments").unwrap_or_else(|| serde_json::json!({})),
+                arguments: self
+                    .extract_value(&queue, "arguments")
+                    .unwrap_or_else(|| serde_json::json!({})),
                 messages: self.extract_number(&queue, "messages"),
                 messages_ready: self.extract_number(&queue, "messages_ready"),
                 messages_unacknowledged: self.extract_number(&queue, "messages_unacknowledged"),
-            }
-        }).collect()
+            })
+            .collect()
     }
 
     // Process bindings response from the API
     fn process_bindings(&self, bindings: Vec<serde_json::Value>) -> Vec<BindingInfo> {
-        bindings.into_iter().map(|binding| {
-            BindingInfo {
+        bindings
+            .into_iter()
+            .map(|binding| BindingInfo {
                 source: self.extract_string(&binding, "source"),
                 destination: self.extract_string(&binding, "destination"),
                 destination_type: self.extract_string(&binding, "destination_type"),
                 routing_key: self.extract_string(&binding, "routing_key"),
-                arguments: self.extract_value(&binding, "arguments").unwrap_or_else(|| serde_json::json!({})),
+                arguments: self
+                    .extract_value(&binding, "arguments")
+                    .unwrap_or_else(|| serde_json::json!({})),
                 vhost: self.extract_string(&binding, "vhost"),
-            }
-        }).collect()
+            })
+            .collect()
     }
 
     // Process vhosts response from the API
     fn process_vhosts(&self, vhosts: Vec<serde_json::Value>) -> Vec<String> {
-        vhosts.into_iter()
-            .filter_map(|vhost| self.extract_value(&vhost, "name")
-                .and_then(|v| v.as_str().map(|s| s.to_string())))
+        vhosts
+            .into_iter()
+            .filter_map(|vhost| {
+                self.extract_value(&vhost, "name")
+                    .and_then(|v| v.as_str().map(|s| s.to_string()))
+            })
             .collect()
     }
 
     // Helper methods to extract values from JSON
     fn extract_string(&self, value: &serde_json::Value, key: &str) -> String {
-        value.get(key)
+        value
+            .get(key)
             .and_then(|v| v.as_str())
             .unwrap_or_default()
             .to_string()
@@ -159,11 +170,5 @@ impl RabbitMQInfoCollector {
         value.get(key).cloned()
     }
 
-
-
-
-
-
     // ... rest of your existing code
-    
 }

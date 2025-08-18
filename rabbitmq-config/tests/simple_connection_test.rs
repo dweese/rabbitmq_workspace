@@ -26,5 +26,9 @@ fn test_simple_rabbitmq_connection() {
         Ok::<_, rabbitmq_config::RabbitMQError>(())
     });
 
-    assert!(result.is_ok(), "Failed to connect to RabbitMQ: {:?}", result.err());
+    assert!(
+        result.is_ok(),
+        "Failed to connect to RabbitMQ: {:?}",
+        result.err()
+    );
 }

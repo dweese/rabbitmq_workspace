@@ -24,7 +24,10 @@ fn test_rabbitmq_config_to_uri() {
     };
 
     let uri2 = config2.to_uri();
-    assert_eq!(uri2, "amqp://test-user:test-pass@rabbitmq.example.com:5673/test-vhost");
+    assert_eq!(
+        uri2,
+        "amqp://test-user:test-pass@rabbitmq.example.com:5673/test-vhost"
+    );
 }
 
 #[test]

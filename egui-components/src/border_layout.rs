@@ -1,5 +1,5 @@
 // egui-components/src/border_layout.rs
-use eframe::egui::{self, Ui, Widget, Response, Color32};
+use eframe::egui::{self, Color32, Response, Ui, Widget};
 
 type WidgetFn = Box<dyn FnOnce(&mut Ui)>;
 
@@ -31,7 +31,7 @@ impl BorderLayout {
             east: None,
             west: None,
             center: None,
-            north_height: 40.0,  // Default heights/widths
+            north_height: 40.0, // Default heights/widths
             south_height: 40.0,
             east_width: 100.0,
             west_width: 100.0,
@@ -249,7 +249,8 @@ impl Widget for BorderLayout {
                     painter.rect_filled(center_rect, 0.0, color);
                 }
                 function(ui);
-            }).response
+            })
+            .response
         } else {
             ui.allocate_rect(center_rect, egui::Sense::hover())
         };

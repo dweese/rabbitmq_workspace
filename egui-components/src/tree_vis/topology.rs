@@ -1,4 +1,3 @@
-
 // egui-components/src/tree_vis/topology.rs
 use crate::event_tree::{EventTree, TreeEvent};
 use crate::tree_node_id::TreeNodeId;
@@ -79,7 +78,9 @@ impl TopologyVisualizer {
     // Add allow(dead_code) to methods that are defined but not yet used
     #[allow(dead_code)]
     fn add_exchange(&mut self, vhost_id: TreeNodeId, name: &str, ex_type: &str) -> TreeNodeId {
-        let exchange_id = TreeNodeId { id: format!("exchange:{name}") };
+        let exchange_id = TreeNodeId {
+            id: format!("exchange:{name}"),
+        };
 
         // Create a topology node
         let node = TopologyNode {
@@ -93,14 +94,17 @@ impl TopologyVisualizer {
         self.nodes.insert(exchange_id.clone(), node);
 
         // Add to the tree
-        self.tree.add_node(exchange_id.clone(), Some(vhost_id), name.to_string());
+        self.tree
+            .add_node(exchange_id.clone(), Some(vhost_id), name.to_string());
 
         exchange_id
     }
 
     #[allow(dead_code)]
     fn add_queue(&mut self, vhost_id: TreeNodeId, name: &str) -> TreeNodeId {
-        let queue_id = TreeNodeId { id: format!("queue:{name}") };
+        let queue_id = TreeNodeId {
+            id: format!("queue:{name}"),
+        };
 
         // Create a topology node
         let node = TopologyNode {
@@ -114,7 +118,8 @@ impl TopologyVisualizer {
         self.nodes.insert(queue_id.clone(), node);
 
         // Add to the tree
-        self.tree.add_node(queue_id.clone(), Some(vhost_id), name.to_string());
+        self.tree
+            .add_node(queue_id.clone(), Some(vhost_id), name.to_string());
 
         queue_id
     }
@@ -122,8 +127,12 @@ impl TopologyVisualizer {
     #[allow(dead_code)]
     fn add_binding(&mut self, exchange_id: TreeNodeId, queue_id: TreeNodeId, routing_key: &str) {
         // Option 1: Add a binding node
-        let binding_id = TreeNodeId { id: format!("binding:{}->{}:{}",
-                                                  exchange_id.id, queue_id.id, routing_key) };
+        let binding_id = TreeNodeId {
+            id: format!(
+                "binding:{}->{}:{}",
+                exchange_id.id, queue_id.id, routing_key
+            ),
+        };
 
         let node = TopologyNode {
             id: binding_id.clone(),
@@ -135,9 +144,15 @@ impl TopologyVisualizer {
         self.nodes.insert(binding_id.clone(), node);
 
         // Add to the tree as a child of the exchange
-        self.tree.add_node(binding_id, Some(exchange_id), format!("→ {} ({})",
-                                                                  self.nodes.get(&queue_id).map_or("Unknown", |n| &n.name),
-                                                                  routing_key));
+        self.tree.add_node(
+            binding_id,
+            Some(exchange_id),
+            format!(
+                "→ {} ({})",
+                self.nodes.get(&queue_id).map_or("Unknown", |n| &n.name),
+                routing_key
+            ),
+        );
     }
 
     pub fn handle_event(&mut self, event: TreeEvent<TreeNodeId>) -> Option<TopologyAction> {
@@ -148,14 +163,16 @@ impl TopologyVisualizer {
                 // Return an action based on node type
                 if let Some(node) = self.nodes.get(&id) {
                     match node.node_type {
-                        TopologyNodeType::Exchange(_) => Some(TopologyAction::ShowExchangeDetails(id)),
+                        TopologyNodeType::Exchange(_) => {
+                            Some(TopologyAction::ShowExchangeDetails(id))
+                        }
                         TopologyNodeType::Queue => Some(TopologyAction::ShowQueueDetails(id)),
                         _ => None,
                     }
                 } else {
                     None
                 }
-            },
+            }
             TreeEvent::NodeDoubleClicked(id) => {
                 // Handle double-click - maybe edit the item
                 if let Some(node) = self.nodes.get(&id) {
@@ -167,7 +184,7 @@ impl TopologyVisualizer {
                 } else {
                     None
                 }
-            },
+            }
             // Handle other events
             _ => None,
         }

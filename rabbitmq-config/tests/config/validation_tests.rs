@@ -6,8 +6,6 @@ fn test_empty_fields() {
     let mut config = RabbitMQConfig::default();
     config.host = "".to_string();
 
-    
-    
     let json = serde_json::to_string(&config).expect("Failed to serialize");
     let deserialized: RabbitMQConfig = serde_json::from_str(&json).expect("Failed to deserialize");
 

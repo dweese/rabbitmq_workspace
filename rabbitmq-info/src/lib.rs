@@ -10,7 +10,6 @@ pub mod api;
 pub mod collector;
 pub mod export;
 
-
 // Define the data structures
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServerInfo {

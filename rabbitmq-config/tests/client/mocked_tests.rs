@@ -1,4 +1,3 @@
-
 // This file contains placeholder tests for now
 // In a real implementation, you would add mock tests that don't require a real RabbitMQ server
 
