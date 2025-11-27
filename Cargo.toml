@@ -1,13 +1,14 @@
 [workspace]
 members = [
-    "rabbitmq-config",
-    "rabbitmq-info",
-    "rabbitmq-ui",
     "egui-components",
+    "messaging_cli", 
     "messaging_commands",
-    "messaging_cli",
-    "yak_json",
+    "messaging_simple",    # Add this line
     "pg_vault",
+    "rabbitmq-config",
+    "rabbitmq-info", "rabbitmq-mon", 
+    "rabbitmq-ui",
+    "yak_json"
 ]
 
 resolver = "2"

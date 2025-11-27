@@ -79,6 +79,15 @@ impl RabbitMQApiClient {
         }
     }
 
+    /// Check if the RabbitMQ server is alive and responding
+    /// Returns Ok(true) if the server responds, Err otherwise
+    pub async fn is_alive(&self) -> Result<bool, ApiError> {
+        match self.get_overview().await {
+            Ok(_) => Ok(true),
+            Err(e) => Err(e),
+        }
+    }
+
     // Get overview information
     pub async fn get_overview(&self) -> Result<serde_json::Value, ApiError> {
         self.get("/overview").await
@@ -102,5 +111,10 @@ impl RabbitMQApiClient {
     // Get all vhosts
     pub async fn get_vhosts(&self) -> Result<Vec<serde_json::Value>, ApiError> {
         self.get("/vhosts").await
+    }
+
+    // Get all users
+    pub async fn get_users(&self) -> Result<Vec<serde_json::Value>, ApiError> {
+        self.get("/users").await
     }
 }

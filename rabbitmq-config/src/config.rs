@@ -41,18 +41,6 @@ impl RabbitMQConfig {
             self.username, self.password, self.host, self.port, vhost_encoded
         )
     }
-
-    /// Extracts the simple connection config from the full configuration.
-    pub fn from_full_config(full_config: &RabbitMQFullConfig) -> Self {
-        let conn = &full_config.connection;
-        Self {
-            host: conn.host.clone(),
-            port: conn.port,
-            username: conn.username.clone(),
-            password: conn.password.clone(),
-            vhost: conn.vhost.clone(),
-        }
-    }
 }
 
 /// A comprehensive, hierarchical configuration for a RabbitMQ setup.
@@ -101,7 +89,8 @@ pub struct ConnectionConfig {
     pub port: u16,
     pub vhost: String,
     pub username: String,
-    pub password: String,
+    // Password is now optional in the config file
+    pub password: Option<String>,
     #[serde(default)]
     pub connection_timeout_ms: u32,
     #[serde(default)]

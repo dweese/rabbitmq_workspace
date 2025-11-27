@@ -29,6 +29,11 @@ pub enum RabbitMQError {
     #[error("JSON error: {0}")]
     JsonError(#[from] serde_json::Error),
 
+    #[error("TOML deserialization error: {0}")]
+    TomlError(#[from] toml::de::Error),
+
+    // KeyringError is being removed
+
     #[error("Timeout error: {0}")]
     TimeoutError(String),
 

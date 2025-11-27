@@ -23,6 +23,7 @@ sha2 = "0.10.9"
 rand = "0.8.5"  # Change from 0.9.1 to 0.8.5
 base64 = "0.21.5"  # Change from 0.22.1 to 0.21.5
 
-
-
-
+# Added for configuration loading
+toml = "0.8"
+dirs = "5.0"
+# keyring is being removed
