@@ -14,7 +14,7 @@ We diagnosed the root cause: the configuration file at `~/.config/rabbitmq-mon/r
 ---
 
 ### == IMMEDIATE NEXT STEP ==
-The user needs to perform the following actions:
+The user needs to perform the following actions:f
 
 1.  **Edit the personal configuration file:**
     Open `~/.config/rabbitmq-mon/rabbitmq-mon.toml`.
