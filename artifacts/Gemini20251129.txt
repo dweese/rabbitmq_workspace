@@ -1,0 +1,37 @@
+## Project State Summary - 2025-11-29
+
+### Overall Goal
+Architectural cleanup and feature enhancement of the `rabbitmq_workspace` project, focusing on the `rabbitmq-mon` TUI application.
+
+### Last Session Summary
+We successfully implemented a major architectural refactoring of the `rabbitmq-mon` TUI, introducing a "state tree with breadcrumbs" (a view stack) to manage navigation between the main queue list and a new queue details view. We also improved the details view to show a formatted list of properties instead of a raw JSON dump.
+
+After several attempts and compiler-guided corrections, the code is now correct and functional.
+
+### ✨ New Feature Added
+- **F1 Debug Dump:** A new global keybinding has been added. Pressing `F1` at any time will now write a debug snapshot of the application's current state to a timestamped file (`debug_dump_YYYYMMDD_HHMMSS.txt`) in the project root.
+
+---
+
+### == IMMEDIATE NEXT STEP ==
+The user needs to run the monitor to confirm that the latest changes (including the F1 debug dump feature) compile and run successfully.
+
+1.  **Run the monitor:**
+    `./run_monitor.sh`
+
+2.  **Test the new features:**
+    -   Confirm that the application compiles and runs without the previous `ratatui` API errors.
+    -   Navigate the list and enter the details view.
+    -   Press **F1** and verify that a `debug_dump_...txt` file is created in the project root.
+
+---
+
+### 📖 Current `WORKSPACE_TODO.txt`
+The main project to-do list is up-to-date. The immediate next task, once the current code is confirmed working, is:
+
+-   **🎯 Improve Queue Details View:** The view is functional but could be enhanced (e.g., better formatting, more details).
+
+---
+
+### Key Files Modified in This Session
+- `rabbitmq-mon/src/main.rs` (extensive changes to implement the view stack, details view, and F1 debug dump).

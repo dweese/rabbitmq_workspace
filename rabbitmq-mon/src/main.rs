@@ -11,10 +11,12 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Cell, Paragraph, Row, Table, TableState},
+    widgets::{Block, Borders, Cell, List, ListItem, Paragraph, Row, Table, TableState},
     Terminal,
 };
 use serde_json::Value;
+use std::fmt;
+use std::fs;
 use std::io;
 use std::time::{Duration, Instant};
 
@@ -35,6 +37,19 @@ pub struct App {
     view_stack: Vec<AppView>,
 }
 
+// Manual implementation of Debug to skip the non-debuggable client
+impl fmt::Debug for App {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("App")
+            .field("queues", &self.queues)
+            .field("should_quit", &self.should_quit)
+            .field("status", &self.status)
+            .field("queue_list_state", &self.queue_list_state)
+            .field("view_stack", &self.view_stack)
+            .finish_non_exhaustive() // Use this to signify the client is omitted
+    }
+}
+
 impl App {
     fn new(client: RabbitMQApiClient) -> Self {
         let mut queue_list_state = TableState::default();
@@ -48,6 +63,15 @@ impl App {
             queue_list_state,
             view_stack: vec![AppView::QueueList], // Start with the queue list view
         }
+    }
+
+    fn debug_dump_to_file(&mut self) -> io::Result<()> {
+        let timestamp = Local::now().format("%Y%m%d_%H%M%S");
+        let filename = format!("debug_dump_{}.txt", timestamp);
+        let content = format!("{:#?}", self);
+        fs::write(&filename, content)?;
+        self.status = format!("Debug state dumped to {}", filename);
+        Ok(())
     }
 
     fn current_view(&self) -> &AppView {
@@ -166,6 +190,14 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mu
         let timeout = tick_rate.checked_sub(last_tick.elapsed()).unwrap_or_else(|| Duration::from_secs(0));
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
+                // Global key bindings
+                if key.code == KeyCode::F(1) {
+                    if let Err(e) = app.debug_dump_to_file() {
+                        app.status = format!("Failed to dump debug info: {}", e);
+                    }
+                    continue; // Skip other input handling
+                }
+
                 let current_view = app.current_view().clone();
                 match current_view {
                     AppView::QueueList => match key.code {
@@ -241,25 +273,50 @@ fn draw_queue_list(f: &mut ratatui::Frame<'_>, queues: &[Value], state: &mut Tab
         Row::new(vec![Cell::from(name), Cell::from(messages), Cell::from(consumers)])
     });
 
-    let table = Table::new(rows, &[Constraint::Percentage(60), Constraint::Percentage(20), Constraint::Percentage(20)])
-        .header(header)
-        .block(Block::default().borders(Borders::ALL).title("Queues"))
-        .highlight_style(Style::default().add_modifier(Modifier::REVERSED))
-        .highlight_symbol(">> ");
+    let table = Table::new(
+        rows,
+        &[
+            Constraint::Percentage(60),
+            Constraint::Percentage(20),
+            Constraint::Percentage(20),
+        ],
+    )
+    .header(header)
+    .block(Block::default().borders(Borders::ALL).title("Queues"))
+    .highlight_style(Style::default().add_modifier(Modifier::REVERSED))
+    .highlight_symbol(">> ");
     
     f.render_stateful_widget(table, area, state);
 }
 
 fn draw_queue_details(f: &mut ratatui::Frame<'_>, queues: &[Value], area: Rect, queue_name: &str) {
-    let details_text = if let Some(queue) = queues.iter().find(|q| q["name"].as_str() == Some(queue_name)) {
-        format!("{:#}", queue) // Pretty-print the JSON for the selected queue
+    let items: Vec<ListItem> = if let Some(queue) = queues.iter().find(|q| q["name"].as_str() == Some(queue_name)) {
+        // A helper to create a styled list item
+        let create_item = |key: &str, value: &Value| {
+            let content = Line::from(vec![
+                Span::styled(format!("{:<20}", key), Style::default().fg(Color::Cyan)),
+                Span::raw(value.to_string().trim_matches('"').to_string()),
+            ]);
+            ListItem::new(content)
+        };
+
+        vec![
+            create_item("Name", &queue["name"]),
+            create_item("Vhost", &queue["vhost"]),
+            create_item("Durable", &queue["durable"]),
+            create_item("Auto Delete", &queue["auto_delete"]),
+            create_item("Messages", &queue["messages"]),
+            create_item("Messages Ready", &queue["messages_ready"]),
+            create_item("Consumers", &queue["consumers"]),
+            create_item("Memory", &queue["memory"]),
+            create_item("State", &queue["state"]),
+        ]
     } else {
-        format!("Details for queue '{}' not found.", queue_name)
+        vec![ListItem::new(Line::from(format!("Details for queue '{}' not found.", queue_name)))]
     };
 
-    let paragraph = Paragraph::new(details_text)
-        .block(Block::default().borders(Borders::ALL).title(format!("Details for {}", queue_name)))
-        .wrap(ratatui::widgets::Wrap { trim: true });
+    let list = List::new(items)
+        .block(Block::default().borders(Borders::ALL).title(format!("Details for {}", queue_name)));
 
-    f.render_widget(paragraph, area);
+    f.render_widget(list, area);
 }

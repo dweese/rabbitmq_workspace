@@ -1,0 +1,59 @@
+# RabbitMQ Workspace To-Do List
+
+This document outlines the development plan and future goals for the `rabbitmq_workspace` project.
+
+---
+
+### 🎯 Immediate Next Task: Improve Queue Details View
+
+The `rabbitmq-mon` application can now navigate to a details view, but it only shows a raw JSON dump. The next step is to make this view user-friendly.
+
+-   **Task:** Refactor the `draw_queue_details` function in `rabbitmq-mon/src/main.rs`.
+-   **Implementation:**
+    -   Instead of printing the raw JSON, parse the `serde_json::Value` for the selected queue.
+    -   Use the `ratatui` `List` or `Table` widget to display the key-value pairs in a clean, formatted way.
+    -   **Fields to display:** `name`, `durable`, `auto_delete`, `messages`, `messages_ready`, `consumers`, `memory`, etc.
+
+---
+
+### 📈 Medium-Term Goals (Enhancing `rabbitmq-mon`)
+
+Once the details view is improved, we can focus on adding more core features to the monitor.
+
+1.  **Table Sorting:**
+    -   Add state to the `App` struct to track the current sort column (e.g., by Name, by Messages) and direction (Ascending/Descending).
+    -   Handle a key press (e.g., `s` for Sort) to cycle through the sortable columns.
+    -   Re-sort the `app.queues` vector before rendering the table.
+
+2.  **Table Filtering:**
+    -   Add a new `AppView` state for filtering (e.g., `AppView::Filtering`).
+    -   Create a text input component to capture the user's filter string.
+    -   Filter the `app.queues` vector based on the input before rendering.
+
+3.  **Deeper Navigation:**
+    -   From the `QueueDetail` view, allow the user to press a key (e.g., `c`) to navigate to a new `ConsumerList` view for that queue.
+    -   This will require adding a new `AppView` variant and fetching consumer details from the Management API.
+
+---
+
+### 🏛️ Longer-Term Architectural Goals
+
+These are bigger-picture ideas that build on the foundation we've established.
+
+1.  **Configuration Validation Tool:**
+    -   Create a new binary, `topology-validator`, that reads `artifacts/message_types.json` and the live server state.
+    -   It should *report* on any drift (missing queues, mismatched durability, etc.) without making any changes. This is a valuable tool for CI/CD pipelines.
+
+2.  **Expand `topology-creator`:**
+    -   The creator currently ignores the `priority` field from the design document. Enhance it to set queue priority arguments (`x-max-priority`) during declaration.
+    -   This will resolve the `dead_code` warning and make the tool more powerful.
+
+3.  **Protocol Expansion:**
+    -   Following our design discussion, we could add placeholder configurations and potentially basic client logic for other protocols like MQTT or STOMP, demonstrating the extensibility of our setup.
+
+---
+
+### 🧹 Housekeeping
+
+-   Continue our workflow of using `friend.txt` (truncated) for session context.
+-   Continue creating clean, descriptive commits for each new feature or major refactoring.
