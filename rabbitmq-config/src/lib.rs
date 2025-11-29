@@ -22,7 +22,7 @@ pub use models::{
     PermissionDefinition,
     QueueDefinition,
     QueueInfo,
-    RabbitMQMessage,
+    RabbitMQMessage, // Export this struct
     RabbitMQServerDefinition,
     TopicPermissionDefinition,
     UserDefinition,

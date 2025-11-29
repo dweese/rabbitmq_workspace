@@ -3,7 +3,8 @@ members = [
     "egui-components",
     "messaging_cli", 
     "messaging_commands",
-    "messaging_simple",    # Add this line
+    "messaging_simple",
+    "messaging_tests", # Added our new testing crate
     "pg_vault",
     "rabbitmq-config",
     "rabbitmq-info", "rabbitmq-mon", 

@@ -1,26 +1,28 @@
+On branch main
+Your branch is up to date with 'origin/main'.
 
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   messaging_tests/Cargo.toml
+	new file:   messaging_tests/src/bin/consumer.rs
+	new file:   messaging_tests/src/bin/producer.rs
+	new file:   messaging_tests/src/main.rs
 
-RabbitMQ is alive. Launching monitor...
-dweese@fedora:~/dev/rust/rabbitmq_workspace$ ./run_monitor.sh
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
-     Running `target/debug/rabbitmq-mon`
-Connecting as user: 'user_rust'
-Enter password:
-Checking RabbitMQ connection...
-RabbitMQ is alive. Launching monitor...
-dweese@fedora:~/dev/rust/rabbitmq_workspace$ ./run_monitor.sh
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.17s
-     Running `target/debug/rabbitmq-mon`
-Connecting as user: 'user_rust'
-Enter password:
-Checking RabbitMQ connection...
-Failed to connect to RabbitMQ: API response error: 401 - {"error":"not_authorized","reason":"Not_Authorized"}
-dweese@fedora:~/dev/rust/rabbitmq_workspace$ ./run_monitor.sh
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
-     Running `target/debug/rabbitmq-mon`
-Connecting as user: 'user_rust'
-Enter password:
-Checking RabbitMQ connection...
-RabbitMQ is alive. Launching monitor...
-dweese@fedora:~/dev/rust/rabbitmq_workspace$
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   Cargo.lock
+	modified:   Cargo.toml
+	modified:   Gemini/friend.txt
+	modified:   messaging_tests/Cargo.toml
+	modified:   messaging_tests/src/bin/consumer.rs
+	modified:   messaging_tests/src/main.rs
+	modified:   rabbitmq-config/src/client.rs
+	modified:   rabbitmq-config/src/error.rs
+	modified:   rabbitmq-config/src/lib.rs
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	debug_dump_20251128_204825.txt
+	debug_dump_20251128_205208.txt
 

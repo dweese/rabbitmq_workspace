@@ -1,0 +1,22 @@
+[package]
+name = "messaging_tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0"
+clap = { version = "4.5.4", features = ["derive"] }
+env_logger = "0.11.3"
+rpassword = "7.3"
+log = "0.4"
+futures-util = "0.3"
+
+[[bin]]
+name = "test-producer"
+path = "src/bin/producer.rs"
+
+[[bin]]
+name = "test-consumer"
+path = "src/bin/consumer.rs"
