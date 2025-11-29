@@ -1,0 +1,1121 @@
+ Gemini
+Network Device Discovery Commands
+Defining Operating Systems Concisely
+Sunrise Cloudscape With Planets
+Alt-Text for Nighttime Street Scene
+Give me a list of Canadian words not used elsewhere
+Open Loop, Illumos, LibreOffice Connection
+Alt-Text Generation for City Image
+HMS vs. GMS App Compatibility Explained
+Estimating Cloud Position Using Trigonometry
+Alt-Text for Desert Night Photograph
+Initial Greeting and Offer of Help
+Ruby's Open Source Licenses
+Self-Hosted Task App Recommendations
+Finding Async Crates on Rust
+Alt-Text for "Wind of Change"
+Django for Microservices: A Nuanced View
+Oracle's CIA Origins Revealed
+Microscope AI Pathogen Detection Hurdles
+Rose Image Analysis Experiment Success
+Fedora Browser Tab Freeze Fix
+Saxon Women's Rights Overview
+Don't sudo GUI Apps
+Linux Kernel Version Explained
+Dogs Sleeping On Couch
+Microsoft 365 Alternatives for Collaboration
+Cats and a Political Sign
+SF Symbols Hierarchical Rendering Crash
+Affordable Canadian Housing Options
+Jumping Spider Macro Photograph Alt-Text
+systemd: Pros and Cons
+Myele Manzanza: A Musical Overview
+New York Times Editors Since 1940
+Cat on Office Chair Alt-Text
+Troubleshooting Audio Buffering Issues
+Conversation with Gemini
+
+Hi Gemini - My OS is dweese@fedora:~$ uname -a
+
+Linux fedora 6.16.7-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 11 17:46:54 UTC 2025 x86_64 GNU/Linux
+
+What is the bash command to give me a list of every device on this network?
+
+The most common and effective tool for this is nmap. You can also use arp-scan for a very fast scan of the local network.
+
+Method 1: Using nmap (Recommended)
+
+nmap (Network Mapper) is a powerful network scanning tool. The -sn flag tells it to perform a simple "ping scan" to discover which hosts are online without doing a more intrusive port scan.
+
+1. Find Your Network Range
+
+First, find your computer's local IP address and network range using the ip addr command.
+Bash
+
+ip addr
+
+Look for your primary network interface (often named enpXsY or wlpXsY). You'll see an entry like inet 192.168.1.15/24. The /24 part is crucial; it defines your network. In this example, the network to scan is 192.168.1.0/24.
+
+2. Run the Scan
+
+Now, use that network range with nmap.
+Bash
+
+nmap -sn 192.168.1.0/24
+
+Replace 192.168.1.0/24 with the range you found in step 1.
+
+The output will list the IP addresses and hostnames (if available) of all the devices that responded on your network.
+
+Method 2: Using arp-scan
+
+The arp-scan tool is often faster for discovering devices on your local Ethernet network because it uses ARP requests directly.
+Bash
+
+sudo arp-scan --localnet
+
+Or you can use the shorthand:
+Bash
+
+sudo arp-scan -l
+
+This command sends ARP packets to all hosts on the local network and displays the responses, giving you a list of IP and MAC addresses.
+
+Installation
+
+If you don't have these tools installed, you can add them using Fedora's package manager, dnf.
+
+    To install nmap:
+    Bash
+
+sudo dnf install nmap
+
+To install arp-scan:
+Bash
+
+    sudo dnf install arp-scan
+
+okay, I'm going to get organized and throw all this into a sorta-project for network shell scripts
+
+That's a great way to build a useful toolkit. Organizing your scripts into a project will make them much easier to manage, share, and improve over time.
+
+Here’s a simple but effective way to structure your project and some ideas to get you started.
+
+## Project Structure 📁
+
+A good directory layout helps keep everything tidy. You can create this with a few mkdir commands.
+
+net-scripts/
+├── scripts/
+│   ├── discover_hosts.sh
+│   ├── port_scan.sh
+│   └── check_latency.sh
+│
+├── logs/
+│   └── (Scan results and logs will go here)
+│
+└── README.md
+
+    scripts/: This directory will hold all your executable shell scripts.
+
+    logs/: A place to save the output from your scans so you can review them later.
+
+    README.md: A text file to describe your project. You should explain what each script does and how to run it. This is incredibly helpful if you step away from the project for a while.
+
+## Best Practices for Your Scripts ✅
+
+As you write your scripts, keeping a few things in mind will save you headaches later.
+
+    Start with a Shebang: Always begin your script with #!/bin/bash to tell the system how to execute it.
+
+    Use Variables: Instead of hard-coding an IP range like 192.168.1.0/24 in a script, make it a variable (TARGET_SUBNET="192.168.1.0/24"). Better yet, have the script accept the target as an argument ($1).
+
+    Make them Executable: Remember to give your scripts execute permissions with chmod +x scripts/your_script_name.sh.
+
+    Comment Your Code: Add comments (# This part does...) to explain complex lines or the overall purpose of a function.
+
+Here's an example of a more robust discover_hosts.sh script:
+Bash
+
+#!/bin/bash
+
+# A simple script to discover live hosts on a network.
+# Usage: ./discover_hosts.sh <subnet>
+# Example: ./discover_hosts.sh 192.168.1.0/24
+
+# Check if a subnet was provided as an argument
+if [ -z "$1" ]; then
+  echo "Error: No subnet provided."
+  echo "Usage: $0 <subnet>"
+  exit 1
+fi
+
+TARGET_SUBNET="$1"
+LOG_FILE="../logs/host_discovery_$(date +%F).log"
+
+echo "Scanning ${TARGET_SUBNET}..."
+echo "Results will be saved to ${LOG_FILE}"
+
+# Run nmap and save the output to both the console and a log file
+nmap -sn "${TARGET_SUBNET}" | tee "${LOG_FILE}"
+
+echo "Scan complete."
+
+## More Script Ideas 🚀
+
+Here are a few other useful network scripts you could add to your project:
+
+    port_scan.sh: A script that takes an IP address and scans it for common open ports.
+
+        Command: nmap -sT -p 1-1000 $1
+
+    check_latency.sh: Pings a target host a few times and reports the average latency.
+
+        Command: ping -c 5 $1
+
+    get_public_ip.sh: A quick script to find your network's public IP address.
+
+        Command: curl ifconfig.me
+
+    network_audit.sh: A master script that runs several other scripts to give you a full report on the network's status.
+
+I will put myself at your mercy and do all you say, heh
+
+Haha, sounds like a plan. No mercy needed—just some command-line fun.
+
+Here's the first step to get that project directory set up exactly as described. You can run these commands right in your terminal.
+Bash
+
+# Create the main project folder and the sub-folders inside it
+mkdir -p net-scripts/{scripts,logs}
+
+# Create the empty README file and your first script
+touch net-scripts/README.md
+touch net-scripts/scripts/discover_hosts.sh
+
+# Make your first script executable
+chmod +x net-scripts/scripts/discover_hosts.sh
+
+Now you have a clean, organized project space. Your next move would be to open net-scripts/scripts/discover_hosts.sh in your favorite text editor (like vim, nano, or vscode) and start building out the script.
+
+Let me know what you want to tackle next once you have that set up.
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts$ tree -L 5
+
+.
+
+├── logs
+
+├── net-scripts.iml
+
+└── scripts
+
+
+3 directories, 1 file
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts$
+
+Looks good, you've got the main directories set up. That net-scripts.iml file is just a project file created by your IDE, which is perfectly fine.
+
+It seems the script file itself hasn't been created inside the scripts/ directory yet. You can create discover_hosts.sh and make it executable with these commands:
+Bash
+
+touch scripts/discover_hosts.sh
+chmod +x scripts/discover_hosts.sh
+
+After that, you'll be ready to open that new file and add the code.
+
+let me explain why I'm doing it this way
+
+Okay, go ahead. I'm listening.
+
+74 directories, 166 files
+
+-rw-r--r--. 1 dweese dweese   1109 Sep 19 23:35 ./Cargo.toml
+
+-rw-r--r--. 1 dweese dweese    379 Aug 17 20:29 ./egui-components/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese   7827 Aug 12 19:03 ./egui-components/src/border_layout.rs
+
+-rw-r--r--. 1 dweese dweese   5920 Aug 12 19:03 ./egui-components/src/event_tree.rs
+
+-rw-r--r--. 1 dweese dweese    256 Aug 12 19:03 ./egui-components/src/lib.rs
+
+-rw-r--r--. 1 dweese dweese   1684 Aug 12 19:03 ./egui-components/src/tree_node_id.rs
+
+-rw-r--r--. 1 dweese dweese   5058 Aug 12 19:03 ./egui-components/src/tree.rs
+
+-rw-r--r--. 1 dweese dweese     37 May 21 17:55 ./egui-components/src/tree_vis/mod.rs
+
+-rw-r--r--. 1 dweese dweese   5869 Aug 12 19:03 ./egui-components/src/tree_vis/topology.rs
+
+-rw-r--r--. 1 dweese dweese      1 Aug 12 19:03 ./egui-components/src/tree_vis/tree_view.rs
+
+-rw-r--r--. 1 dweese dweese    357 Jun  8 18:26 ./messaging_cli/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese   2364 Aug 12 19:03 ./messaging_cli/src/main.rs
+
+-rw-r--r--. 1 dweese dweese    809 Sep 19 22:49 ./messaging_commands/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese   1540 Jun 30 12:29 ./messaging_commands/src/client/mod.rs
+
+-rw-r--r--. 1 dweese dweese   2365 Aug 12 22:39 ./messaging_commands/src/clients/amqp.rs
+
+-rw-r--r--. 1 dweese dweese     13 Aug 12 18:09 ./messaging_commands/src/clients/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/mqtt/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/clients/stomp/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:19 ./messaging_commands/src/common/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/config/mod.rs
+
+-rw-r--r--. 1 dweese dweese    383 Aug 12 17:23 ./messaging_commands/src/error.rs
+
+-rw-r--r--. 1 dweese dweese  13087 Sep 19 23:15 ./messaging_commands/src/lib.rs
+
+-rw-r--r--. 1 dweese dweese  12800 Sep 19 22:23 ./messaging_commands/src/main.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/protocol/mod.rs
+
+-rw-r--r--. 1 dweese dweese   6800 Sep 19 21:56 ./messaging_commands/src/tests/mod.rs
+
+-rw-r--r--. 1 dweese dweese    946 Aug 12 22:47 ./messaging_commands/src/traits.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/utils/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 Aug 12 22:50 ./messaging_commands/src/utils.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 28 17:50 ./messaging_commands/src/version/mod.rs
+
+-rw-r--r--. 1 dweese dweese    156 Sep 19 23:44 ./messaging_simple/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese   1338 Sep 19 23:33 ./messaging_simple/src/main.rs
+
+-rw-r--r--. 1 dweese dweese    776 Aug 12 23:23 ./pg_vault/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese  11311 Aug 14 01:00 ./pg_vault/src/auth/mock.rs
+
+-rw-r--r--. 1 dweese dweese   5102 Aug 12 22:01 ./pg_vault/src/auth/mod.rs
+
+-rw-r--r--. 1 dweese dweese   4330 Aug 12 22:59 ./pg_vault/src/auth/yubikey.rs
+
+-rw-r--r--. 1 dweese dweese    426 Aug 12 23:04 ./pg_vault/src/lib.rs
+
+-rw-r--r--. 1 dweese dweese   3539 Aug 12 23:38 ./pg_vault/src/main.rs
+
+-rw-r--r--. 1 dweese dweese   1272 Aug 12 22:50 ./pg_vault/src/utils.rs
+
+-rw-r--r--. 1 dweese dweese  15915 Aug 12 19:03 ./pg_vault/src/vault/connection.rs
+
+-rw-r--r--. 1 dweese dweese  14857 Aug 12 23:25 ./pg_vault/src/vault/mod.rs
+
+-rw-r--r--. 1 dweese dweese   2165 Aug 12 23:25 ./pg_vault/src/vault/secure_connection.rs
+
+-rw-r--r--. 1 dweese dweese   1394 Aug 12 22:01 ./pg_vault/tests/auth_helpers.rs
+
+-rw-r--r--. 1 dweese dweese    566 May 27 17:55 ./rabbitmq-config/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese  10916 Aug 12 19:03 ./rabbitmq-config/src/client.rs
+
+-rw-r--r--. 1 dweese dweese   6611 Aug 13 22:07 ./rabbitmq-config/src/config.rs
+
+-rw-r--r--. 1 dweese dweese    831 May 23 20:41 ./rabbitmq-config/src/error.rs
+
+-rw-r--r--. 1 dweese dweese    770 Aug 12 19:03 ./rabbitmq-config/src/lib.rs
+
+-rw-r--r--. 1 dweese dweese   5119 Aug 12 19:03 ./rabbitmq-config/src/models.rs
+
+-rw-r--r--. 1 dweese dweese   1043 Aug 12 19:03 ./rabbitmq-config/src/topology.rs
+
+-rw-r--r--. 1 dweese dweese    474 Aug 12 19:03 ./rabbitmq-config/tests/client/integration_tests.rs
+
+-rw-r--r--. 1 dweese dweese    272 Aug 12 19:03 ./rabbitmq-config/tests/client/mocked_tests.rs
+
+-rw-r--r--. 1 dweese dweese   1146 Aug 12 19:03 ./rabbitmq-config/tests/client/unit_tests.rs
+
+-rw-r--r--. 1 dweese dweese   1341 Aug 12 19:03 ./rabbitmq-config/tests/common/test_utils.rs
+
+-rw-r--r--. 1 dweese dweese      1 Aug 12 19:03 ./rabbitmq-config/tests/config/manipulation_tests.rs
+
+-rw-r--r--. 1 dweese dweese   2074 May 27 11:04 ./rabbitmq-config/tests/config/rabbitmq_def_tests.rs
+
+-rw-r--r--. 1 dweese dweese    813 Jul 18 02:34 ./rabbitmq-config/tests/config/serialization_tests.rs
+
+-rw-r--r--. 1 dweese dweese    761 Aug 12 19:03 ./rabbitmq-config/tests/config/validation_tests.rs
+
+-rw-r--r--. 1 dweese dweese   1073 Aug 12 19:03 ./rabbitmq-config/tests/connection_test.rs
+
+-rw-r--r--. 1 dweese dweese    399 Aug 12 19:03 ./rabbitmq-config/tests/lib.rs
+
+-rw-r--r--. 1 dweese dweese    848 Aug 12 19:03 ./rabbitmq-config/tests/simple_connection_test.rs
+
+-rw-r--r--. 1 dweese dweese    380 May 22 22:03 ./rabbitmq-info/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese   3011 Aug 12 19:03 ./rabbitmq-info/src/api/mod.rs
+
+-rw-r--r--. 1 dweese dweese   6464 Aug 12 19:03 ./rabbitmq-info/src/collector/mod.rs
+
+-rw-r--r--. 1 dweese dweese   3155 Aug 12 19:03 ./rabbitmq-info/src/export/mod.rs
+
+-rw-r--r--. 1 dweese dweese   1704 Aug 12 19:03 ./rabbitmq-info/src/lib.rs
+
+-rw-r--r--. 1 dweese dweese    393 May 26 19:03 ./rabbitmq-ui/Cargo.toml
+
+-rw-r--r--. 1 dweese dweese  21269 Aug 12 19:03 ./rabbitmq-ui/src/app.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/config.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/connection/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/create.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/list.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/exchanges/mod.rs
+
+-rw-r--r--. 1 dweese dweese  22288 Aug 12 19:03 ./rabbitmq-ui/src/main.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/consume.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/mod.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 16:00 ./rabbitmq-ui/src/messages/publish.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/queues/create.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:59 ./rabbitmq-ui/src/queues/list.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 14 15:58 ./rabbitmq-ui/src/queues/mod.rs
+
+-rw-r--r--. 1 dweese dweese  56132 Sep 19 22:53 ./target/debug/build/glutin_egl_sys-3bc79f3839d85926/out/egl_bindings.rs
+
+-rw-r--r--. 1 dweese dweese  56858 Sep 19 22:53 ./target/debug/build/glutin_egl_sys-a2855caf597f8944/out/egl_bindings.rs
+
+-rw-r--r--. 1 dweese dweese  39902 Sep 19 22:53 ./target/debug/build/glutin_glx_sys-48a278578d68c310/out/glx_bindings.rs
+
+-rw-r--r--. 1 dweese dweese  45050 Sep 19 22:53 ./target/debug/build/glutin_glx_sys-48a278578d68c310/out/glx_extra_bindings.rs
+
+-rw-r--r--. 1 dweese dweese  39902 Sep 19 22:53 ./target/debug/build/glutin_glx_sys-a687e7d8fdab4795/out/glx_bindings.rs
+
+-rw-r--r--. 1 dweese dweese  45050 Sep 19 22:53 ./target/debug/build/glutin_glx_sys-a687e7d8fdab4795/out/glx_extra_bindings.rs
+
+-rw-r--r--. 1 dweese dweese   5928 Sep 19 22:53 ./target/debug/build/khronos_api-136f8b7ce1033831/out/webgl_exts.rs
+
+-rw-r--r--. 1 dweese dweese      0 Sep 19 22:53 ./target/debug/build/mime_guess2-611fc6714b6f432d/out/mime_types_generated.rs
+
+-rw-r--r--. 1 dweese dweese  35510 Sep 19 22:50 ./target/debug/build/oid-registry-40cda92a46451447/out/oid_db.rs
+
+-rw-r--r--. 1 dweese dweese 622641 Sep 19 22:50 ./target/debug/build/typenum-2d30ccdb2de4e356/out/tests.rs
+
+-rw-r--r--. 1 dweese dweese 487759 Sep 19 22:53 ./target/debug/build/wayland-client-4c8cc4fc2edb559c/out/wayland_api.rs
+
+-rw-r--r--. 1 dweese dweese  36133 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/fullscreen-shell-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  50925 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/gtk-primary-selection_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  17276 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/idle-inhibit-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  79068 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/input-method-unstable-v2_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  76756 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/input-method-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  27485 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/input-timestamps-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  22158 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/keyboard-shortcuts-inhibit-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  49439 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/linux-dmabuf-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  38422 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/linux-explicit-synchronization-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  51503 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/pointer-constraints-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  45863 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/pointer-gestures-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  31164 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/presentation-time_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  51162 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/primary-selection-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  22111 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/relative-pointer-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  23580 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/server-decoration_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  88716 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/tablet-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese 177361 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/tablet-v2_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  69265 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/text-input-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  60643 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/text-input-v3_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  26840 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/viewporter_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  59048 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-data-control-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  33587 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-export-dmabuf-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  52777 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-foreign-toplevel-management-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  22134 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-gamma-control-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  15226 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-input-inhibitor-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  53848 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-layer-shell-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  93651 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-output-management-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  22133 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-output-power-management-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  42415 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-screencopy-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  38296 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-virtual-pointer-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  30459 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-activation-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  26499 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-decoration-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  38737 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-foreign-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  40471 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-foreign-v2_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  28256 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-output-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese 166832 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-shell_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  88470 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-shell-v5_client_api.rs
+
+-rw-r--r--. 1 dweese dweese 145289 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-shell-v6_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  18565 Sep 19 22:53 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xwayland-keyboard-grab-v1_client_api.rs
+
+-rw-r--r--. 1 dweese dweese  19206 Sep 19 22:53 ./target/debug/build/winit-ad672a953e8fed70/out/fractional_scale_v1.rs
+
+-rw-r--r--. 1 dweese dweese    777 Sep 19 22:53 ./target/debug/build/x11-dl-94d2df608b44f3ef/out/config.rs
+
+-rw-r--r--. 1 dweese dweese      0 May 20 22:11 ./tests/client/integration_tests.rs
+
+-rw-r--r--. 1 dweese dweese   4924 May 20 22:11 ./tests/client/unit_tests.rs
+
+-rw-r--r--. 1 dweese dweese    845 May 23 05:20 ./tests/integration_test.rs
+
+-rw-r--r--. 1 dweese dweese    400 May 20 22:11 ./tests/lib.rs
+
+-rw-r--r--. 1 dweese dweese    416 Aug 14 00:50 ./yak_json/Cargo.toml
+
+Okay, that makes perfect sense. Thank you for the context.
+
+You're not just creating a small, standalone project. You are integrating these new network utility scripts into your much larger, existing Rust workspace that deals with RabbitMQ, messaging, and other related tools.
+
+This is a very common and effective workflow. It keeps all the related code, tools, and helper scripts for a single, large project together in one place.
+
+Given that, the structure you've started is exactly right for your situation. The next logical step is to populate that scripts/discover_hosts.sh file with the script's code.
+
+this workspace is set up expressly for you the LLM to grasp the entirety
+
+Got it. Thank you for the clarification.
+
+You're treating this as a cohesive project and want me to have the full context—understanding that the network scripts are helper utilities for your larger Rust-based RabbitMQ and messaging application.
+
+That's an excellent approach. I can work with that context in mind.
+
+Let's start by building out that first utility. I'm ready to help with the code for discover_hosts.sh.
+
+This is my IDE IntelliJ IDEA 2025.2 (Ultimate Edition)
+
+Build #IU-252.23892.409, built on August 1, 2025
+
+Source revision: 0a9a69b3f9332
+
+Licensed to Dan Weese
+
+Subscription is active until March 28, 2026.
+
+Runtime version: 21.0.7+6-b1038.58 amd64 (JCEF 122.1.9)
+
+VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
+
+Toolkit: sun.awt.X11.XToolkit
+
+Linux 6.16.7-200.fc42.x86_64
+
+Fedora Linux 42 (Workstation Edition); glibc: 2.41
+
+GC: G1 Young Generation, G1 Concurrent GC, G1 Old Generation
+
+Memory: 2048M
+
+Cores: 20
+
+Registry:
+
+  ide.experimental.ui=true
+
+  com.android.studio.ml.activeModel=com.google.tools.intellij.aiplugin.AiPlugin
+
+Non-Bundled Plugins:
+
+  JavaScriptDebugger (252.23892.515)
+
+  org.jetbrains.completion.full.line (252.23892.458)
+
+  com.intellij.notebooks.core (252.23892.464)
+
+  ru.adelf.idea.dotenv (252.23892.201)
+
+  com.intellij.copyright (252.23892.464)
+
+  org.editorconfig.editorconfigjetbrains (252.23892.464)
+
+  org.jetbrains.plugins.yaml (252.23892.464)
+
+  PythonCore (252.23892.458)
+
+  org.toml.lang (252.23892.464)
+
+  com.intellij.kubernetes (252.23892.515)
+
+  com.jetbrains.rust (252.23892.452)
+
+  com.google.tools.ij.aiplugin (1.30.0-252)
+
+  com.intellij.properties (252.23892.464)
+
+  com.intellij.velocity (252.23892.464)
+
+  com.intellij.spring (252.23892.458)
+
+  com.intellij.swagger (252.23892.464)
+
+  com.jetbrains.restClient (252.23892.464)
+
+  Pythonid (252.23892.458)
+
+  intellij.jupyter (252.23892.530)
+
+  Docker (252.23892.515)
+
+  com.intellij.ml.llm (252.23892.530)
+
+  com.intellij.nativeDebug (252.23892.346)
+
+  org.jetbrains.plugins.gitlab (252.23892.515-IU)
+
+  org.jetbrains.plugins.github (252.23892.515-IU)
+
+  com.intellij.react (252.23892.515)
+
+  org.jetbrains.plugins.vue (252.23892.449)
+
+  Karma (252.25204.0)
+
+  org.jetbrains.security.package-checker (252.23892.464)
+
+  com.intellij.microservices.ui (252.23892.464)
+
+Kotlin: 252.23892.409-IJ
+
+Current Desktop: X-Cinnamon
+
+Okay, thank you. I've noted the details of your development environment.
+
+You're running a current version of IntelliJ IDEA Ultimate on Fedora with the Cinnamon desktop. You have a comprehensive setup with key plugins for Rust, Docker, Kubernetes, and Python.
+
+This is very helpful context. Knowing your IDE and its specific capabilities allows me to give you more tailored guidance.
+
+With the project structure and your IDE environment now clear, we can get back to the task. Let's write the code for your discover_hosts.sh script.
+
+After about six months, I am the opposite of the lazy Vibe Coder. I've been coding for 40 years and to me, the LLM is a really useful toolkit. But it's like riding a big horse - the horse really needs to know what the goal is heh
+
+That's a perfect analogy.
+
+A powerful tool is only as good as the direction it's given. The more context and clarity you provide about the goal—the "why"—the better and more accurately I can perform the "how."
+
+Your method of showing me your project structure and development environment is exactly that. You're making sure the 'horse' knows the terrain before asking it to gallop.
+
+It's a very effective way to work. I have the context. I'm ready when you are.
+
+are there any env vars you want me to establish first ?
+
+Yes, that's an excellent idea. Setting environment variables is a great way to make your scripts configurable without hardcoding values.
+
+For the initial discover_hosts.sh script, one variable would be immediately useful.
+
+## Primary Recommendation
+
+I recommend establishing a variable for your default network subnet. This saves you from having to type it every time you run the script.
+
+    DEFAULT_SUBNET: The network address you scan most often.
+
+You can set it in your current terminal session like this (be sure to use the correct value for your network):
+Bash
+
+export DEFAULT_SUBNET="192.168.1.0/24"
+
+To make this permanent, you would add that line to your shell's startup file, such as ~/.bashrc or ~/.zshrc.
+
+## How to Use It in a Script
+
+You can then modify your script to use this variable as a fallback if no command-line argument is given. This makes the script flexible.
+
+Here is an updated version of the discover_hosts.sh code that incorporates this logic:
+Bash
+
+#!/bin/bash
+
+# A script to discover live hosts on a network.
+# It uses the first command-line argument ($1) if provided.
+# If not, it falls back to the DEFAULT_SUBNET environment variable.
+
+TARGET_SUBNET="${1:-$DEFAULT_SUBNET}"
+
+# Check if a target subnet is available from either source.
+if [ -z "$TARGET_SUBNET" ]; then
+  echo "Error: No subnet provided and DEFAULT_SUBNET environment variable is not set."
+  echo "Usage: $0 [subnet]"
+  exit 1
+fi
+
+echo "Scanning target: ${TARGET_SUBNET}"
+nmap -sn "${TARGET_SUBNET}"
+
+This is a robust pattern. It allows a user to either run discover_hosts.sh for a quick default scan or discover_hosts.sh 10.0.0.0/8 to scan a different network on the fly.
+
+I'm not a network guy, this is just me trying to learn it in an orderly fashion - I am not sure how to determine my default subnet. Is that localhost?
+
+No, your default subnet is not localhost. That's a very common point of confusion, so it's a great question.
+
+Localhost (with the IP address 127.0.0.1) is a special address your computer uses to talk to itself. It never goes out onto the network. Your subnet, on the other hand, is the address range for your actual local network (like your home Wi-Fi) that connects all your devices together.
+
+## Finding Your Subnet
+
+The easiest way to find your network information on Fedora is with the ip addr command.
+
+1. Run the Command
+Open your terminal and type:
+Bash
+
+ip addr
+
+2. Find Your Active Connection
+You'll see a few entries. You're looking for your main network connection, which is usually named something like enp... (for a wired Ethernet connection) or wlp... (for a wireless connection). You want the one that has an inet address listed.
+
+Here is some example output:
+
+2: wlp2s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 1a:2b:3c:4d:5e:6f brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.108/24 brd 192.168.1.255 scope global dynamic noprefixroute wlp2s0
+       valid_lft 85656sec preferred_lft 85656sec
+    inet6 fe80::1234:5678:9abc:def0/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+
+## Interpreting the Output
+
+From the example above, the important line is the one that starts with inet:
+
+inet 192.168.1.108/24
+
+    192.168.1.108 is your computer's specific IP address on the network.
+
+    /24 is the network mask in CIDR notation, which defines the size of your network.
+
+To find your subnet, you combine these two pieces. You take the IP address and change the last number to 0.
+
+So, 192.168.1.108/24 becomes the subnet 192.168.1.0/24.
+
+Think of it like this: 192.168.1.108 is your specific house address, while 192.168.1.0/24 is the name of your entire street. For scanning, you want to tell nmap to check every house on the whole street.
+
+Once you find your value, you can run the export command:
+Bash
+
+export DEFAULT_SUBNET="192.168.1.0/24"
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ ip addr
+
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+
+    inet 127.0.0.1/8 scope host lo
+
+       valid_lft forever preferred_lft forever
+
+    inet6 ::1/128 scope host noprefixroute
+
+       valid_lft forever preferred_lft forever
+
+2: enp46s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN group default qlen 1000
+
+    link/ether c4:c6:e6:e4:29:8b brd ff:ff:ff:ff:ff:ff
+
+    altname enxc4c6e6e4298b
+
+3: enp0s20f0u4u2c2: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN group default qlen 1000
+
+    link/ether 00:05:1b:82:af:a3 brd ff:ff:ff:ff:ff:ff
+
+    altname enx00051b82afa3
+
+4: wlp45s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+
+    link/ether b2:6b:05:56:da:ac brd ff:ff:ff:ff:ff:ff permaddr 70:08:94:ab:61:ef
+
+    altname wlx700894ab61ef
+
+    inet 192.168.1.61/24 brd 192.168.1.255 scope global dynamic noprefixroute wlp45s0
+
+       valid_lft 79144sec preferred_lft 79144sec
+
+    inet6 fd51:8874:104d:1dc7:187a:1d3b:e72b:4b0c/64 scope global dynamic noprefixroute
+
+       valid_lft 1644sec preferred_lft 1644sec
+
+    inet6 fe80::2ab8:f46e:9c48:f981/64 scope link noprefixroute
+
+       valid_lft forever preferred_lft forever
+
+5: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
+
+    link/ether 52:57:2a:99:e0:1d brd ff:ff:ff:ff:ff:ff
+
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+
+       valid_lft forever preferred_lft forever
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace$
+
+You've found it. Your active connection is the wireless interface wlp45s0.
+
+The key line in your output is this one:
+
+inet 192.168.1.61/24 brd 192.168.1.255 scope global dynamic noprefixroute wlp45s0
+
+Based on that, your subnet is 192.168.1.0/24.
+
+Now you can set the environment variable with this command:
+Bash
+
+export DEFAULT_SUBNET="192.168.1.0/24"
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts/scripts$ . exports.sh
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts/scripts$ set | grep SUB
+
+DEFAULT_SUBNET=192.168.1.0/24
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts/scripts$
+
+Perfect. The DEFAULT_SUBNET variable is sourced and active in your shell.
+
+You're now ready to put the final code into your discover_hosts.sh file.
+
+## Script Code
+
+Open net-scripts/scripts/discover_hosts.sh in IntelliJ and paste this code into it:
+Bash
+
+#!/bin/bash
+
+# A script to discover live hosts on a network.
+# It uses the first command-line argument ($1) if provided.
+# If not, it falls back to the DEFAULT_SUBNET environment variable.
+
+TARGET_SUBNET="${1:-$DEFAULT_SUBNET}"
+
+# Check if a target subnet is available from either source.
+if [ -z "$TARGET_SUBNET" ]; then
+  echo "Error: No subnet provided and DEFAULT_SUBNET environment variable is not set."
+  echo "Usage: $0 [subnet]"
+  exit 1
+fi
+
+echo "Scanning target: ${TARGET_SUBNET}"
+nmap -sn "${TARGET_SUBNET}"
+
+## Running the Script
+
+Once you save the file, you can run it from your current directory (/net-scripts/scripts):
+Bash
+
+./discover_hosts.sh
+
+Because your environment variable is set, it will automatically find and scan 192.168.1.0/24.
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts/scripts$ . discover_hosts.sh
+
+Scanning target: 192.168.1.0/24
+
+bash: nmap: command not found...
+
+Install package 'nmap' to provide command 'nmap'? [N/y] y
+
+
+
+ * Waiting in queue...
+
+ * Loading list of packages....
+
+The following packages have to be installed:
+
+ nmap-4:7.92-5.fc42.x86_64    Network exploration tool and security scanner
+
+Proceed with changes? [N/y] y
+
+
+
+ * Waiting in queue...
+
+ * Waiting for authentication...
+
+ * Waiting in queue...
+
+ * Downloading packages...
+
+ * Requesting data...
+
+ * Testing changes...
+
+ * Installing packages...
+
+Starting Nmap 7.92 ( https://nmap.org ) at 2025-09-28 16:22 CDT
+
+Nmap scan report for _gateway (192.168.1.1)
+
+Host is up (0.0035s latency).
+
+Nmap scan report for 192.168.1.3
+
+Host is up (0.0068s latency).
+
+Nmap scan report for 192.168.1.5
+
+Host is up (0.058s latency).
+
+Nmap scan report for 192.168.1.6
+
+Host is up (0.0064s latency).
+
+Nmap scan report for 192.168.1.7
+
+Host is up (0.0074s latency).
+
+Nmap scan report for 192.168.1.13
+
+Host is up (0.0074s latency).
+
+Nmap scan report for 192.168.1.15
+
+Host is up (0.18s latency).
+
+Nmap scan report for 192.168.1.16
+
+Host is up (0.044s latency).
+
+Nmap scan report for 192.168.1.26
+
+Host is up (0.0047s latency).
+
+Nmap scan report for fedora (192.168.1.61)
+
+Host is up (0.000039s latency).
+
+Nmap done: 256 IP addresses (10 hosts up) scanned in 15.92 seconds
+
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace/net-scripts/scripts$
+
+Excellent! The script worked perfectly.
+
+It correctly identified that nmap was missing, prompted you to install it, and then ran the scan exactly as planned. You've successfully built and run your first network utility and found 10 active devices on your subnet.
+
+This is a great foundation for your net-scripts project. ✅
+
+What would you like to build next? We could work on the port_scan.sh script we discussed earlier, or something else if you have another idea.
+
+Well, here's the admittedly untutored objective: I have a lot of USB drives around here. I want to get them online so I can inventory them.
+
+That's a great project. The standard and most compatible way to get those drives "online" for inventory on your local network is to share them using Samba, which makes them accessible as a standard network drive.
+
+Think of it as plugging the USB drive into your Fedora machine and then telling your network, "Hey, this drive is now a shared folder that anyone on the Wi-Fi can access."
+
+Here’s a step-by-step plan to get your first drive online.
+
+## The Plan: Sharing a USB Drive with Samba
+
+This process involves installing the Samba server software, configuring it to "share" the location where your USB drive is connected, and adjusting the firewall to allow access.
+
+Step 1: Install Samba
+First, you'll need to install the Samba server packages on your Fedora machine.
+Bash
+
+sudo dnf install samba samba-client
+
+Step 2: Prepare a Mount Point 🔌
+Instead of having the USB drive show up in a different place each time, it's best to create a permanent directory where you will "mount" it. This gives Samba a consistent location to share.
+
+Let's create a directory for this purpose:
+Bash
+
+sudo mkdir /mnt/usb_share
+
+Now, plug in a USB drive. Find its device name (like /dev/sdb1) by running lsblk. Then, mount it to your new directory:
+Bash
+
+# First, find the device name (e.g., sda1, sdb1)
+lsblk
+
+# Then, mount it (replace /dev/sdb1 with your drive's name)
+sudo mount /dev/sdb1 /mnt/usb_share
+
+Step 3: Configure the Samba Share 📁
+You need to tell Samba what to share. You do this by editing its configuration file, /etc/samba/smb.conf.
+
+Open the file with root privileges:
+Bash
+
+sudo nano /etc/samba/smb.conf
+
+Scroll to the very bottom of the file and add the following configuration block. This defines a new network share named [usb].
+Ini, TOML
+
+[usb]
+    comment = USB Drive for Inventory
+    path = /mnt/usb_share
+    read only = yes
+    browsable = yes
+    guest ok = yes
+
+    path: The directory on your Fedora machine you want to share.
+
+    read only: Set to yes for safety during inventory. You can change it to no later if you need to write files.
+
+    browsable: Allows other computers to see the share when they browse the network.
+
+    guest ok: Allows access without a password. This is fine for a trusted home network.
+
+Save the file and exit the editor (in nano, that's Ctrl+X, then Y, then Enter).
+
+Step 4: Start the Samba Service
+Now, start the Samba server and enable it so it automatically starts when you boot your machine.
+Bash
+
+sudo systemctl start smb
+sudo systemctl enable smb
+
+Step 5: Adjust the Firewall
+Fedora's firewall will block network access by default. You need to add a rule to allow Samba traffic.
+Bash
+
+sudo firewall-cmd --add-service=samba --permanent
+sudo firewall-cmd --reload
+
+## Accessing and Inventorying the Drive
+
+You're all set! Your USB drive is now "online."
+
+    To access it from another computer (Windows, Mac, or another Linux machine), go to your file explorer and navigate to the network address of your Fedora machine, which is \\192.168.1.61 (from our previous conversation). You should see a shared folder named usb.
+
+    To inventory it, you can now access that network drive and run any tool you want against it. The simplest inventory from your Fedora machine itself would be to list all files recursively and save the output to a text file:
+
+Bash
+
+# Run this after mounting the drive
+ls -lR /mnt/usb_share > ~/inventory_of_drive_1.txt
+
+When you want to inventory the next drive, you'll just need to unmount the first one (sudo umount /mnt/usb_share) and mount the next one in its place. The network share will automatically show the contents of the newly mounted drive.
+
+If I get a big old USB 3 connection strip, I presume I can do this for multiple drives?
+
+Yes, you absolutely can. Using a USB hub is the perfect way to scale this project up.
+
+The core concept is the same, but instead of a single mount point and a single share, you'll create a unique one for each physical USB port on your hub.
+
+## The Multi-Drive Plan
+
+Let's say you get a 4-port USB hub. Here’s how you would adapt the process.
+
+Step 1: Create Multiple Mount Points
+You need a separate directory for each drive you want to share simultaneously.
+Bash
+
+# Create four directories: /mnt/usb1, /mnt/usb2, /mnt/usb3, /mnt/usb4
+sudo mkdir -p /mnt/usb{1,2,3,4}
+
+Step 2: Update the Samba Configuration
+You'll add a new share block in your /etc/samba/smb.conf file for each mount point.
+Ini, TOML
+
+# Add this to the end of /etc/samba/smb.conf
+
+[usb1]
+    comment = USB Drive 1
+    path = /mnt/usb1
+    read only = yes
+    browsable = yes
+    guest ok = yes
+
+[usb2]
+    comment = USB Drive 2
+    path = /mnt/usb2
+    read only = yes
+    browsable = yes
+    guest ok = yes
+
+[usb3]
+    comment = USB Drive 3
+    path = /mnt/usb3
+    read only = yes
+    browsable = yes
+    guest ok = yes
+
+[usb4]
+    comment = USB Drive 4
+    path = /mnt/usb4
+    read only = yes
+    browsable = yes
+    guest ok = yes
+
+After saving the changes, you must restart the Samba service for the new shares to become active:
+Bash
+
+sudo systemctl restart smb
+
+Step 3: Mount Each Drive
+Now, as you plug your drives into the hub, you will mount each one to its own dedicated directory.
+
+    Use lsblk to identify the device names (e.g., /dev/sdb1, /dev/sdc1, etc.).
+
+    Mount each one to a unique location:
+    Bash
+
+    sudo mount /dev/sdb1 /mnt/usb1
+    sudo mount /dev/sdc1 /mnt/usb2
+    sudo mount /dev/sdd1 /mnt/usb3
+    # and so on...
+
+Now on your network, you will see four separate shared folders: usb1, usb2, usb3, and usb4.
+
+## A Better Way: Using Stable Names
+
+A potential problem is that device names like /dev/sdb1 can sometimes change when you reboot or unplug drives. For a more permanent setup, it's much more reliable to identify drives by their unique UUID (Universally Unique Identifier).
+
+    Find the UUID for your drives:
+    Bash
+
+sudo blkid
+
+The output will look something like this:
+/dev/sdb1: LABEL="Photos" UUID="1234-ABCD" TYPE="exfat"
+/dev/sdc1: LABEL="Docs" UUID="5678-EFGH" TYPE="ntfs"
+
+Mount using the UUID:
+This is much more reliable because the UUID never changes.
+Bash
+
+    sudo mount UUID="1234-ABCD" /mnt/usb1
+    sudo mount UUID="5678-EFGH" /mnt/usb2
+
+This method ensures that the "Photos" drive always gets shared as usb1 and the "Docs" drive always gets shared as usb2, no matter which physical port you plug them into.
+
+
+Gemini can make mistakes, so double-check it

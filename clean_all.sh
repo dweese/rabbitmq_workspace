@@ -10,6 +10,7 @@ PROJECTS=(
     "rabbitmq-config"
     "rabbitmq-info" 
     "rabbitmq-ui"
+    "rabbitmq-mon"
     "egui-components"
     "messaging_commands"
     "messaging_cli"

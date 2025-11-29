@@ -26,7 +26,7 @@ impl RabbitMQClient {
     pub async fn new(config: RabbitMQConfig) -> Result<Self, RabbitMQError> {
         info!(
             "component=RabbitMQClient action=new host={} port={}",
-            config.host, config.port
+            config.host, config.amqp_port
         );
 
         let mut client = Self {
@@ -55,14 +55,7 @@ impl RabbitMQClient {
         info!("component=RabbitMQClient action=connect");
 
         // Construct connection URI
-        let uri = format!(
-            "amqp://{}:{}@{}:{}/{}",
-            self.config.username,
-            self.config.password,
-            self.config.host,
-            self.config.port,
-            self.config.vhost
-        );
+        let uri = self.config.to_uri();
 
         // Connect with timeout
         let connection_timeout = Duration::from_secs(10);
@@ -183,6 +176,7 @@ impl RabbitMQClient {
             let options = ExchangeDeclareOptions {
                 durable: exchange_info.durable,
                 auto_delete: exchange_info.auto_delete,
+                internal: exchange_info.internal,
                 ..Default::default()
             };
 

@@ -11,7 +11,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Cell, Paragraph, Row, Table},
     Terminal,
 };
 use serde_json::Value;
@@ -65,7 +65,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Assemble the final config
     let config = RabbitMQConfig {
         host: conn_info.host,
-        port: conn_info.port,
+        amqp_port: conn_info.amqp_port,
+        management_port: conn_info.management_port,
         username: conn_info.username,
         password,
         vhost: conn_info.vhost,
@@ -155,33 +156,51 @@ fn ui(f: &mut ratatui::Frame<'_>, app: &App) {
             Constraint::Min(0),    // Main content
             Constraint::Length(3), // Footer
         ].as_ref())
-        .split(f.size());
+        .split(f.area()); // Use .area() instead of .size()
 
     // Header
-    let header = Paragraph::new(Line::from(vec![
+    let header_paragraph = Paragraph::new(Line::from(vec![
         Span::styled(
             "RabbitMQ Monitor",
             Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
         ),
     ]))
     .block(Block::default().borders(Borders::ALL).title("Header"));
-    f.render_widget(header, chunks[0]);
+    f.render_widget(header_paragraph, chunks[0]);
 
-    // Main content area - Display Queues
-    let queue_lines: Vec<Line> = app.queues.iter().map(|q| {
+    // Main content area - Display Queues in a Table
+    let header_cells = ["Queue", "Messages", "Consumers"]
+        .iter()
+        .map(|h| Cell::from(*h).style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)));
+    let header = Row::new(header_cells)
+        .style(Style::default().bg(Color::DarkGray))
+        .height(1);
+
+    let rows = app.queues.iter().map(|q| {
         let name = q["name"].as_str().unwrap_or("N/A");
-        let messages = q["messages"].as_i64().unwrap_or(0);
-        let consumers = q["consumers"].as_i64().unwrap_or(0);
-        Line::from(format!("Queue: {:<30} | Messages: {:<10} | Consumers: {}", name, messages, consumers))
-    }).collect();
+        let messages = q["messages"].as_i64().unwrap_or(0).to_string();
+        let consumers = q["consumers"].as_i64().unwrap_or(0).to_string();
+        Row::new(vec![
+            Cell::from(name),
+            Cell::from(messages),
+            Cell::from(consumers),
+        ])
+    });
 
-    let content = Paragraph::new(queue_lines)
-        .block(Block::default().borders(Borders::ALL).title("Queues"));
-    f.render_widget(content, chunks[1]);
+    let table = Table::new(rows, &[
+            Constraint::Percentage(60),
+            Constraint::Percentage(20),
+            Constraint::Percentage(20),
+        ])
+        .header(header)
+        .block(Block::default().borders(Borders::ALL).title("Queues"))
+        .highlight_style(Style::default().add_modifier(Modifier::REVERSED))
+        .highlight_symbol(">> ");
+    f.render_widget(table, chunks[1]);
+
 
     // Footer
-    let footer_text = format!("Status: {} | Press 'q' to quit", app.status);
-    let footer = Paragraph::new(Line::from(footer_text))
+    let footer_paragraph = Paragraph::new(Line::from(format!("Status: {} | Press 'q' to quit", app.status)))
         .block(Block::default().borders(Borders::ALL));
-    f.render_widget(footer, chunks[2]);
+    f.render_widget(footer_paragraph, chunks[2]);
 }

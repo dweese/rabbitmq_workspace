@@ -1,0 +1,59 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.82s
+     Running `target/debug/rabbitmq-mon`
+Connecting as user: 'user_rust'
+Enter password:
+Checking RabbitMQ connection...
+RabbitMQ is alive. Launching monitor...
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   artifacts/Gemini20251128.txt
+	new file:   rabbitmq-config/src/bin/topology_creator.rs
+	new file:   run_monitor.sh
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   Cargo.lock
+	modified:   bestinf.sh
+	modified:   bestinf.txt
+	modified:   clean_all.sh
+	modified:   messaging_commands/Cargo.toml
+	modified:   messaging_commands/src/lib.rs
+	modified:   messaging_commands/src/main.rs
+	modified:   messaging_commands/src/tests/mod.rs
+	modified:   rabbitmq-config/Cargo.toml
+	modified:   rabbitmq-config/src/bin/topology_creator.rs
+	modified:   rabbitmq-config/src/client.rs
+	modified:   rabbitmq-config/src/config.rs
+	modified:   rabbitmq-config/src/lib.rs
+	modified:   rabbitmq-info/src/api/mod.rs
+	modified:   rabbitmq-mon.toml
+	modified:   rabbitmq-mon/src/main.rs
+	modified:   run_monitor.sh
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	Gemini/
+	capture.txt
+	cargo.txt
+	messaging_commands/msgcmd.txt
+	messaging_simple/
+	net-scripts/
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace$
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ git add .
+error: 'net-scripts/' does not have a commit checked out
+fatal: adding files failed
+dweese@fedora:~/dev/rust/rabbitmq_workspace$
+
+can you append if you can see?
+
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ git rm --cached net-scripts
+fatal: pathspec 'net-scripts' did not match any files
+
+

@@ -8,22 +8,23 @@ edition = "2021"
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 tokio-executor-trait = "2.1.1"
-
 serde_json = "1.0"
-
 tokio = { version = "1", features = ["full"] }
 lapin = "2.5.3"
 thiserror = "1.0"
 futures-util = "0.3.31"
-# Use version 7.2.3 which is compatible with lapin 2.5.3
 amq-protocol-uri = "7.2.3"
 percent-encoding = "2.3.1"
 log = "0.4.27"
 sha2 = "0.10.9"
-rand = "0.8.5"  # Change from 0.9.1 to 0.8.5
-base64 = "0.21.5"  # Change from 0.22.1 to 0.21.5
-
-# Added for configuration loading
+rand = "0.8.5"
+base64 = "0.21.5"
 toml = "0.8"
 dirs = "5.0"
-# keyring is being removed
+rpassword = "7.3"
+env_logger = "0.11.3"
+
+
+[[bin]]
+name = "topology-creator"
+path = "src/bin/topology_creator.rs"

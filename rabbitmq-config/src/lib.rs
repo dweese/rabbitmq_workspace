@@ -21,7 +21,7 @@ pub use models::{
     MessageProperties,
     PermissionDefinition,
     QueueDefinition,
-    QueueInfo, // Use QueueInfo from models instead of defining it here
+    QueueInfo,
     RabbitMQMessage,
     RabbitMQServerDefinition,
     TopicPermissionDefinition,

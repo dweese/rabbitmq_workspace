@@ -3,13 +3,17 @@
 # Copy this file to your system's configuration directory:
 #   - Linux:   ~/.config/rabbitmq-mon/rabbitmq-mon.toml
 #   - macOS:   ~/Library/Application Support/rabbitmq-mon/rabbitmq-mon.toml
-#   - Windows: %APPDATA%\rabbitmq-mon\config\rabbitmq-mon.toml
+#   - Windows: %APPDATA%\\rabbitmq-mon\\config\\rabbitmq-mon.toml
 #
-# Then, edit it with your RabbitMQ management API credentials.
+# Then, edit it with your RabbitMQ connection details.
 
 [connection]
 host = "localhost"
-port = 15672 # This is the management API port, not the AMQP port
 username = "guest"
-password = "guest"
 vhost = "/"
+
+# The AMQP protocol port (for declaring topology, publishing, etc.)
+amqp_port = 5672
+
+# The HTTP management API port (for monitoring)
+management_port = 15672

@@ -1,0 +1,50 @@
+## Project State Summary - 2025-11-28
+
+### Overall Goal
+Architectural cleanup of the RabbitMQ workspace to align the running server configuration with the design documents and professional best practices.
+
+### Current Task
+Implementing a `topology-creator` utility to programmatically declare exchanges and queues based on the design in `artifacts/message_types.json`.
+
+### Last Status
+We created the `topology-creator` binary within the `rabbitmq-config` crate. When we ran it, we received an `ACCESS_REFUSED` error from RabbitMQ.
+
+We diagnosed the root cause: the configuration file at `~/.config/rabbitmq-mon/rabbitmq-mon.toml` was pointing to the default `vhost = "/"` instead of the correct, isolated `vhost = "vhost_rust"`. The `user_rust` does not have permissions on the default vhost, so the connection was correctly refused.
+
+---
+
+### == IMMEDIATE NEXT STEP ==
+The user needs to perform the following actions:
+
+1.  **Edit the personal configuration file:**
+    Open `~/.config/rabbitmq-mon/rabbitmq-mon.toml`.
+
+2.  **Change the virtual host:**
+    Modify the line `vhost = "/"` to be `vhost = "vhost_rust"`.
+
+3.  **Run the topology creator:**
+    After saving the change, run the following command from the workspace root:
+    `cargo run --bin topology-creator`
+
+This should successfully connect to the `vhost_rust` and apply the desired topology.
+
+---
+
+### Architectural Cleanup Plan
+1. [x] Consolidate on a single vhost (`vhost_rust`).
+2. [ ] Implement missing exchanges and queues (This is the current task).
+3. [ ] Standardize naming conventions (`.` vs `_`).
+4. [ ] Align durability of queues with the design.
+
+### Key Decisions & Context
+- We abandoned the `keyring` crate due to platform-specific unreliability and pivoted to a secure "prompt on startup" model for password entry.
+- We established a clear pattern: use the AMQP protocol (`lapin`) for topology/setup tasks and the HTTP Management API for monitoring tasks.
+- We refactored the configuration to explicitly define `amqp_port` (5672) and `management_port` (15672) to resolve connection errors.
+
+### Key Files Modified in This Session
+- `rabbitmq-config/src/bin/topology_creator.rs` (new file)
+- `rabbitmq-config/Cargo.toml`
+- `rabbitmq-config/src/config.rs`
+- `rabbitmq-config/src/client.rs`
+- `rabbitmq-info/src/api/mod.rs`
+- `rabbitmq-mon.toml` (template)

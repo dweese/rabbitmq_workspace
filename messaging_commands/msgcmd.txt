@@ -1,0 +1,68 @@
+
+running 11 tests
+test tests::cli_tests::test_cli_parsing_reload_command ... ok
+test tests::cli_tests::test_config_reload_with_nonexistent_file ... ok
+test tests::cli_tests::test_cli_invalid_port ... ok
+test tests::cli_tests::test_cli_parsing_reload_custom_config ... ok
+test tests::cli_tests::test_cli_parsing_connect_command ... ok
+test tests::cli_tests::test_cli_parsing_connect_with_defaults ... ok
+test tests::cli_tests::test_cli_missing_required_args ... ok
+test tests::cli_tests::test_config_reload_with_invalid_json ... ok
+test tests::prelude_imports_work ... ok
+test tests::cli_tests::test_config_reload_with_valid_json ... ok
+test tests::cli_tests::test_verbose_flag ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 11 tests
+test tests::cli_tests::test_config_reload_with_nonexistent_file ... ok
+test tests::cli_tests::test_config_reload_with_invalid_json ... ok
+test tests::cli_tests::test_cli_parsing_reload_command ... ok
+test tests::cli_tests::test_cli_parsing_reload_custom_config ... ok
+test tests::prelude_imports_work ... ok
+test tests::cli_tests::test_config_reload_with_valid_json ... ok
+test tests::cli_tests::test_cli_invalid_port ... FAILED
+test tests::cli_tests::test_cli_parsing_connect_command ... FAILED
+test tests::cli_tests::test_cli_parsing_connect_with_defaults ... FAILED
+test tests::cli_tests::test_cli_missing_required_args ... FAILED
+test tests::cli_tests::test_verbose_flag ... FAILED
+
+failures:
+
+---- tests::cli_tests::test_cli_invalid_port stdout ----
+
+thread 'tests::cli_tests::test_cli_invalid_port' panicked at /home/dweese/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/clap_builder-4.5.44/src/builder/debug_asserts.rs:112:17:
+Command connect: Short option names must be unique for each argument, but '-p' is in use by both 'protocol' and 'port'
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- tests::cli_tests::test_cli_parsing_connect_command stdout ----
+
+thread 'tests::cli_tests::test_cli_parsing_connect_command' panicked at /home/dweese/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/clap_builder-4.5.44/src/builder/debug_asserts.rs:112:17:
+Command connect: Short option names must be unique for each argument, but '-p' is in use by both 'protocol' and 'port'
+
+---- tests::cli_tests::test_cli_parsing_connect_with_defaults stdout ----
+
+thread 'tests::cli_tests::test_cli_parsing_connect_with_defaults' panicked at /home/dweese/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/clap_builder-4.5.44/src/builder/debug_asserts.rs:112:17:
+Command connect: Short option names must be unique for each argument, but '-p' is in use by both 'protocol' and 'port'
+
+---- tests::cli_tests::test_cli_missing_required_args stdout ----
+
+thread 'tests::cli_tests::test_cli_missing_required_args' panicked at /home/dweese/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/clap_builder-4.5.44/src/builder/debug_asserts.rs:112:17:
+Command connect: Short option names must be unique for each argument, but '-p' is in use by both 'protocol' and 'port'
+
+---- tests::cli_tests::test_verbose_flag stdout ----
+
+thread 'tests::cli_tests::test_verbose_flag' panicked at /home/dweese/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/clap_builder-4.5.44/src/builder/debug_asserts.rs:112:17:
+Command connect: Short option names must be unique for each argument, but '-p' is in use by both 'protocol' and 'port'
+
+
+failures:
+    tests::cli_tests::test_cli_invalid_port
+    tests::cli_tests::test_cli_missing_required_args
+    tests::cli_tests::test_cli_parsing_connect_command
+    tests::cli_tests::test_cli_parsing_connect_with_defaults
+    tests::cli_tests::test_verbose_flag
+
+test result: FAILED. 6 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

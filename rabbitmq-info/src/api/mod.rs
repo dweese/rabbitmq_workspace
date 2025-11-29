@@ -34,8 +34,8 @@ impl RabbitMQApiClient {
         // Create HTTP client with timeout
         let client = Client::builder().timeout(Duration::from_secs(30)).build()?;
 
-        // Construct base URL for management API (default port is 15672)
-        let base_url = format!("http://{}:15672/api", config.host);
+        // Construct base URL for management API using the correct port
+        let base_url = format!("http://{}:{}/api", config.host, config.management_port);
 
         // Create basic auth header
         let auth_str = format!("{}:{}", config.username, config.password);

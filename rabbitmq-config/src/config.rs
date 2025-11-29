@@ -3,10 +3,12 @@ use percent_encoding::{utf8_percent_encode, NON_ALPHANUMERIC};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+/// A flattened, simple config struct for use by client applications.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RabbitMQConfig {
     pub host: String,
-    pub port: u16,
+    pub amqp_port: u16,
+    pub management_port: u16,
     pub username: String,
     pub password: String,
     pub vhost: String,
@@ -16,7 +18,8 @@ impl Default for RabbitMQConfig {
     fn default() -> Self {
         Self {
             host: "localhost".to_string(),
-            port: 5672,
+            amqp_port: 5672,
+            management_port: 15672,
             username: "guest".to_string(),
             password: "guest".to_string(),
             vhost: "/".to_string(),
@@ -27,25 +30,22 @@ impl Default for RabbitMQConfig {
 impl RabbitMQConfig {
     /// Converts the configuration into a valid AMQP URI string.
     pub fn to_uri(&self) -> String {
-        // The vhost part of the URI must be percent-encoded and start with a slash.
         let vhost_encoded = if self.vhost.is_empty() || self.vhost == "/" {
-            // The root vhost is just a single slash.
             "/".to_string()
         } else {
-            // For other vhosts, ensure it starts with a slash and encode it.
             format!("/{}", utf8_percent_encode(&self.vhost, NON_ALPHANUMERIC))
         };
 
         format!(
             "amqp://{}:{}@{}:{}{}",
-            self.username, self.password, self.host, self.port, vhost_encoded
+            self.username, self.password, self.host, self.amqp_port, vhost_encoded
         )
     }
 }
 
 /// A comprehensive, hierarchical configuration for a RabbitMQ setup.
 /// This struct is designed to be deserialized from a single configuration file (e.g., TOML).
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RabbitMQFullConfig {
     pub connection: ConnectionConfig,
     #[serde(default)]
@@ -66,6 +66,23 @@ pub struct RabbitMQFullConfig {
     pub retry: Option<RetryConfig>,
 }
 
+impl Default for RabbitMQFullConfig {
+    fn default() -> Self {
+        Self {
+            connection: ConnectionConfig::default(),
+            channel: ChannelConfig::default(),
+            logging: LoggingConfig::default(),
+            exchanges: vec![],
+            queues: vec![],
+            bindings: vec![],
+            consumers: vec![],
+            publishers: vec![],
+            retry: None,
+        }
+    }
+}
+
+
 // --- Configuration Sub-structs ---
 
 /// Logging configuration
@@ -83,13 +100,13 @@ pub struct LoggingConfig {
 }
 
 /// Connection configuration
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConnectionConfig {
     pub host: String,
-    pub port: u16,
+    pub amqp_port: u16,
+    pub management_port: u16,
     pub vhost: String,
     pub username: String,
-    // Password is now optional in the config file
     pub password: Option<String>,
     #[serde(default)]
     pub connection_timeout_ms: u32,
@@ -102,6 +119,25 @@ pub struct ConnectionConfig {
     #[serde(default)]
     pub tls_options: Option<TlsOptions>,
 }
+
+impl Default for ConnectionConfig {
+    fn default() -> Self {
+        Self {
+            host: "localhost".to_string(),
+            amqp_port: 5672,
+            management_port: 15672,
+            vhost: "/".to_string(),
+            username: "guest".to_string(),
+            password: None,
+            connection_timeout_ms: 10000,
+            heartbeat_interval_sec: 60,
+            connection_name: "rabbitmq_app".to_string(),
+            use_tls: false,
+            tls_options: None,
+        }
+    }
+}
+
 
 /// TLS configuration options
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

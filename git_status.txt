@@ -1,0 +1,6 @@
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ git status >git_status.txt
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ git add .
+error: 'net-scripts/' does not have a commit checked out
+fatal: adding files failed
+
+can you see this line?
