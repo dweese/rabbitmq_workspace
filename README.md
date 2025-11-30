@@ -1,40 +1,47 @@
-# 🦀 RabbitMQ Workspace
+# RabbitMQ Workspace
 
-A collection of tools for managing RabbitMQ and experimenting with database security, all built as part of my journey learning Rust.
+This workspace contains a professional suite of tools for designing, deploying, monitoring, and testing a RabbitMQ-based messaging architecture.
 
----
+## Core Philosophy: Emanate from the Tree
 
-## What is this?
+This project follows a strict design principle: the entire system topology should **emanate from a single source of truth**. That source of truth is the `artifacts/message_types.json` file.
 
-This is a **Cargo workspace** containing a set of related crates that I'm building to learn and apply different concepts in Rust. The primary focus is on creating practical tools for managing a **RabbitMQ** server, with a secondary project for exploring hardware authentication using **YubiKey**.
+This design document is not just a diagram; it is the machine-readable spec that drives the entire system. All tools in this workspace are designed to be consumers of this spec, which ensures that our live, running system never drifts from our intended design.
 
-While this is a learning project, the goal is to build useful and robust tools.
+## Crate Breakdown
 
----
+This workspace is organized into several distinct crates, each with a specific purpose:
 
-## Crates in this Workspace
+-   `rabbitmq-config`: A core library crate that provides shared logic for configuration management and a high-level RabbitMQ client for connecting to the server.
+-   `rabbitmq-mon`: A terminal-based UI (TUI) application for monitoring the health and status of the RabbitMQ server, including queue depths and consumer counts.
+-   `topology-creator` (binary within `rabbitmq-config`): A command-line tool that reads `artifacts/message_types.json` and programmatically declares all exchanges and queues on the server.
+-   `messaging_tests`: A full integration testing framework, complete with `test-producer` and `test-consumer` utilities and a suite of automated test scripts.
+-   *(Other crates like `egui-components`, `messaging_cli`, etc. serve as components for other experiments within the workspace.)*
 
-### 🐰 RabbitMQ Tools
-| Crate | Purpose | Progress |
-| :--- | :--- | :--- |
-| **`rabbitmq-config`** | A library for managing RabbitMQ server topology. | ✅ Usable |
-| **`rabbitmq-info`** | A tool for gathering metrics and server status. | ✅ Usable |
-| **`rabbitmq-ui`** | A graphical UI for managing RabbitMQ. | 🚧 In Progress |
+## Key Workflows
 
-### 🔐 Security & Utilities
-| Crate | Purpose | Progress |
-| :--- | :--- | :--- |
-| **`pg_vault`** | An app to manage PostgreSQL connections using a YubiKey. | ✅ Usable |
-| **`messaging_commands`**| A shared library for messaging protocol logic. | ✅ Usable |
-| **`messaging_cli`** | A command-line tool for messaging. | 🚧 In Progress |
-| **`yak_json`** | A simple utility for JSON processing. | ✅ Usable |
-| **`egui-components`** | Shared UI components for the `egui` framework. | 🚧 In Progress |
+All commands should be run from the workspace root.
 
----
+### Apply the Topology
 
-## 🚀 Getting Started
+To apply the design from `artifacts/message_types.json` to the RabbitMQ server, run the `topology-creator`:
 
-### Prerequisites
-You'll need the Rust toolchain (1.70+).
-```shell
-curl --proto '=https' --tlsv1.2 -sSf [https://sh.rustup.rs](https://sh.rustup.rs) | sh
+```sh
+cargo run -p rabbitmq-config --bin topology-creator
+```
+
+### Monitor the Server
+
+To launch the terminal-based monitoring application:
+
+```sh
+./run_monitor.sh
+```
+
+### Run the Test Suite
+
+To run the entire suite of automated integration tests, which validates the end-to-end message flow for our defined topology:
+
+```sh
+./messaging_tests/run_all_tests.sh
+```
