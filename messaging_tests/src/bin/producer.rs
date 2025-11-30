@@ -1,6 +1,6 @@
 use clap::Parser;
 use log::info;
-use rabbitmq_config::{get_password, load_config_file, RabbitMQClient, RabbitMQConfig, RabbitMQMessage};
+use rabbitmq_config::{get_password, load_config_file, RabbitMQClient, RabbitMQConfig, RabbitMQMessage, MessageProperties};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -16,6 +16,10 @@ struct Args {
     /// The message payload, as a JSON string.
     #[arg(short, long)]
     payload: String,
+
+    /// The priority of the message (optional).
+    #[arg(long)]
+    priority: Option<u8>,
 }
 
 #[tokio::main]
@@ -43,14 +47,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Successfully connected to RabbitMQ.");
 
     // --- Publish Message ---
+    let properties = MessageProperties {
+        priority: args.priority,
+        ..Default::default()
+    };
+
     let message = RabbitMQMessage {
         exchange: args.exchange,
         routing_key: args.routing_key,
         payload: args.payload.into_bytes(),
-        properties: None, // For now, we don't need special properties
+        properties: Some(properties),
     };
 
-    info!("Publishing message...");
+    info!("Publishing message with priority {:?}...", args.priority);
     client.publish_message(&message).await?;
     info!("Message published successfully.");
 

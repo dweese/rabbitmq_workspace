@@ -4,7 +4,7 @@ use futures_util::stream::StreamExt;
 use lapin::{
     options::{
         BasicAckOptions, BasicConsumeOptions, BasicPublishOptions, ExchangeDeclareOptions,
-        ExchangeDeleteOptions, QueueBindOptions, QueueDeclareOptions, QueueDeleteOptions,
+        QueueBindOptions, QueueDeclareOptions,
     },
     types::FieldTable,
     BasicProperties, Channel, Connection, ConnectionProperties, ExchangeKind,
@@ -82,7 +82,7 @@ impl RabbitMQClient {
                 ..Default::default()
             };
             channel
-                .queue_declare(&queue_info.name, options, FieldTable::default())
+                .queue_declare(&queue_info.name, options, queue_info.arguments.clone())
                 .await
                 .map_err(|e| RabbitMQError::QueueError(format!("Failed to declare queue: {e}")))?;
             Ok(())
@@ -108,7 +108,7 @@ impl RabbitMQClient {
                 ..Default::default()
             };
             channel
-                .exchange_declare(&exchange_info.name, kind, options, FieldTable::default())
+                .exchange_declare(&exchange_info.name, kind, options, exchange_info.arguments.clone())
                 .await
                 .map_err(|e| RabbitMQError::ExchangeError(format!("Failed to declare exchange: {e}")))?;
             Ok(())
@@ -131,6 +131,9 @@ impl RabbitMQClient {
                 }
                 if let Some(delivery_mode) = props.delivery_mode {
                     properties = properties.with_delivery_mode(delivery_mode);
+                }
+                if let Some(priority) = props.priority {
+                    properties = properties.with_priority(priority);
                 }
             }
             channel

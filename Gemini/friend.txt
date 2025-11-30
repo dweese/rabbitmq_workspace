@@ -4,14 +4,27 @@ Your branch is up to date with 'origin/main'.
 
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-	new file:   artifacts/README.md
+	new file:   artifacts/Gemini20251202.txt
+	new file:   messaging_tests/scripts/test_priority_queues.sh
 
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
 	modified:   Gemini/friend.txt
-	modified:   artifacts/message_types.json
-	modified:   rabbitmq-config/src/bin/topology_creator.rs
+	modified:   messaging_tests/scripts/test_priority_queues.sh
+	modified:   messaging_tests/src/bin/producer.rs
+	modified:   rabbitmq-config/src/client.rs
 	modified:   rabbitmq-config/src/models.rs
+	modified:   rabbitmq-config/tests/client/unit_tests.rs
+	modified:   rabbitmq-config/tests/common/test_utils.rs
+	modified:   rabbitmq-config/tests/config/serialization_tests.rs
+	modified:   rabbitmq-config/tests/connection_test.rs
+	modified:   rabbitmq-config/tests/simple_connection_test.rs
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	rabbitmq-config/src/client.rs:7:9
+	rabbitmq-config/src/models.rs:3:32
+	rabbitmq-config/src/models.rs:5:5
 
 dweese@fedora:~/dev/rust/rabbitmq_workspace$

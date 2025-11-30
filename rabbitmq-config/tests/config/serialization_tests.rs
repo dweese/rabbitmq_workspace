@@ -5,7 +5,8 @@ fn test_basic_config_serialization() {
     // Test serialization of RabbitMQConfig (the simple config)
     let config = RabbitMQConfig {
         host: "test-host".to_string(),
-        port: 5673,
+        amqp_port: 5673,
+        management_port: 15673,
         username: "test-user".to_string(),
         password: "test-password".to_string(),
         vhost: "test-vhost".to_string(),
@@ -15,7 +16,8 @@ fn test_basic_config_serialization() {
     let deserialized: RabbitMQConfig = serde_json::from_str(&json).expect("Failed to deserialize");
 
     assert_eq!(config.host, deserialized.host);
-    assert_eq!(config.port, deserialized.port);
+    assert_eq!(config.amqp_port, deserialized.amqp_port);
+    assert_eq!(config.management_port, deserialized.management_port);
     assert_eq!(config.username, deserialized.username);
     assert_eq!(config.password, deserialized.password);
     assert_eq!(config.vhost, deserialized.vhost);

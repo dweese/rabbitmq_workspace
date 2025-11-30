@@ -5,7 +5,8 @@ fn test_rabbitmq_config_to_uri() {
     // Test URI generation for simple config
     let config = RabbitMQConfig {
         host: "localhost".to_string(),
-        port: 5672,
+        amqp_port: 5672,
+        management_port: 15672,
         username: "guest".to_string(),
         password: "guest".to_string(),
         vhost: "/".to_string(),
@@ -17,7 +18,8 @@ fn test_rabbitmq_config_to_uri() {
     // Test with non-default values
     let config2 = RabbitMQConfig {
         host: "rabbitmq.example.com".to_string(),
-        port: 5673,
+        amqp_port: 5673,
+        management_port: 15673,
         username: "test-user".to_string(),
         password: "test-pass".to_string(),
         vhost: "test-vhost".to_string(),

@@ -1,8 +1,7 @@
 // rabbitmq-config/src/models.rs
 
-use lapin::types::{FieldTable, AMQPValue};
+use lapin::types::FieldTable;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RabbitMQServerDefinition {
@@ -114,9 +113,10 @@ pub struct RabbitMQMessage {
     pub properties: Option<MessageProperties>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct MessageProperties {
     pub content_type: Option<String>,
     pub content_encoding: Option<String>,
     pub delivery_mode: Option<u8>,
+    pub priority: Option<u8>,
 }

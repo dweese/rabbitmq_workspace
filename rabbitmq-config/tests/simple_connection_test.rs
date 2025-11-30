@@ -6,7 +6,8 @@ fn test_simple_rabbitmq_connection() {
     // Create a simple config
     let config = RabbitMQConfig {
         host: "localhost".to_string(),
-        port: 5672,
+        amqp_port: 5672,
+        management_port: 15672,
         username: "guest".to_string(),
         password: "guest".to_string(),
         vhost: "/".to_string(),

@@ -7,7 +7,8 @@ use std::path::Path;
 pub fn create_test_config() -> RabbitMQConfig {
     RabbitMQConfig {
         host: "localhost".to_string(),
-        port: 5672,
+        amqp_port: 5672,
+        management_port: 15672,
         username: "guest".to_string(),
         password: "guest".to_string(),
         vhost: "%2F".to_string(), // URL-encoded form of "/"
