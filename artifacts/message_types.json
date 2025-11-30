@@ -1,27 +1,59 @@
 {
-  "message_types": [
-    {
-      "category": "commands", 
-      "types": [
-        {"name": "user.create", "priority": 1, "durable": true},
-        {"name": "user.update", "priority": 1, "durable": true},
-        {"name": "user.delete", "priority": 2, "durable": true}
-      ]
-    },
-    {
-      "category": "events",
-      "types": [
-        {"name": "order.placed", "priority": 0, "durable": true},
-        {"name": "payment.processed", "priority": 0, "durable": true},
-        {"name": "inventory.updated", "priority": 0, "durable": false}
-      ]
-    },
-    {
-      "category": "queries", 
-      "types": [
-        {"name": "user.lookup", "priority": 0, "durable": false},
-        {"name": "order.status", "priority": 0, "durable": false}
-      ]
-    }
-  ]
+    "message_types": [
+        {
+            "category": "commands",
+            "types": [
+                {
+                    "name": "user.create",
+                    "priority": 1,
+                    "durable": true
+                },
+                {
+                    "name": "user.update",
+                    "priority": 1,
+                    "durable": true
+                },
+                {
+                    "name": "user.delete",
+                    "priority": 1,
+                    "durable": true
+                }
+            ]
+        },
+        {
+            "category": "events",
+            "types": [
+                {
+                    "name": "order.placed",
+                    "priority": 5,
+                    "durable": true
+                },
+                {
+                    "name": "payment.processed",
+                    "priority": 5,
+                    "durable": true
+                },
+                {
+                    "name": "inventory.updated",
+                    "priority": 2,
+                    "durable": false
+                }
+            ]
+        },
+        {
+            "category": "queries",
+            "types": [
+                {
+                    "name": "user.lookup",
+                    "priority": 0,
+                    "durable": false
+                },
+                {
+                    "name": "order.status",
+                    "priority": 0,
+                    "durable": false
+                }
+            ]
+        }
+    ]
 }

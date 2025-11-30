@@ -1,8 +1,8 @@
-use rabbitmq_config::{load_config_file, RabbitMQClient, RabbitMQConfig};
+use rabbitmq_config::{get_password, load_config_file, RabbitMQClient, RabbitMQConfig};
 use serde::Deserialize;
-use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
+use lapin::types::{AMQPValue, FieldTable};
 
 #[derive(Debug, Deserialize)]
 struct MessageTypes {
@@ -18,6 +18,7 @@ struct Category {
 #[derive(Debug, Deserialize)]
 struct MessageType {
     name: String,
+    #[serde(default)] // Priority is optional, defaults to 0
     priority: u8,
     durable: bool,
 }
@@ -31,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn_info = file_config.connection;
 
     println!("Connecting to RabbitMQ as user: '{}'", conn_info.username);
-    let password = rpassword::prompt_password("Enter password: ")?;
+    let password = get_password()?;
 
     let config = RabbitMQConfig {
         host: conn_info.host,
@@ -47,8 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // --- Load Topology Definition ---
     let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    // Corrected path: Go up one level from rabbitmq-config/ to the workspace root
-    path.push("../artifacts/message_types.json"); 
+    path.push("../artifacts/message_types.json");
 
     println!("Loading topology from: {:?}", path);
     let topology_str = fs::read_to_string(path)?;
@@ -59,31 +59,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let exchange_name = category.category.clone();
         println!("Declaring exchange: {}", exchange_name);
 
-        // For now, we'll assume all are topic exchanges, which is a common pattern.
         let exchange_info = rabbitmq_config::ExchangeInfo {
             name: exchange_name.clone(),
             kind: "topic".to_string(),
-            durable: true, // Exchanges are almost always durable
+            durable: true,
             auto_delete: false,
             internal: false,
-            arguments: HashMap::new(),
+            arguments: FieldTable::default(),
         };
         client.declare_exchange(&exchange_info).await?;
 
         for msg_type in category.types {
             let queue_name = msg_type.name.clone();
-            println!("- Declaring queue: {}", queue_name);
+            
+            let mut arguments = FieldTable::default();
+            if msg_type.priority > 0 {
+                println!("- Declaring priority queue: {} with max-priority={}", queue_name, msg_type.priority);
+                arguments.insert("x-max-priority".into(), AMQPValue::LongLongInt(msg_type.priority as i64));
+            } else {
+                println!("- Declaring queue: {}", queue_name);
+            }
 
             let queue_info = rabbitmq_config::QueueInfo {
                 name: queue_name.clone(),
                 durable: msg_type.durable,
                 exclusive: false,
                 auto_delete: false,
-                arguments: HashMap::new(),
+                arguments,
             };
             client.declare_queue(&queue_info).await?;
 
-            // Bind the queue to the exchange with its name as the routing key
             println!("  - Binding queue {} to exchange {} with routing key {}", queue_name, exchange_name, queue_name);
             client.bind_queue(&queue_name, &exchange_name, &queue_name).await?;
         }
