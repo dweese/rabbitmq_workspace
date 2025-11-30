@@ -4,18 +4,15 @@ Your branch is up to date with 'origin/main'.
 
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-	new file:   artifacts/Gemini20251130.txt
-	new file:   messaging_tests/scripts/test_user_creation.sh
+	new file:   artifacts/Gemini20251201.txt
+	new file:   messaging_tests/run_all_tests.sh
+	new file:   messaging_tests/scripts/test_order_placement.sh
 
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
-	modified:   .gitignore
 	modified:   Gemini/friend.txt
-	modified:   messaging_tests/scripts/test_user_creation.sh
-	modified:   messaging_tests/src/bin/consumer.rs
-	modified:   messaging_tests/src/bin/producer.rs
-	modified:   rabbitmq-config/src/lib.rs
-	modified:   rabbitmq-mon/src/main.rs
+	modified:   messaging_tests/run_all_tests.sh
+	modified:   messaging_tests/scripts/test_order_placement.sh
 
 dweese@fedora:~/dev/rust/rabbitmq_workspace$
