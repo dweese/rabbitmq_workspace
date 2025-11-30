@@ -1,28 +1,21 @@
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ git status
 On branch main
 Your branch is up to date with 'origin/main'.
 
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-	new file:   messaging_tests/Cargo.toml
-	new file:   messaging_tests/src/bin/consumer.rs
-	new file:   messaging_tests/src/bin/producer.rs
-	new file:   messaging_tests/src/main.rs
+	new file:   artifacts/Gemini20251130.txt
+	new file:   messaging_tests/scripts/test_user_creation.sh
 
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
-	modified:   Cargo.lock
-	modified:   Cargo.toml
+	modified:   .gitignore
 	modified:   Gemini/friend.txt
-	modified:   messaging_tests/Cargo.toml
+	modified:   messaging_tests/scripts/test_user_creation.sh
 	modified:   messaging_tests/src/bin/consumer.rs
-	modified:   messaging_tests/src/main.rs
-	modified:   rabbitmq-config/src/client.rs
-	modified:   rabbitmq-config/src/error.rs
+	modified:   messaging_tests/src/bin/producer.rs
 	modified:   rabbitmq-config/src/lib.rs
+	modified:   rabbitmq-mon/src/main.rs
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	debug_dump_20251128_204825.txt
-	debug_dump_20251128_205208.txt
-
+dweese@fedora:~/dev/rust/rabbitmq_workspace$

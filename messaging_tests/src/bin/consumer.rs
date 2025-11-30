@@ -1,6 +1,6 @@
 use clap::Parser;
 use log::info;
-use rabbitmq_config::{load_config_file, RabbitMQClient, RabbitMQConfig};
+use rabbitmq_config::{get_password, load_config_file, RabbitMQClient, RabbitMQConfig};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn_info = file_config.connection;
 
     info!("Connecting to RabbitMQ as user: '{}'", conn_info.username);
-    let password = rpassword::prompt_password("Enter password: ")?;
+    let password = get_password()?;
 
     let config = RabbitMQConfig {
         host: conn_info.host,

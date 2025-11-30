@@ -1,5 +1,9 @@
 // rabbitmq-config/src/lib.rs
 
+use std::env;
+use std::fs;
+use std::path::PathBuf;
+
 // Module declarations
 mod client;
 mod config;
@@ -11,25 +15,11 @@ mod topology;
 pub use client::RabbitMQClient;
 pub use config::{ConnectionConfig, RabbitMQConfig, RabbitMQFullConfig};
 pub use error::RabbitMQError;
-
-// Re-export the models needed by the UI
 pub use models::{
-    BindingDefinition,
-    ExchangeDefinition,
-    ExchangeInfo,
-    GlobalParameterDefinition,
-    MessageProperties,
-    PermissionDefinition,
-    QueueDefinition,
-    QueueInfo,
-    RabbitMQMessage, // Export this struct
-    RabbitMQServerDefinition,
-    TopicPermissionDefinition,
-    UserDefinition,
-    VhostDefinition,
+    BindingDefinition, ExchangeDefinition, ExchangeInfo, GlobalParameterDefinition, MessageProperties,
+    PermissionDefinition, QueueDefinition, QueueInfo, RabbitMQMessage, RabbitMQServerDefinition,
+    TopicPermissionDefinition, UserDefinition, VhostDefinition,
 };
-use std::fs;
-use std::path::PathBuf;
 
 /// Loads and parses the `rabbitmq-mon.toml` file to get non-sensitive connection info.
 pub fn load_config_file() -> Result<RabbitMQFullConfig, RabbitMQError> {
@@ -43,5 +33,14 @@ pub fn load_config_file() -> Result<RabbitMQFullConfig, RabbitMQError> {
     } else {
         log::warn!("Configuration file not found at: {:?}. Using defaults.", config_path);
         Ok(RabbitMQFullConfig::default())
+    }
+}
+
+/// Gets the RabbitMQ password, preferring the `RABBITMQ_PASSWORD` environment variable.
+/// If the environment variable is not set, it prompts the user for the password.
+pub fn get_password() -> Result<String, std::io::Error> {
+    match env::var("RABBITMQ_PASSWORD") {
+        Ok(pass) => Ok(pass),
+        Err(_) => rpassword::prompt_password("Enter password: "),
     }
 }

@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use rabbitmq_config::{load_config_file, RabbitMQConfig};
+use rabbitmq_config::{get_password, load_config_file, RabbitMQConfig};
 use rabbitmq_info::api::RabbitMQApiClient;
 use ratatui::{
     backend::CrosstermBackend,
@@ -140,7 +140,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file_config = load_config_file()?;
     let conn_info = file_config.connection;
     println!("Connecting as user: '{}'", conn_info.username);
-    let password = rpassword::prompt_password("Enter password: ")?;
+    let password = get_password()?;
     let config = RabbitMQConfig {
         host: conn_info.host,
         amqp_port: conn_info.amqp_port,

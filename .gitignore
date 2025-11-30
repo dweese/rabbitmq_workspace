@@ -23,6 +23,9 @@ rabbitmq_data/
 *.log
 
 # Credentials and private keys
+*.pem
+*.key
+*.pub
 id_*
 !id_*.pub  # Still track public keys if needed
 
@@ -35,7 +38,6 @@ id_*
 
 # Ignore sensitive files
 *_config.json
-*.pem
-id_*
-*.key
-*.pub
+
+# Ignore local utility scripts
+net-scripts/
