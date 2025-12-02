@@ -6,17 +6,17 @@
                 {
                     "name": "user.create",
                     "priority": 1,
-                    "durable": true
+                    "durable": false
                 },
                 {
                     "name": "user.update",
                     "priority": 1,
-                    "durable": true
+                    "durable": false
                 },
                 {
                     "name": "user.delete",
                     "priority": 1,
-                    "durable": true
+                    "durable": false
                 }
             ]
         },

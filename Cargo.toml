@@ -1,14 +1,17 @@
 [workspace]
 members = [
     "egui-components",
+    "message-player",
     "messaging_cli", 
     "messaging_commands",
     "messaging_simple",
-    "messaging_tests", # Added our new testing crate
+    "messaging_tests",
     "pg_vault",
     "rabbitmq-config",
-    "rabbitmq-info", "rabbitmq-mon", 
-    "rabbitmq-ui",
+    "rabbitmq-info",
+    "rabbitmq-mon",
+    "rabbitmq-tools", "rabbitmq-ui",
+    # "old-rabbitmq-ui", # Shelved for now, as it is stale and not a priority.
     "yak_json"
 ]
 

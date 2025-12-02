@@ -23,8 +23,4 @@ toml = "0.8"
 dirs = "5.0"
 rpassword = "7.3"
 env_logger = "0.11.3"
-
-
-[[bin]]
-name = "topology-creator"
-path = "src/bin/topology_creator.rs"
+chrono = "0.4"

@@ -1,0 +1,16 @@
+## old-rabbitmq-ui/Cargo.toml
+[package]
+name = "rabbitmq-ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+rabbitmq-info = { path = "../rabbitmq-info" }
+egui-components = { path = "../egui-components" }
+eframe = "0.24.0"
+tokio = { version = "1", features = ["full"] }
+env_logger = "0.11.8"
+egui_extras = "0.24.0"
+lapin = "2.5.3" # For FieldTable
+serde_json = "1.0" # For processing API responses

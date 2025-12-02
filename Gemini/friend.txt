@@ -1,125 +1,51 @@
-
-Here is the "Robust" version of your properties block:
-
-Rust
-use lapin::types::ShortString;
-use lapin::BasicProperties;
-
-// ... inside main ...
-
-// 1. Delivery Mode 2 = Persistent (Write to Disk)
-// 2. Content Type = application/json (Good metadata practice)
-let properties = MessageProperties::default()
-    .with_delivery_mode(2) 
-    .with_content_type(ShortString::from("application/json"));
-
-let message = RabbitMQMessage {
-    exchange: args.exchange,
-    routing_key: args.routing_key,
-    payload: args.payload.into_bytes(),
-    properties: Some(properties),
-};
-3. The "Handshake" (Publisher Confirms)
-You mentioned "sending robustly." Currently, client.publish_message likely fires the bytes into the socket. If the network blips after the bytes leave your NIC but before RabbitMQ writes them to disk, the message is lost, and your logs will still say "Message published successfully."
-
-To close that "Forensic Gap," you need Publisher Confirms.
-
-The Mechanism: The Producer sends a message and waits for the Server to send back an Ack.
-
-The Cost: It adds a few milliseconds of latency (which you said is fine).
-
-The Benefit: Mathematical certainty that the server accepted the liability.
-
-4. The Consumer Side (QoS)
-On the receiving end, "receiving robustly" means using QoS Prefetch.
-
-If you dump 10,000 messages into the consumer at once, you might blow the consumer's RAM (OOM kill).
-
-QoS (Quality of Service): You tell RabbitMQ: "Only send me 1 message at a time. Do not send another until I acknowledge this one."
-
-This creates the "Loose Coupling" you want. The producer can run at 1000 msg/sec, and the consumer can chug along at 10 msg/sec, and the queue (on disk) absorbs the pressure.
-
-Would you like to see how to enable confirm_select (Publisher Confirms) in your RabbitMQClient? It changes the publish method from a "Fire and Forget" to a "Fire and Verify" operation.
-
-yeah, I did priority because AMQP does it
-
-That is the classic "Spec Complotionist" trap. Just because the AMQP spec defines a feature doesn't mean your architecture should inherit the liability of supporting it.
-
-In my experience, AMQP is like C++: it has a massive surface area, but you should only use a safe subset of it if you want to sleep at night.
-
-Since you prefer robustness over complexity, here is the "Certified Mail" pattern (Publisher Confirms). This replaces the "Priority" logic with "Verification" logic.
-
-This ensures that client.publish_message doesn't return Ok(()) until the broker has actually written the message to its ledger.
-
-The Refactor: confirm_select
-You will need to update your RabbitMQClient struct (likely in your shared library) to enable confirmations on the channel, and then wait for them during publish.
-
-Rust
-// In your rabbitmq_config/src/lib.rs (or wherever the Client impl is)
-
-use lapin::{options::*, types::FieldTable, BasicProperties, Channel};
-use lapin::publisher_confirm::Confirmation;
-
-pub struct RabbitMQClient {
-    channel: Channel,
-    // ... other fields
-}
-
-impl RabbitMQClient {
-    pub async fn new(config: RabbitMQConfig) -> Result<Self, Box<dyn std::error::Error>> {
-        // ... connection logic ...
-        let channel = conn.create_channel().await?;
-
-        // THE FORENSIC UPGRADE:
-        // Turn this channel into "Confirm Mode".
-        // The broker will now send back an Ack for every publish.
-        channel.confirm_select(ConfirmSelectOptions::default()).await?;
-
-        Ok(Self { channel })
-    }
-
-    pub async fn publish_message(&self, msg: &RabbitMQMessage) -> Result<(), Box<dyn std::error::Error>> {
-        let payload = &msg.payload;
-        
-        // Ensure the message is Persistent (Delivery Mode 2)
-        // This means "Write to Disk", not just RAM.
-        let properties = msg.properties.clone()
-            .unwrap_or_default()
-            .with_delivery_mode(2); 
-
-        // 1. Fire the message
-        let confirm_future = self.channel
-            .basic_publish(
-                &msg.exchange,
-                &msg.routing_key,
-                BasicPublishOptions::default(),
-                payload,
-                properties,
-            )
-            .await?; // This await just means "sent to network buffer"
-
-        // 2. WAIT for the Receipt (The Latency Cost)
-        // This await blocks until the Broker replies with "I have it"
-        match confirm_future.await? {
-            Confirmation::Ack(delivery_tag) => {
-                // Success: Broker took ownership.
-                // Log::debug!("Broker acked message {}", delivery_tag);
-                Ok(())
-            }
-            Confirmation::Nack(_) => {
-                // Failure: Broker explicitly rejected it (internal error, queue full?)
-                Err("Broker NACKed the message - Data was rejected".into())
-            }
-            Confirmation::NotRequested => {
-                // Should not happen if confirm_select was called
-                Err("Confirmation was not requested but expected".into())
-            }
-        }
-    }
-}
-The Trade-off
-Without Confirms: You can pump 20,000 msg/sec, but if the broker crashes, you lose the last 2 seconds of data and never know.
-
-With Confirms: You might drop to 2,000 msg/sec (due to the network round-trip for the Ack), but you have 100% data integrity.
-
-Given your "forensic" mindset, this is the correct trade. You are trading raw speed for an audit trail.
+dweese@fedora:~/dev/rust/rabbitmq_workspace$ ls -latr
+total 504
+-rwxr-xr-x. 1 dweese dweese     57 May 20  2025 dwt.sh
+drwxr-xr-x. 1 dweese dweese    102 May 23  2025 tests
+drwxr-xr-x. 1 dweese dweese     26 May 25  2025 rabbitmq-info
+drwxr-xr-x. 1 dweese dweese    320 May 25  2025 ..
+-rwxr-xr-x. 1 dweese dweese   1418 Jun  5 22:05 find_rust_files.sh
+drwxr-xr-x. 1 dweese dweese     26 Jun  8 18:26 messaging_cli
+-rw-r--r--. 1 dweese dweese   5942 Jun 30 05:03 tree.txt
+-rw-r--r--. 1 dweese dweese      0 Jun 30 11:51 check.txt
+-rwxr-xr-x. 1 dweese dweese    215 Jul 18 02:29 load_pagila.sh
+-rwxr-xr-x. 1 dweese dweese   2888 Jul 18 02:29 traverse_projects.sh
+-rw-r--r--. 1 dweese dweese   3842 Jul 18 02:29 summary.md
+-rw-r--r--. 1 dweese dweese    340 Jul 18 02:29 verify_pagila.sh
+-rw-r--r--. 1 dweese dweese      0 Aug  5 23:10 rabbitmq_workspace.log
+drwxr-xr-x. 1 dweese dweese     90 Aug 12 23:23 pg_vault
+drwxr-xr-x. 1 dweese dweese     86 Aug 14 00:50 yak_json
+-rw-r--r--. 1 dweese dweese  12723 Aug 14 00:56 clippy.txt
+drwxr-xr-x. 1 dweese dweese     64 Aug 17 20:29 egui-components
+drwxr-xr-x. 1 dweese dweese    108 Sep 19 23:07 messaging_commands
+drwxr-xr-x. 1 dweese dweese     26 Sep 19 23:44 messaging_simple
+-rwxr-xr-x. 1 dweese dweese    671 Oct  1 12:59 bestinf.sh
+drwxr-xr-x. 1 dweese dweese     26 Nov 26 21:43 rabbitmq-mon
+-rwxr-xr-x. 1 dweese dweese   1101 Nov 26 22:26 clean_all.sh
+-rwxr-xr-x. 1 dweese dweese     98 Nov 27 20:47 run_monitor.sh
+-rw-r--r--. 1 dweese dweese      0 Nov 27 21:48 cargo.txt
+-rw-r--r--. 1 dweese dweese    584 Nov 27 21:57 rabbitmq-mon.toml
+-rw-r--r--. 1 dweese dweese 176886 Nov 27 22:11 capture.txt
+drwxr-xr-x. 1 dweese dweese     72 Nov 27 22:16 target
+-rw-r--r--. 1 dweese dweese    235 Nov 28 19:01 git_status.txt
+drwxr-xr-x. 1 dweese dweese     62 Nov 28 19:13 net-scripts
+-rw-r--r--. 1 dweese dweese   2959 Nov 28 20:24 WORKSPACE_TODO.txt
+-rw-r--r--. 1 dweese dweese  19026 Nov 28 20:48 debug_dump_20251128_204825.txt
+-rw-r--r--. 1 dweese dweese  19099 Nov 28 20:52 debug_dump_20251128_205208.txt
+-rw-r--r--. 1 dweese dweese    492 Nov 29 21:52 .gitignore
+drwxr-xr-x. 1 dweese dweese     72 Nov 29 22:41 messaging_tests
+-rw-r--r--. 1 dweese dweese   2150 Nov 30 17:53 README.md
+-rw-r--r--. 1 dweese dweese  23395 Dec  1 08:28 bestinf.txt
+drwxr-xr-x. 1 dweese dweese     26 Dec  2 14:49 message-player
+drwxr-xr-x. 1 dweese dweese    530 Dec  2 16:24 artifacts
+drwxr-xr-x. 1 dweese dweese     26 Dec  2 17:12 rabbitmq-tools
+drwxr-xr-x. 1 dweese dweese     96 Dec  2 17:14 rabbitmq-config
+drwxr-xr-x. 1 dweese dweese    168 Dec  2 17:21 Gemini
+-rw-r--r--. 1 dweese dweese 183898 Dec  2 17:21 Cargo.lock
+drwxr-xr-x. 1 dweese dweese    166 Dec  2 17:27 .git
+-rw-r--r--. 1 dweese dweese   1236 Dec  2 17:27 Cargo.toml
+drwxr-xr-x. 1 dweese dweese   1140 Dec  2 17:27 .
+drwxr-xr-x. 1 dweese dweese     46 Dec  2 17:27 old-rabbitmq-ui
+drwxr-xr-x. 1 dweese dweese    270 Dec  2 17:27 .idea
+dweese@fedora:~/dev/rust/rabbitmq_workspace$
+r

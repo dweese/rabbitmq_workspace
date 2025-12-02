@@ -1,0 +1,24 @@
+[package]
+name = "rabbitmq-tools"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+rabbitmq-info = { path = "../rabbitmq-info" }
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0"
+log = "0.4"
+env_logger = "0.11.3"
+chrono = "0.4"
+anyhow = "1.0"
+lapin = "2.5.3" # For topology_creator
+serde = { version = "1.0", features = ["derive"] } # For topology_creator
+
+[[bin]]
+name = "dump-state"
+path = "src/bin/dump-state.rs"
+
+[[bin]]
+name = "topology-creator"
+path = "src/bin/topology_creator.rs"

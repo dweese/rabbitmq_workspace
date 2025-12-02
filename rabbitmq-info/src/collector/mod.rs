@@ -3,6 +3,9 @@
 use crate::api::{ApiError, RabbitMQApiClient};
 use crate::{BindingInfo, ExchangeInfo, QueueInfo, ServerInfo};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::future::Future;
+use std::pin::Pin;
 
 // Define the RabbitMQInfo struct
 #[derive(Debug, Serialize, Deserialize)]
@@ -43,12 +46,12 @@ impl RabbitMQInfoCollector {
     }
 
     pub async fn collect_all(&self) -> Result<RabbitMQInfo, ApiError> {
-        // Get all the information in parallel
-        let overview_future = self.client.get_overview();
-        let exchanges_future = self.client.get_exchanges();
-        let queues_future = self.client.get_queues();
-        let bindings_future = self.client.get_bindings();
-        let vhosts_future = self.client.get_vhosts();
+        // Define the futures with explicit types
+        let overview_future: Pin<Box<dyn Future<Output = Result<Value, ApiError>> + Send>> = Box::pin(self.client.get_overview());
+        let exchanges_future: Pin<Box<dyn Future<Output = Result<Vec<Value>, ApiError>> + Send>> = Box::pin(self.client.get_exchanges());
+        let queues_future: Pin<Box<dyn Future<Output = Result<Vec<Value>, ApiError>> + Send>> = Box::pin(self.client.get_queues());
+        let bindings_future: Pin<Box<dyn Future<Output = Result<Vec<Value>, ApiError>> + Send>> = Box::pin(self.client.get_bindings());
+        let vhosts_future: Pin<Box<dyn Future<Output = Result<Vec<Value>, ApiError>> + Send>> = Box::pin(self.client.get_vhosts());
 
         // Await all futures
         let (overview, exchanges, queues, bindings, vhosts) = tokio::join!(
@@ -169,6 +172,4 @@ impl RabbitMQInfoCollector {
     fn extract_value(&self, value: &serde_json::Value, key: &str) -> Option<serde_json::Value> {
         value.get(key).cloned()
     }
-
-    // ... rest of your existing code
 }

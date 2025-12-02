@@ -34,7 +34,7 @@ fn test_message_properties_default() {
     assert_eq!(props.message_id, None);
     assert_eq!(props.timestamp, None);
     assert_eq!(props.user_id, None);
-    assert_eq!(props.app_id, Some("rabbitmq-ui".to_string()));
+    assert_eq!(props.app_id, Some("old-rabbitmq-ui".to_string()));
     assert_eq!(props.delivery_mode, Some(2)); // Persistent by default
 }
 

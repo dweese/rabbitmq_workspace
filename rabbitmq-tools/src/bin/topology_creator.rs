@@ -48,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // --- Load Topology Definition ---
     let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    path.push("../artifacts/message_types.json");
+    path.push("../../artifacts/message_types.json"); // Adjusted path
 
     println!("Loading topology from: {:?}", path);
     let topology_str = fs::read_to_string(path)?;

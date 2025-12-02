@@ -320,6 +320,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.100"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
+
+[[package]]
 name = "arboard"
 version = "3.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1304,7 +1310,7 @@ version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9885fa71e26b8ab7855e2ec7cae6e9b380edff76cd052e07c683a0319d51b3a2"
 dependencies = [
- "futures",
+ "futures 0.3.31",
 ]
 
 [[package]]
@@ -1383,6 +1389,22 @@ name = "crossbeam-utils"
 version = "0.8.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
+
+[[package]]
+name = "crossterm"
+version = "0.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f476fe445d41c9e991fd07515a6f463074b782242ccf4a5b7b1d1012e70824df"
+dependencies = [
+ "bitflags 2.9.1",
+ "crossterm_winapi",
+ "libc",
+ "mio 0.8.11",
+ "parking_lot",
+ "signal-hook",
+ "signal-hook-mio",
+ "winapi",
+]
 
 [[package]]
 name = "crossterm"
@@ -2285,6 +2307,12 @@ checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
 ]
+
+[[package]]
+name = "futures"
+version = "0.1.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a471a38ef8ed83cd6e40aa59c1ffe17db6855c18e3604d9c4ed8c08ebc28678"
 
 [[package]]
 name = "futures"
@@ -3332,6 +3360,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "message-player"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "crossterm 0.27.0",
+ "env_logger 0.11.8",
+ "futures-util",
+ "log",
+ "rabbitmq-config",
+ "ratatui",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tokio-sync",
+ "tui-textarea",
+]
+
+[[package]]
 name = "messaging_cli"
 version = "0.1.0"
 dependencies = [
@@ -3705,6 +3753,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.105",
+]
+
+[[package]]
+name = "num_threads"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c7398b9c8b70908f6371f47ed36737907c87c52af34c268fed0bf0ceb92ead9"
+dependencies = [
+ "libc",
 ]
 
 [[package]]
@@ -4428,6 +4485,7 @@ version = "0.1.0"
 dependencies = [
  "amq-protocol-uri",
  "base64 0.21.7",
+ "chrono",
  "dirs",
  "env_logger 0.11.8",
  "futures-util",
@@ -4464,13 +4522,29 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "clap",
- "crossterm",
+ "crossterm 0.28.1",
  "env_logger 0.11.8",
  "log",
  "rabbitmq-config",
  "rabbitmq-info",
  "ratatui",
  "rpassword",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "rabbitmq-tools"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "env_logger 0.11.8",
+ "lapin",
+ "log",
+ "rabbitmq-config",
+ "rabbitmq-info",
  "serde",
  "serde_json",
  "tokio",
@@ -4484,7 +4558,10 @@ dependencies = [
  "egui-components",
  "egui_extras",
  "env_logger 0.11.8",
+ "lapin",
  "rabbitmq-config",
+ "rabbitmq-info",
+ "serde_json",
  "tokio",
 ]
 
@@ -4556,13 +4633,14 @@ dependencies = [
  "bitflags 2.9.1",
  "cassowary",
  "compact_str",
- "crossterm",
+ "crossterm 0.28.1",
  "instability",
  "itertools",
  "lru",
  "paste",
  "strum",
  "strum_macros",
+ "time",
  "unicode-segmentation",
  "unicode-truncate",
  "unicode-width",
@@ -5164,6 +5242,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b75a19a7a740b25bc7944bdee6172368f988763b744e3d4dfe753f6b4ece40cc"
 dependencies = [
  "libc",
+ "mio 0.8.11",
  "mio 1.0.4",
  "signal-hook",
 ]
@@ -5595,7 +5674,9 @@ checksum = "8a7619e19bc266e0f9c5e6686659d394bc57973859340060a69221e57dbc0c40"
 dependencies = [
  "deranged",
  "itoa",
+ "libc",
  "num-conv",
+ "num_threads",
  "powerfmt",
  "serde",
  "time-core",
@@ -5758,6 +5839,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio-sync"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edfe50152bc8164fcc456dab7891fa9bf8beaf01c5ee7e1dd43a397c3cf87dee"
+dependencies = [
+ "fnv",
+ "futures 0.1.31",
+]
+
+[[package]]
 name = "tokio-test"
 version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5883,6 +5974,17 @@ name = "ttf-parser"
 version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2df906b07856748fa3f6e0ad0cbaa047052d4a7dd609e231c4f72cee8c36f31"
+
+[[package]]
+name = "tui-textarea"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3e38ced1f941a9cfc923fbf2fe6858443c42cc5220bfd35bdd3648371e7bd8e"
+dependencies = [
+ "crossterm 0.27.0",
+ "ratatui",
+ "unicode-width",
+]
 
 [[package]]
 name = "typenum"
