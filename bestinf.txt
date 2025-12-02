@@ -1,6 +1,13 @@
 === PROJECT STRUCTURE ===
 .
 ├── artifacts
+│   ├── Gemini20251128.txt
+│   ├── Gemini20251129.txt
+│   ├── Gemini20251130.txt
+│   ├── Gemini20251201.txt
+│   ├── Gemini20251202.txt
+│   ├── Gemini20251203.txt
+│   ├── Gemini20251204.txt
 │   ├── message_types.json
 │   ├── package.json
 │   ├── pagila
@@ -21,14 +28,19 @@
 │   │   ├── README.md
 │   │   └── restore-pagila-data-jsonb.sh
 │   ├── rabbit_fedora_2025-5-23.json
-│   └── rabbitmq_config.json
+│   ├── rabbitmq_config.json
+│   └── README.md
 ├── bestinf.sh
 ├── bestinf.txt
+├── capture.txt
 ├── Cargo.lock
 ├── Cargo.toml
+├── cargo.txt
 ├── check.txt
 ├── clean_all.sh
 ├── clippy.txt
+├── debug_dump_20251128_204825.txt
+├── debug_dump_20251128_205208.txt
 ├── dwt.sh
 ├── egui-components
 │   ├── Cargo.toml
@@ -44,9 +56,13 @@
 ├── find_rust_files.sh
 ├── Gemini
 │   ├── 20251124spec.txt
-│   └── 20251124T184933.txt
+│   ├── 20251124T184933.txt
+│   └── friend.txt
 ├── .gitignore
+├── git_status.txt
 ├── .idea
+│   ├── codeStyles
+│   │   └── codeStyleConfig.xml
 │   ├── dataSources
 │   │   ├── 3e6a8089-6d64-4450-8405-24033cb146d1
 │   │   └── 3e6a8089-6d64-4450-8405-24033cb146d1.xml
@@ -87,6 +103,16 @@
 │   ├── Cargo.toml
 │   └── src
 │       └── main.rs
+├── messaging_tests
+│   ├── Cargo.toml
+│   ├── run_all_tests.sh
+│   ├── scripts
+│   │   ├── test_order_placement.sh
+│   │   ├── test_priority_queues.sh
+│   │   └── test_user_creation.sh
+│   └── src
+│       ├── bin
+│       └── main.rs
 ├── net-scripts
 │   ├── .idea
 │   │   ├── .gitignore
@@ -125,11 +151,15 @@
 │   ├── .gitignore
 │   ├── README.md
 │   ├── src
+│   │   ├── bin
 │   │   ├── client.rs
+│   │   ├── client.rs:7:9
 │   │   ├── config.rs
 │   │   ├── error.rs
 │   │   ├── lib.rs
 │   │   ├── models.rs
+│   │   ├── models.rs:3:32
+│   │   ├── models.rs:5:5
 │   │   └── topology.rs
 │   └── tests
 │       ├── client
@@ -150,6 +180,7 @@
 │   ├── Cargo.toml
 │   └── src
 │       └── main.rs
+├── rabbitmq-mon.toml
 ├── rabbitmq-ui
 │   ├── Cargo.toml
 │   ├── .gitignore
@@ -162,6 +193,7 @@
 │       └── queues
 ├── rabbitmq_workspace.log
 ├── README.md
+├── run_monitor.sh
 ├── summary.md
 ├── tests
 │   ├── client
@@ -177,6 +209,7 @@
 ├── traverse_projects.sh
 ├── tree.txt
 ├── verify_pagila.sh
+├── WORKSPACE_TODO.txt
 └── yak_json
     ├── 2cbuild.txt
     ├── Cargo.toml
@@ -185,29 +218,29 @@
     │   └── main.rs
     └── test.json
 
-66 directories, 119 files
+72 directories, 146 files
 
 === RUST FILES (recent modifications) ===
--rw-r--r--. 1 dweese dweese 3.3K Nov 26 20:06 ./rabbitmq-info/src/api/mod.rs
--rw-r--r--. 1 dweese dweese  38K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-virtual-pointer-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  42K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-screencopy-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  22K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-output-power-management-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  92K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-output-management-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  53K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-layer-shell-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  15K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-input-inhibitor-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  22K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-gamma-control-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  52K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-foreign-toplevel-management-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  33K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-export-dmabuf-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  58K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-data-control-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  19K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xwayland-keyboard-grab-v1_client_api.rs
--rw-r--r--. 1 dweese dweese 142K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-shell-v6_client_api.rs
--rw-r--r--. 1 dweese dweese  87K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-shell-v5_client_api.rs
--rw-r--r--. 1 dweese dweese  28K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-output-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  40K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-foreign-v2_client_api.rs
--rw-r--r--. 1 dweese dweese  38K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-foreign-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  26K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/xdg-decoration-v1_client_api.rs
--rw-r--r--. 1 dweese dweese  60K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/text-input-v3_client_api.rs
--rw-r--r--. 1 dweese dweese  68K Nov 26 19:54 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/text-input-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  12K Nov 30 17:45 ./rabbitmq-mon/src/main.rs
+-rw-r--r--. 1 dweese dweese 1.4K Nov 30 17:38 ./rabbitmq-config/tests/common/test_utils.rs
+-rw-r--r--. 1 dweese dweese  930 Nov 30 17:38 ./rabbitmq-config/tests/config/serialization_tests.rs
+-rw-r--r--. 1 dweese dweese 1.2K Nov 30 17:37 ./rabbitmq-config/tests/client/unit_tests.rs
+-rw-r--r--. 1 dweese dweese  885 Nov 30 17:37 ./rabbitmq-config/tests/simple_connection_test.rs
+-rw-r--r--. 1 dweese dweese 1.1K Nov 30 17:37 ./rabbitmq-config/tests/connection_test.rs
+-rw-r--r--. 1 dweese dweese 3.0K Nov 30 16:54 ./rabbitmq-config/src/models.rs
+-rw-r--r--. 1 dweese dweese 8.4K Nov 30 16:48 ./rabbitmq-config/src/client.rs
+-rw-r--r--. 1 dweese dweese 1.9K Nov 30 16:48 ./messaging_tests/src/bin/producer.rs
+-rw-r--r--. 1 dweese dweese 3.2K Nov 29 23:00 ./rabbitmq-config/src/bin/topology_creator.rs
+-rw-r--r--. 1 dweese dweese 1.5K Nov 29 22:05 ./messaging_tests/src/bin/consumer.rs
+-rw-r--r--. 1 dweese dweese 1.8K Nov 29 22:03 ./rabbitmq-config/src/lib.rs
+-rw-r--r--. 1 dweese dweese  885 Nov 28 21:32 ./rabbitmq-config/src/error.rs
+-rw-r--r--. 1 dweese dweese  449 Nov 28 21:31 ./messaging_tests/Cargo.toml
+-rw-r--r--. 1 dweese dweese 1.7K Nov 28 21:29 ./messaging_tests/src/main.rs
+-rw-r--r--. 1 dweese dweese 1.2K Nov 28 21:29 ./Cargo.toml
+-rw-r--r--. 1 dweese dweese  38K Nov 27 22:16 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-virtual-pointer-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  42K Nov 27 22:16 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-screencopy-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  22K Nov 27 22:16 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-output-power-management-v1_client_api.rs
+-rw-r--r--. 1 dweese dweese  92K Nov 27 22:16 ./target/debug/build/wayland-protocols-a346ef5614e13caf/out/wlr-output-management-v1_client_api.rs
 
 === WORKSPACE CARGO.TOML ===
 [workspace]
@@ -215,7 +248,8 @@ members = [
     "egui-components",
     "messaging_cli", 
     "messaging_commands",
-    "messaging_simple",    # Add this line
+    "messaging_simple",
+    "messaging_tests", # Added our new testing crate
     "pg_vault",
     "rabbitmq-config",
     "rabbitmq-info", "rabbitmq-mon", 
@@ -320,6 +354,28 @@ edition = "2021"
 clap = { version = "4.0", features = ["derive"] }
 serde_json = "1.0"
 [package]
+name = "messaging_tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rabbitmq-config = { path = "../rabbitmq-config" }
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0"
+clap = { version = "4.5.4", features = ["derive"] }
+env_logger = "0.11.3"
+rpassword = "7.3"
+log = "0.4"
+futures-util = "0.3"
+
+[[bin]]
+name = "test-producer"
+path = "src/bin/producer.rs"
+
+[[bin]]
+name = "test-consumer"
+path = "src/bin/consumer.rs"
+[package]
 name = "pg_vault"
 version = "0.1.0"
 edition = "2021" # Using the current stable edition to avoid toolchain issues
@@ -361,24 +417,26 @@ edition = "2021"
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 tokio-executor-trait = "2.1.1"
-
 serde_json = "1.0"
-
 tokio = { version = "1", features = ["full"] }
 lapin = "2.5.3"
 thiserror = "1.0"
 futures-util = "0.3.31"
-# Use version 7.2.3 which is compatible with lapin 2.5.3
 amq-protocol-uri = "7.2.3"
 percent-encoding = "2.3.1"
 log = "0.4.27"
 sha2 = "0.10.9"
-rand = "0.8.5"  # Change from 0.9.1 to 0.8.5
-base64 = "0.21.5"  # Change from 0.22.1 to 0.21.5
+rand = "0.8.5"
+base64 = "0.21.5"
+toml = "0.8"
+dirs = "5.0"
+rpassword = "7.3"
+env_logger = "0.11.3"
 
 
-
-
+[[bin]]
+name = "topology-creator"
+path = "src/bin/topology_creator.rs"
 ## rabbitmq-info/Cargo.toml
 [package]
 name = "rabbitmq-info"
@@ -415,6 +473,9 @@ rabbitmq-config = { workspace = true }
 chrono = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+# keyring is being removed
+clap = { version = "4.5", features = ["derive"] }
+rpassword = "7.3"
 ## rabbitmq-ui/Cargo.toml
 [package]
 name = "rabbitmq-ui"
@@ -502,6 +563,10 @@ pub mod prelude {
 }--- rabbitmq-config/src/lib.rs ---
 // rabbitmq-config/src/lib.rs
 
+use std::env;
+use std::fs;
+use std::path::PathBuf;
+
 // Module declarations
 mod client;
 mod config;
@@ -511,25 +576,21 @@ mod topology;
 
 // Re-export the models needed by the UI
 pub use client::RabbitMQClient;
-pub use config::RabbitMQConfig;
+pub use config::{ConnectionConfig, RabbitMQConfig, RabbitMQFullConfig};
 pub use error::RabbitMQError;
-
-// Re-export the models needed by the UI
 pub use models::{
-    BindingDefinition,
-    ExchangeDefinition,
-    ExchangeInfo,
-    GlobalParameterDefinition,
-    MessageProperties,
-    PermissionDefinition,
-    QueueDefinition,
-    QueueInfo, // Use QueueInfo from models instead of defining it here
-    RabbitMQMessage,
-    RabbitMQServerDefinition,
-    TopicPermissionDefinition,
-    UserDefinition,
-    VhostDefinition,
+    BindingDefinition, ExchangeDefinition, ExchangeInfo, GlobalParameterDefinition, MessageProperties,
+    PermissionDefinition, QueueDefinition, QueueInfo, RabbitMQMessage, RabbitMQServerDefinition,
+    TopicPermissionDefinition, UserDefinition, VhostDefinition,
 };
+
+/// Loads and parses the `rabbitmq-mon.toml` file to get non-sensitive connection info.
+pub fn load_config_file() -> Result<RabbitMQFullConfig, RabbitMQError> {
+    let config_dir = dirs::config_dir().ok_or_else(|| RabbitMQError::ConfigError("Could not determine config directory.".to_string()))?;
+    let config_path: PathBuf = [config_dir.to_str().unwrap(), "rabbitmq-mon", "rabbitmq-mon.toml"].iter().collect();
+
+    if config_path.exists() {
+        log::info!("Loading configuration from: {:?}", config_path);
 --- rabbitmq-info/src/lib.rs ---
 // rabbitmq-info/src/lib.rs
 
@@ -690,23 +751,44 @@ enum Commands {
     },
     Reload {
 --- ./rabbitmq-mon/src/main.rs ---
+use chrono::Local;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use rabbitmq_config::{get_password, load_config_file, RabbitMQConfig};
+use rabbitmq_info::api::RabbitMQApiClient;
 use ratatui::{
     backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout},
+    layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Cell, List, ListItem, Paragraph, Row, Table, TableState},
     Terminal,
 };
+use serde_json::Value;
+use std::fmt;
+use std::fs;
 use std::io;
-use std::time::{Duration, Instant};
+--- ./messaging_tests/src/main.rs ---
+use clap::Parser;
+use log::info;
+use rabbitmq_config::{load_config_file, RabbitMQClient, RabbitMQConfig, RabbitMQMessage};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// The exchange to publish the message to.
+    #[arg(short, long)]
+    exchange: String,
+
+    /// The routing key for the message.
+    #[arg(short, long)]
+    routing_key: String,
+
+    /// The message payload, as a JSON string.
+    #[arg(short, long)]
+    payload: String,
+}
+

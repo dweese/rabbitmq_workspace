@@ -1,30 +1,125 @@
-dweese@fedora:~/dev/rust/rabbitmq_workspace$ git status
-On branch main
-Your branch is up to date with 'origin/main'.
 
-Changes to be committed:
-  (use "git restore --staged <file>..." to unstage)
-	new file:   artifacts/Gemini20251202.txt
-	new file:   messaging_tests/scripts/test_priority_queues.sh
+Here is the "Robust" version of your properties block:
 
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   Gemini/friend.txt
-	modified:   messaging_tests/scripts/test_priority_queues.sh
-	modified:   messaging_tests/src/bin/producer.rs
-	modified:   rabbitmq-config/src/client.rs
-	modified:   rabbitmq-config/src/models.rs
-	modified:   rabbitmq-config/tests/client/unit_tests.rs
-	modified:   rabbitmq-config/tests/common/test_utils.rs
-	modified:   rabbitmq-config/tests/config/serialization_tests.rs
-	modified:   rabbitmq-config/tests/connection_test.rs
-	modified:   rabbitmq-config/tests/simple_connection_test.rs
+Rust
+use lapin::types::ShortString;
+use lapin::BasicProperties;
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	rabbitmq-config/src/client.rs:7:9
-	rabbitmq-config/src/models.rs:3:32
-	rabbitmq-config/src/models.rs:5:5
+// ... inside main ...
 
-dweese@fedora:~/dev/rust/rabbitmq_workspace$
+// 1. Delivery Mode 2 = Persistent (Write to Disk)
+// 2. Content Type = application/json (Good metadata practice)
+let properties = MessageProperties::default()
+    .with_delivery_mode(2) 
+    .with_content_type(ShortString::from("application/json"));
+
+let message = RabbitMQMessage {
+    exchange: args.exchange,
+    routing_key: args.routing_key,
+    payload: args.payload.into_bytes(),
+    properties: Some(properties),
+};
+3. The "Handshake" (Publisher Confirms)
+You mentioned "sending robustly." Currently, client.publish_message likely fires the bytes into the socket. If the network blips after the bytes leave your NIC but before RabbitMQ writes them to disk, the message is lost, and your logs will still say "Message published successfully."
+
+To close that "Forensic Gap," you need Publisher Confirms.
+
+The Mechanism: The Producer sends a message and waits for the Server to send back an Ack.
+
+The Cost: It adds a few milliseconds of latency (which you said is fine).
+
+The Benefit: Mathematical certainty that the server accepted the liability.
+
+4. The Consumer Side (QoS)
+On the receiving end, "receiving robustly" means using QoS Prefetch.
+
+If you dump 10,000 messages into the consumer at once, you might blow the consumer's RAM (OOM kill).
+
+QoS (Quality of Service): You tell RabbitMQ: "Only send me 1 message at a time. Do not send another until I acknowledge this one."
+
+This creates the "Loose Coupling" you want. The producer can run at 1000 msg/sec, and the consumer can chug along at 10 msg/sec, and the queue (on disk) absorbs the pressure.
+
+Would you like to see how to enable confirm_select (Publisher Confirms) in your RabbitMQClient? It changes the publish method from a "Fire and Forget" to a "Fire and Verify" operation.
+
+yeah, I did priority because AMQP does it
+
+That is the classic "Spec Complotionist" trap. Just because the AMQP spec defines a feature doesn't mean your architecture should inherit the liability of supporting it.
+
+In my experience, AMQP is like C++: it has a massive surface area, but you should only use a safe subset of it if you want to sleep at night.
+
+Since you prefer robustness over complexity, here is the "Certified Mail" pattern (Publisher Confirms). This replaces the "Priority" logic with "Verification" logic.
+
+This ensures that client.publish_message doesn't return Ok(()) until the broker has actually written the message to its ledger.
+
+The Refactor: confirm_select
+You will need to update your RabbitMQClient struct (likely in your shared library) to enable confirmations on the channel, and then wait for them during publish.
+
+Rust
+// In your rabbitmq_config/src/lib.rs (or wherever the Client impl is)
+
+use lapin::{options::*, types::FieldTable, BasicProperties, Channel};
+use lapin::publisher_confirm::Confirmation;
+
+pub struct RabbitMQClient {
+    channel: Channel,
+    // ... other fields
+}
+
+impl RabbitMQClient {
+    pub async fn new(config: RabbitMQConfig) -> Result<Self, Box<dyn std::error::Error>> {
+        // ... connection logic ...
+        let channel = conn.create_channel().await?;
+
+        // THE FORENSIC UPGRADE:
+        // Turn this channel into "Confirm Mode".
+        // The broker will now send back an Ack for every publish.
+        channel.confirm_select(ConfirmSelectOptions::default()).await?;
+
+        Ok(Self { channel })
+    }
+
+    pub async fn publish_message(&self, msg: &RabbitMQMessage) -> Result<(), Box<dyn std::error::Error>> {
+        let payload = &msg.payload;
+        
+        // Ensure the message is Persistent (Delivery Mode 2)
+        // This means "Write to Disk", not just RAM.
+        let properties = msg.properties.clone()
+            .unwrap_or_default()
+            .with_delivery_mode(2); 
+
+        // 1. Fire the message
+        let confirm_future = self.channel
+            .basic_publish(
+                &msg.exchange,
+                &msg.routing_key,
+                BasicPublishOptions::default(),
+                payload,
+                properties,
+            )
+            .await?; // This await just means "sent to network buffer"
+
+        // 2. WAIT for the Receipt (The Latency Cost)
+        // This await blocks until the Broker replies with "I have it"
+        match confirm_future.await? {
+            Confirmation::Ack(delivery_tag) => {
+                // Success: Broker took ownership.
+                // Log::debug!("Broker acked message {}", delivery_tag);
+                Ok(())
+            }
+            Confirmation::Nack(_) => {
+                // Failure: Broker explicitly rejected it (internal error, queue full?)
+                Err("Broker NACKed the message - Data was rejected".into())
+            }
+            Confirmation::NotRequested => {
+                // Should not happen if confirm_select was called
+                Err("Confirmation was not requested but expected".into())
+            }
+        }
+    }
+}
+The Trade-off
+Without Confirms: You can pump 20,000 msg/sec, but if the broker crashes, you lose the last 2 seconds of data and never know.
+
+With Confirms: You might drop to 2,000 msg/sec (due to the network round-trip for the Ack), but you have 100% data integrity.
+
+Given your "forensic" mindset, this is the correct trade. You are trading raw speed for an audit trail.
