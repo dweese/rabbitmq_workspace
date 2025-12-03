@@ -18,6 +18,8 @@ pub enum ServerResponse {
     Connected,
     Disconnected,
     Error(String),
+    Queues(Vec<String>),
+    Exchanges(Vec<String>),
 }
 
 // The state of our application
@@ -30,6 +32,8 @@ pub struct AppState {
     password_input: String,
     connection_status: bool,
     status_message: String,
+    available_queues: Vec<String>,
+    available_exchanges: Vec<String>,
 }
 
 impl AppState {
@@ -66,7 +70,32 @@ impl AppState {
                         response_tx.send(ServerResponse::Disconnected).await.ok();
                     }
                     UiRequest::Refresh => {
-                        response_tx.send(ServerResponse::Error("Refresh not implemented".to_string())).await.ok();
+                        if let Some(client) = &api_client {
+                            match client.get_queues().await {
+                                Ok(queues) => {
+                                    let queue_names = queues.into_iter()
+                                        .filter_map(|q| q.get("name").and_then(|n| n.as_str().map(String::from)))
+                                        .collect();
+                                    response_tx.send(ServerResponse::Queues(queue_names)).await.ok();
+                                }
+                                Err(e) => {
+                                    response_tx.send(ServerResponse::Error(format!("Failed to get queues: {}", e))).await.ok();
+                                }
+                            }
+                            match client.get_exchanges().await {
+                                Ok(exchanges) => {
+                                    let exchange_names = exchanges.into_iter()
+                                        .filter_map(|e| e.get("name").and_then(|n| n.as_str().map(String::from)))
+                                        .collect();
+                                    response_tx.send(ServerResponse::Exchanges(exchange_names)).await.ok();
+                                }
+                                Err(e) => {
+                                    response_tx.send(ServerResponse::Error(format!("Failed to get exchanges: {}", e))).await.ok();
+                                }
+                            }
+                        } else {
+                            response_tx.send(ServerResponse::Error("Not connected".to_string())).await.ok();
+                        }
                     }
                 }
             }
@@ -80,6 +109,8 @@ impl AppState {
             password_input: String::new(),
             connection_status: false,
             status_message: "Welcome to the new RabbitMQ UI".to_string(),
+            available_queues: Vec::new(),
+            available_exchanges: Vec::new(),
         }
     }
 }
@@ -107,9 +138,17 @@ impl eframe::App for App {
                 ServerResponse::Disconnected => {
                     self.state.connection_status = false;
                     self.state.status_message = "Disconnected.".to_string();
+                    self.state.available_queues.clear();
+                    self.state.available_exchanges.clear();
                 }
                 ServerResponse::Error(msg) => {
                     self.state.status_message = format!("Error: {}", msg);
+                }
+                ServerResponse::Queues(queues) => {
+                    self.state.available_queues = queues;
+                }
+                ServerResponse::Exchanges(exchanges) => {
+                    self.state.available_exchanges = exchanges;
                 }
             }
         }
@@ -117,22 +156,35 @@ impl eframe::App for App {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 if !self.state.connection_status {
-                    if ui.button("Connect").clicked() {
-                        let mut config = self.state.config.clone();
-                        config.password = self.state.password_input.clone();
-                        self.state.request_tx.blocking_send(UiRequest::Connect(config)).ok();
-                    }
-                    ui.label("Host:");
-                    ui.text_edit_singleline(&mut self.state.config.host);
+                    ui.vertical(|ui| {
+                        egui::Grid::new("connection_grid")
+                            .num_columns(2)
+                            .spacing([10.0, 4.0])
+                            .striped(true)
+                            .show(ui, |ui| {
+                                ui.label("Host:");
+                                ui.text_edit_singleline(&mut self.state.config.host);
+                                ui.end_row();
 
-                    ui.label("VHost:");
-                    ui.text_edit_singleline(&mut self.state.config.vhost);
-                    
-                    ui.label("Username:");
-                    ui.text_edit_singleline(&mut self.state.config.username);
+                                ui.label("VHost:");
+                                ui.text_edit_singleline(&mut self.state.config.vhost);
+                                ui.end_row();
 
-                    ui.label("Password:");
-                    ui.add(egui::TextEdit::singleline(&mut self.state.password_input).password(true));
+                                ui.label("Username:");
+                                ui.text_edit_singleline(&mut self.state.config.username);
+                                ui.end_row();
+
+                                ui.label("Password:");
+                                ui.add(egui::TextEdit::singleline(&mut self.state.password_input).password(true));
+                                ui.end_row();
+                            });
+                        
+                        if ui.button("Connect").clicked() {
+                            let mut config = self.state.config.clone();
+                            config.password = self.state.password_input.clone();
+                            self.state.request_tx.blocking_send(UiRequest::Connect(config)).ok();
+                        }
+                    });
                 } else {
                     if ui.button("Disconnect").clicked() {
                         self.state.request_tx.blocking_send(UiRequest::Disconnect).ok();
@@ -140,6 +192,22 @@ impl eframe::App for App {
                     if ui.button("Refresh").clicked() {
                         self.state.request_tx.blocking_send(UiRequest::Refresh).ok();
                     }
+                }
+            });
+        });
+
+        egui::SidePanel::left("left_panel").show(ctx, |ui| {
+            ui.heading("Queues");
+            egui::ScrollArea::vertical().id_source("queues_scroll").show(ui, |ui| {
+                for queue in &self.state.available_queues {
+                    ui.label(queue);
+                }
+            });
+            ui.separator();
+            ui.heading("Exchanges");
+            egui::ScrollArea::vertical().id_source("exchanges_scroll").show(ui, |ui| {
+                for exchange in &self.state.available_exchanges {
+                    ui.label(exchange);
                 }
             });
         });

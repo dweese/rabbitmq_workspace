@@ -1,1 +1,36 @@
-Error: Connection failed: Connection error: protocol error: AMQP soft error: ACCESS-REFUSED: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
+1. Success State (image_46e1a0.png)
+Status: Connected
+
+Queues:
+
+order.placed
+
+payment.processed
+
+user.create
+
+user.delete
+
+user.update
+
+Exchanges:
+
+amq.direct
+
+amq.fanout
+
+amq.headers
+
+amq.match
+
+amq.rabbitmq.trace
+
+amq.topic
+
+(List repeats/continues below separator)
+
+commands
+
+events
+
+queries
