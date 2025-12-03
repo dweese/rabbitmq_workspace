@@ -1,5 +1,10 @@
 # RabbitMQ Workspace
 
+HAS MOVED TO:
+
+https://codeberg.org/dweese/rabbitmq_workspace
+
+
 This workspace contains a professional suite of tools for designing, deploying, monitoring, and testing a RabbitMQ-based messaging architecture.
 
 ## Core Philosophy: Emanate from the Tree
